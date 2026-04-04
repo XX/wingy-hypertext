@@ -12,8 +12,13 @@ function init_scroll_to_anchor() {
             window.scrollTo({
                 top: to_pos,
                 behavior: 'smooth'
-            }); 
+            });
         }
+    } else {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
     }
 }
 

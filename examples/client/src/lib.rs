@@ -59,7 +59,7 @@ pub fn render_root(url_path: &str) -> String {
                     <nav class="page-menu-nav border-end">
                         <a
                             class="wa-flank"
-                            href="#"
+                            href="/badge"
                             hx-get="/badge"
                             hx-target=".main-content"
                             hx-swap="innerHTML"
@@ -69,7 +69,7 @@ pub fn render_root(url_path: &str) -> String {
                         </a>
                         <a
                             class="wa-flank"
-                            href="#"
+                            href="/button"
                             hx-get="/button"
                             hx-target=".main-content"
                             hx-swap="innerHTML"

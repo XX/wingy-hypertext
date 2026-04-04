@@ -22,4 +22,5 @@ init_scroll_to_anchor();
 
 document.body.addEventListener("htmx:afterSettle", function (_event) {
     highlight.highlightAll();
+    init_scroll_to_anchor();
 });
