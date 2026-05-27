@@ -1,7 +1,8 @@
 [package]
-name = "was-basic-hypertext-macros"
+name = "wingy-hypertext-macros"
 version = "0.1.0"
 edition.workspace = true
+license.workspace = true
 
 [lib]
 proc-macro = true

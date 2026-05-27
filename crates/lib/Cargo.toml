@@ -1,11 +1,12 @@
 [package]
-name = "was-basic-hypertext"
+name = "wingy-hypertext"
 version = "0.1.0"
 edition.workspace = true
+license.workspace = true
 
 [dependencies]
 derive_more = { workspace = true }
 hypertext = { workspace = true }
 itertools = { workspace = true }
 strum = { workspace = true }
-was-basic-hypertext-macros = { workspace = true }
+wingy-hypertext-macros = { workspace = true }
