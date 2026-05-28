@@ -2,15 +2,20 @@
 
 @import url("components/badge.css");
 @import url("components/button.css");
+@import url("components/copy_button.css");
 @import url("components/head.css");
 
-@import url("layouts/code-example.css");
+@import url("layouts/code_example.css");
 @import url("layouts/page.css");
 
 @import url("utils/icon.css");
 
 html {
   scroll-behavior: smooth;
+}
+
+[hidden] {
+  display: none !important;
 }
 
 @media screen and (prefers-reduced-motion: reduce) {

@@ -190,14 +190,8 @@
 }
 
 /* Icon buttons */
-.button.is-icon-button {
-  outline-offset: 2px;
-  width: var(--wa-form-control-height);
-  aspect-ratio: 1;
-}
-
-.button.is-icon-button:has(.icon) {
-  width: auto;
+.button:has(.icon) {
+  padding: 0 0.75em;
 }
 
 /* Pill modifier */
@@ -213,8 +207,7 @@
     margin-inline-end: 0.75em;
   }
 
-  .end,
-  &:not(.visually-hidden-label) {
+  .end {
     margin-inline-start: 0.75em;
   }
 }

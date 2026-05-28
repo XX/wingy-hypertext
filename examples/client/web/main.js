@@ -2,9 +2,11 @@ import init, * as wasm from "./dist/client.js";
 import highlight from "./vendor/highlight/highlight.js";
 import html from './vendor/highlight/languages/xml.js';
 import init_htmx_request_interception from './vendor/htmx/client_patch.js';
+import './js/components/copy_button.js';
 import './js/components/head.js';
-import './js/layouts/code-example.js';
+import './js/layouts/code_example.js';
 import './js/layouts/page.js';
+import './js/utils/animate.js';
 
 await init();
 init_htmx_request_interception(wasm);

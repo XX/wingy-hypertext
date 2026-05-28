@@ -1,14 +1,12 @@
 use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Renderable, rsx};
-use was_basic_hypertext::appearance::Appearance::*;
-use was_basic_hypertext::attributes::CommonAttributeSetters;
-use was_basic_hypertext::components::badge::Badge;
-use was_basic_hypertext::components::head::Head;
-use was_basic_hypertext::components::head::HeadLevel::*;
-use was_basic_hypertext::layouts::code_example::{
-    CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource,
-};
-use was_basic_hypertext::variant::Variant::*;
+use wingy_hypertext::appearance::Appearance::*;
+use wingy_hypertext::attributes::CommonAttributeSetters;
+use wingy_hypertext::components::badge::Badge;
+use wingy_hypertext::components::head::Head;
+use wingy_hypertext::components::head::HeadLevel::*;
+use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
+use wingy_hypertext::variant::Variant::*;
 
 use crate::fontawesome;
 
@@ -19,7 +17,7 @@ pub fn overview() -> impl Renderable {
             <CodeExamplePreview resize=true>
                 <Badge>"Badge"</Badge>
             </CodeExamplePreview>
-            <CodeExampleSource>
+            <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"<Badge>"Badge"</Badge>"#</code>
             </CodeExampleSource>
             <CodeExampleButton>"Code"</CodeExampleButton>
@@ -43,7 +41,7 @@ pub fn overview() -> impl Renderable {
                     <Badge variant=Danger>"Danger"</Badge>
                 </div>
             </CodeExamplePreview>
-            <CodeExampleSource>
+            <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
                     <Badge variant=Neutral>"Neutral"</Badge>
                     <Badge variant=Brand>"Brand"</Badge>
@@ -92,7 +90,7 @@ pub fn overview() -> impl Renderable {
                     <Badge variant=Danger appearance=Outlined>"Outlined"</Badge>
                 </div>
             </CodeExamplePreview>
-            <CodeExampleSource>
+            <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
                     <div class="wa-cluster wa-gap-2xs" style="margin-block-end: 1rem;">
                         <Badge variant=Neutral appearance=Accent>"Accent"</Badge>
@@ -160,7 +158,7 @@ pub fn overview() -> impl Renderable {
                     <Badge variant=Brand style="font-size: var(--wa-font-size-3xl)">"Brand"</Badge>
                 </div>
             </CodeExamplePreview>
-            <CodeExampleSource>
+            <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
                     <div class="wa-cluster wa-gap-2xs" style="margin-block-end: 1rem;">
                         <Badge variant=Brand class="size-extra-small">"Brand"</Badge>
@@ -200,7 +198,7 @@ pub fn overview() -> impl Renderable {
                     <Badge variant=Danger pill=true>"Danger"</Badge>
                 </div>
             </CodeExamplePreview>
-            <CodeExampleSource>
+            <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
                     <Badge variant=Neutral pill=true>"Neutral"</Badge>
                     <Badge variant=Brand pill=true>"Brand"</Badge>
@@ -289,7 +287,7 @@ pub fn overview() -> impl Renderable {
                     </Badge>
                 </div>
             </CodeExamplePreview>
-            <CodeExampleSource>
+            <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
                     <div class="wa-cluster wa-gap-2xs" style="margin-block-end: 1rem;">
                         <Badge>

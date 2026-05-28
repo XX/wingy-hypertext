@@ -1,11 +1,14 @@
+use std::borrow::Cow;
+
 use derive_more::{AsMut, AsRef};
 use hypertext::prelude::{
     EventHandlerAttributes, GlobalAttributes, SvgGlobalAttributes, hypertext_elements, hypertext_svg_elements,
 };
 use hypertext::{Buffer, Renderable, rsx};
-use was_basic_hypertext_macros::{Props, const_str};
+use wingy_hypertext_macros::{Props, const_str};
 
-use crate::attributes::{CommonAttributeGetters, CommonAttrs};
+use crate::attributes::{CommonAttributeGetters, CommonAttributeSetters, CommonAttrs};
+use crate::components::copy_button::CopyButton;
 
 #[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = "code-example")]
@@ -82,6 +85,11 @@ impl<R: Renderable> Renderable for CodeExamplePreview<R> {
 #[const_str(CLASS = "code-example-source")]
 #[props(builder)]
 pub struct CodeExampleSource<R: Renderable = ()> {
+    #[prop(into)]
+    pub code_block_id: Option<Cow<'static, str>>,
+
+    pub copy_button: bool,
+
     #[as_ref]
     #[as_mut]
     pub attrs: CommonAttrs,
@@ -97,9 +105,17 @@ impl<R: Renderable> Renderable for CodeExampleSource<R> {
         let style_line = self.style_line_with([]);
 
         rsx! {
+            @let code_block_id = self
+                .code_block_id
+                .clone()
+                .or_else(|| id.map(|id| Cow::Owned(format!("{id}-code-block"))));
+
             <div id=[id] class=[&class_line] style=[&style_line]>
-                <pre>
+                <pre id=[code_block_id.as_ref()]>
                     (self.children)
+                    @if self.copy_button {
+                        <CopyButton class="wa-dark" from=(code_block_id.unwrap_or_default()) />
+                    }
                 </pre>
             </div>
         }

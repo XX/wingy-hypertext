@@ -1,13 +1,13 @@
 use hypertext::prelude::{GlobalAttributes, HtmxAttributes, hypertext_elements};
 use hypertext::{Renderable, RenderableExt, rsx};
-use was_basic_hypertext::appearance::Appearance::*;
-use was_basic_hypertext::attributes::CommonAttributeSetters;
-use was_basic_hypertext::components::button::Button;
-use was_basic_hypertext::layouts::page::{Page, PageAside, PageBody, PageFooter, PageHeader, PageMain, PageMenu};
-use was_basic_hypertext::link::LinkSetters;
-use was_basic_hypertext::link::Target::*;
-use was_basic_hypertext::variant::Variant::*;
 use wasm_bindgen::prelude::*;
+use wingy_hypertext::appearance::Appearance::*;
+use wingy_hypertext::attributes::CommonAttributeSetters;
+use wingy_hypertext::components::button::Button;
+use wingy_hypertext::layouts::page::{Page, PageAside, PageBody, PageFooter, PageHeader, PageMain, PageMenu};
+use wingy_hypertext::link::LinkSetters;
+use wingy_hypertext::link::Target::*;
+use wingy_hypertext::variant::Variant::*;
 
 pub mod components;
 pub mod fontawesome;
@@ -25,6 +25,7 @@ fn main_section(route_path: &str) -> impl Renderable {
         @match path {
             "badge" => (components::badge::overview()),
             "button" => (components::button::overview()),
+            "copy-button" => (components::copy_button::overview()),
             _ => {},
         }
     }
@@ -43,7 +44,7 @@ pub fn render_root(url_path: &str) -> String {
                     <a href="#">"Example Link"</a>
                 </div>
                 <div class="wa-cluster wa-gap-xs">
-                    <Button variant=Brand appearance=Accent class="size-small" href="https://github.com/XX/was-basic-hypertext" target=Blank>
+                    <Button variant=Brand appearance=Accent class="size-small" href="https://github.com/XX/wingy-hypertext" target=Blank>
                         <span class="start icon">
                             (fontawesome::icon("github"))
                         </span>
@@ -76,6 +77,16 @@ pub fn render_root(url_path: &str) -> String {
                             hx-push-url="true"
                         >
                             <span>"Button"</span>
+                        </a>
+                        <a
+                            class="wa-flank"
+                            href="/copy-button"
+                            hx-get="/copy-button"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Copy Button"</span>
                         </a>
                     </nav>
                     <nav class="page-menu-nav border-end">

@@ -20,6 +20,14 @@ pub trait CommonAttributeSetters {
         self
     }
 
+    fn classes(mut self, classes: impl Into<Vec<Cow<'static, str>>>) -> Self
+    where
+        Self: Sized,
+    {
+        self.set_classes(classes.into());
+        self
+    }
+
     fn style(mut self, style: impl Into<Cow<'static, str>>) -> Self
     where
         Self: Sized,

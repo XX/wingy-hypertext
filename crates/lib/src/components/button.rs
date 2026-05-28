@@ -3,7 +3,7 @@ use std::borrow::Cow;
 use derive_more::{AsMut, AsRef};
 use hypertext::prelude::{EventHandlerAttributes, GlobalAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable, rsx};
-use was_basic_hypertext_macros::{Props, const_str};
+use wingy_hypertext_macros::{Props, const_str};
 
 use crate::appearance::Appearance;
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
@@ -69,8 +69,9 @@ impl<R: Renderable> Renderable for Button<R> {
             }
             .render_to(buffer);
         } else {
+            let disabled = self.disabled.then_some(true);
             rsx! {
-                <button id=[id] class=[&class_line] style=[&style_line] onclick=[&self.onclick]>
+                <button id=[id] class=[&class_line] style=[&style_line] disabled=[disabled] onclick=[&self.onclick]>
                     (self.children)
                 </button>
             }

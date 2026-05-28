@@ -1,16 +1,14 @@
 use hypertext::prelude::{GlobalAttributes, SvgGlobalAttributes, hypertext_elements, hypertext_svg_elements};
 use hypertext::{Renderable, rsx};
-use was_basic_hypertext::appearance::Appearance::*;
-use was_basic_hypertext::attributes::CommonAttributeSetters;
-use was_basic_hypertext::components::button::Button;
-use was_basic_hypertext::components::head::Head;
-use was_basic_hypertext::components::head::HeadLevel::*;
-use was_basic_hypertext::layouts::code_example::{
-    CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource,
-};
-use was_basic_hypertext::link::LinkSetters;
-use was_basic_hypertext::link::Target::*;
-use was_basic_hypertext::variant::Variant::*;
+use wingy_hypertext::appearance::Appearance::*;
+use wingy_hypertext::attributes::CommonAttributeSetters;
+use wingy_hypertext::components::button::Button;
+use wingy_hypertext::components::head::Head;
+use wingy_hypertext::components::head::HeadLevel::*;
+use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
+use wingy_hypertext::link::LinkSetters;
+use wingy_hypertext::link::Target::*;
+use wingy_hypertext::variant::Variant::*;
 
 pub fn overview() -> impl Renderable {
     rsx! {
@@ -19,7 +17,7 @@ pub fn overview() -> impl Renderable {
             <CodeExamplePreview resize=true>
                 <Button>"Button"</Button>
             </CodeExamplePreview>
-            <CodeExampleSource>
+            <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"<Button>"Button"</Button>"#</code>
             </CodeExampleSource>
             <CodeExampleButton>"Code"</CodeExampleButton>
@@ -43,7 +41,7 @@ pub fn overview() -> impl Renderable {
                     <Button variant=Danger>"Danger"</Button>
                 </div>
             </CodeExamplePreview>
-            <CodeExampleSource>
+            <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
                     <Button variant=Neutral>"Neutral"</Button>
                     <Button variant=Brand>"Brand"</Button>
@@ -97,7 +95,7 @@ pub fn overview() -> impl Renderable {
                     <Button variant=Danger appearance=Plain>"Plain"</Button>
                 </div>
             </CodeExamplePreview>
-            <CodeExampleSource>
+            <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
                     <div class="wa-cluster wa-gap-2xs" style="margin-block-end: 1rem;">
                         <Button variant=Neutral appearance=Accent>"Accent"</Button>
@@ -170,7 +168,7 @@ pub fn overview() -> impl Renderable {
                     <Button variant=Brand style="font-size: var(--wa-font-size-3xl)">"Brand"</Button>
                 </div>
             </CodeExamplePreview>
-            <CodeExampleSource>
+            <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
                     <div class="wa-cluster wa-gap-2xs" style="margin-block-end: 1rem;">
                         <Button variant=Brand class="size-extra-small">"Brand"</Button>
@@ -210,7 +208,7 @@ pub fn overview() -> impl Renderable {
                     <Button variant=Danger pill=true class="size-extra-large">"Danger"</Button>
                 </div>
             </CodeExamplePreview>
-            <CodeExampleSource>
+            <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
                     <Button variant=Neutral pill=true class="size-extra-small">"Neutral"</Button>
                     <Button variant=Brand pill=true class="size-small">"Brand"</Button>
@@ -238,7 +236,7 @@ pub fn overview() -> impl Renderable {
                     <Button href="https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/car.svg" download="auto.svg">"Download"</Button>
                 </div>
             </CodeExamplePreview>
-            <CodeExampleSource>
+            <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
                     <Button href="https://example.com/">"Link"</Button>
                     <Button href="https://example.com/" target=Blank>"New Window"</Button>
@@ -301,7 +299,7 @@ pub fn overview() -> impl Renderable {
                     </Button>
                 </div>
             </CodeExamplePreview>
-            <CodeExampleSource>
+            <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
                     <Button appearance=Accent>
                         <span class="icon">
