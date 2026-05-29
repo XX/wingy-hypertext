@@ -1,9 +1,7 @@
 use std::borrow::Cow;
 
 use derive_more::{AsMut, AsRef};
-use hypertext::prelude::{
-    EventHandlerAttributes, GlobalAttributes, SvgGlobalAttributes, hypertext_elements, hypertext_svg_elements,
-};
+use hypertext::prelude::{GlobalAttributes, SvgGlobalAttributes, hypertext_elements, hypertext_svg_elements};
 use hypertext::{Buffer, Renderable, rsx};
 use wingy_hypertext_macros::{Props, const_str};
 
@@ -90,6 +88,8 @@ pub struct CodeExampleSource<R: Renderable = ()> {
 
     pub copy_button: bool,
 
+    pub is_not_animated: bool,
+
     #[as_ref]
     #[as_mut]
     pub attrs: CommonAttrs,
@@ -101,7 +101,11 @@ pub struct CodeExampleSource<R: Renderable = ()> {
 impl<R: Renderable> Renderable for CodeExampleSource<R> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
-        let class_line = self.class_line_with([Self::CLASS]);
+        let class_line = if self.is_not_animated {
+            self.class_line_with([Self::CLASS, "no-animation"])
+        } else {
+            self.class_line_with([Self::CLASS])
+        };
         let style_line = self.style_line_with([]);
 
         rsx! {
@@ -143,7 +147,7 @@ impl<R: Renderable> Renderable for CodeExampleButton<R> {
 
         rsx! {
             <div id=[id] class=[&class_line] style=[&style_line]>
-                <button class=(CodeExample::class(), "-toggle") type="button" onclick=("this.closest('.", CodeExample::class(), "').classList.toggle('open')")>
+                <button class=(CodeExample::class(), "-toggle") type="button">
                     (self.children)
                     " "
                     <span class="icon">

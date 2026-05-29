@@ -23,3 +23,15 @@
   padding: var(--wa-space-xl);
   margin-inline: auto;
 }
+
+.code-example-source pre {
+  color-scheme: dark;
+  color: white;
+  background-color: var(--code-background, var(--wa-color-neutral-20));
+
+  /* Ensures a discernible background color in dark mode
+   * Useful for themes that use gray-20 as --wa-color-surface-default  */
+  .wa-dark & {
+    background-color: var(--code-background-dark, var(--wa-color-surface-lowered));
+  }
+}
