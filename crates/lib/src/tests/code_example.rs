@@ -33,7 +33,7 @@ fn default() {
 
     let code_example_button_markup = r#"
         <div class="code-example-buttons">
-            <button class="code-example-toggle" type="button" onclick="this.closest('.code-example').classList.toggle('open')"> 
+            <button class="code-example-toggle" type="button"> 
                 <span class="icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                         <path fill="currentColor" d="M201.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 338.7 54.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"></path>
@@ -63,11 +63,7 @@ fn empty() {
                 <pre></pre>
             </div>
             <div class="code-example-buttons">
-                <button 
-                    class="code-example-toggle" 
-                    type="button" 
-                    onclick="this.closest('.code-example').classList.toggle('open')"
-                > 
+                <button class="code-example-toggle" type="button"> 
                     <span class="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                             <path fill="currentColor" d="M201.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 338.7 54.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"></path>
@@ -128,11 +124,7 @@ fn attributes() {
                 </pre>
             </div>
             <div class="code-example-buttons toggle" style="color: red">
-                <button 
-                    class="code-example-toggle" 
-                    type="button" 
-                    onclick="this.closest('.code-example').classList.toggle('open')"
-                > 
+                <button class="code-example-toggle" type="button"> 
                     <span class="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                             <path fill="currentColor" d="M201.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 338.7 54.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"></path>
@@ -200,11 +192,7 @@ fn children() {
                 </pre>
             </div>
             <div class="code-example-buttons">
-                <button 
-                    class="code-example-toggle" 
-                    type="button" 
-                    onclick="this.closest('.code-example').classList.toggle('open')"
-                >Code 
+                <button class="code-example-toggle" type="button">Code 
                     <span class="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                             <path fill="currentColor" d="M201.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 338.7 54.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"></path>
