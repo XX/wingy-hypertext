@@ -1,5 +1,11 @@
 # Wingy-hypertext
 
+## To run examples
+
+```sh
+cargo make run
+```
+
 ## License
 
 Licensed under either of
