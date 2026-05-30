@@ -40,7 +40,7 @@ pub fn render_root(url_path: &str) -> String {
                     <span class="icon" style="color: var(--wa-color-brand-fill-loud); font-size: 1.5em; --rotate-angle: 0deg;">
                         (fontawesome::icon("puzzle-piece"))
                     </span>
-                    <span id="brand-name" class="wa-heading-m wa-desktop-only">"WAS Basic Hypertext"</span>
+                    <span id="brand-name" class="wa-heading-m wa-desktop-only">"Wingy Hypertext"</span>
                     <a href="#">"Example Link"</a>
                 </div>
                 <div class="wa-cluster wa-gap-xs">
@@ -108,7 +108,7 @@ pub fn render_root(url_path: &str) -> String {
                     <span class="icon">
                         (fontawesome::icon("puzzle-piece"))
                     </span>
-                    <span id="brand-name" class="wa-heading-m">"WAS Basic Hypertext"</span>
+                    <span id="brand-name" class="wa-heading-m">"Wingy Hypertext"</span>
                 </div>
                 <div class="wa-stack">
                     <h3 class="wa-heading-s">Our Work</h3>
