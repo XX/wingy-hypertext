@@ -75,7 +75,9 @@ export function prefers_reduced_motion() {
     return query.matches;
 }
 
-window.animate = animate;
-window.animate_with_class = animate_with_class;
-window.parse_duration = parse_duration;
-window.prefers_reduced_motion = prefers_reduced_motion;
+window.WingyAnimation = window.WingyAnimation || {};
+
+window.WingyAnimation.animate = animate;
+window.WingyAnimation.animate_with_class = animate_with_class;
+window.WingyAnimation.parse_duration = parse_duration;
+window.WingyAnimation.prefers_reduced_motion = prefers_reduced_motion;

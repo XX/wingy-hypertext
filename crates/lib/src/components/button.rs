@@ -1,10 +1,9 @@
-use std::borrow::Cow;
-
 use derive_more::{AsMut, AsRef};
-use hypertext::prelude::{EventHandlerAttributes, GlobalAttributes, hypertext_elements};
+use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable, rsx};
 use wingy_hypertext_macros::{Props, const_str};
 
+use crate::action::Action;
 use crate::appearance::Appearance;
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::link::Link;
@@ -30,8 +29,9 @@ pub struct Button<R: Renderable = ()> {
     #[as_mut]
     pub link: Link,
 
-    #[prop(into)]
-    pub onclick: Option<Cow<'static, str>>,
+    #[as_ref]
+    #[as_mut]
+    pub action_data: Action,
 
     #[as_ref]
     #[as_mut]
@@ -62,7 +62,8 @@ impl<R: Renderable> Renderable for Button<R> {
                     target=[&self.link.target]
                     download=[&self.link.download]
                     rel=[&self.link.rel]
-                    onclick=[&self.onclick]
+                    data-action=[&self.action_data.action]
+                    data-args=[&self.action_data.args]
                 >
                     (self.children)
                 </a>
@@ -71,7 +72,14 @@ impl<R: Renderable> Renderable for Button<R> {
         } else {
             let disabled = self.disabled.then_some(true);
             rsx! {
-                <button id=[id] class=[&class_line] style=[&style_line] disabled=[disabled] onclick=[&self.onclick]>
+                <button
+                    id=[id]
+                    class=[&class_line]
+                    style=[&style_line]
+                    disabled=[disabled]
+                    data-action=[&self.action_data.action]
+                    data-args=[&self.action_data.args]
+                >
                     (self.children)
                 </button>
             }

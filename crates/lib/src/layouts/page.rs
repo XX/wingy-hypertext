@@ -27,7 +27,6 @@ impl<R: Renderable> Renderable for Page<R> {
             <div id=[id] class=[&class_line] style=[&style_line]>
                 (self.children)
             </div>
-            <script>"set_page_header_height()"</script>
         }
         .render_to(buffer);
     }

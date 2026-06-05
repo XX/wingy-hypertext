@@ -1,4 +1,4 @@
-function init_scroll_to_anchor() {
+export function init_scroll_to_anchor() {
     const hash = window.location.hash;
 
     if (hash) {
@@ -21,5 +21,3 @@ function init_scroll_to_anchor() {
         });
     }
 }
-
-window.init_scroll_to_anchor = init_scroll_to_anchor;

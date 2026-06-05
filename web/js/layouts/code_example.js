@@ -1,10 +1,8 @@
 //
 // Resizing previews
 //
-document.addEventListener('mousedown', handleResizerDrag);
-document.addEventListener('touchstart', handleResizerDrag, { passive: true });
 
-function handleResizerDrag(event) {
+export function handleResizerDrag(event) {
     const resizer = event.target.closest('.code-example-resizer');
     const preview = event.target.closest('.code-example-preview');
 
@@ -37,45 +35,32 @@ function handleResizerDrag(event) {
 //
 // Code example open animation
 //
-document.addEventListener('click', event => {
-  const toggle = event.target?.closest('.code-example-toggle');
-
-  if (toggle) {
-    const code_example = toggle.closest('.code-example');
-    if (!code_example) {
-      return;
-    }
-
-    const open = !code_example.classList.contains('open');
-    void set_code_example_open(code_example, toggle, open);
-  }
-});
 
 const CODE_EXAMPLE_ANIMATIONS = new WeakMap();
 
-function get_animation_generation(code_example) {
+export function get_animation_generation(code_example) {
     return CODE_EXAMPLE_ANIMATIONS.get(code_example) || 0;
 }
 
-function bump_animation_generation(code_example) {
+export function bump_animation_generation(code_example) {
     const generation = get_animation_generation(code_example) + 1;
     CODE_EXAMPLE_ANIMATIONS.set(code_example, generation);
     return generation;
 }
 
-function cancel_source_animations(source) {
+export function cancel_source_animations(source) {
     source.getAnimations().forEach(animation => animation.cancel());
 }
 
-function get_code_example_durations(source) {
+export function get_code_example_durations(source) {
     const style = getComputedStyle(source);
-    const show_duration = parse_duration(style.getPropertyValue('--code-example-show-duration').trim() || '200ms');
-    const hide_duration = parse_duration(style.getPropertyValue('--code-example-hide-duration').trim() || '200ms');
+    const show_duration = WingyAnimation.parse_duration(style.getPropertyValue('--code-example-show-duration').trim() || '200ms');
+    const hide_duration = WingyAnimation.parse_duration(style.getPropertyValue('--code-example-hide-duration').trim() || '200ms');
 
     return { show_duration, hide_duration };
 }
 
-function set_code_example_source_accessibility(source, open) {
+export function set_code_example_source_accessibility(source, open) {
     if (open) {
         source.removeAttribute('aria-hidden');
     } else {
@@ -83,7 +68,7 @@ function set_code_example_source_accessibility(source, open) {
     }
 }
 
-function set_code_example_source_collapsed(source, collapsed) {
+export function set_code_example_source_collapsed(source, collapsed) {
     if (collapsed) {
         source.style.height = '0';
         source.style.opacity = '0';
@@ -94,7 +79,7 @@ function set_code_example_source_collapsed(source, collapsed) {
     source.style.opacity = '';
 }
 
-function reset_code_example_element(code_example) {
+export function reset_code_example_element(code_example) {
     const source = code_example.querySelector('.code-example-source');
     const preview = code_example.querySelector('.code-example-preview');
 
@@ -109,22 +94,7 @@ function reset_code_example_element(code_example) {
     }
 }
 
-function init_code_examples() {
-    document.querySelectorAll('.code-example').forEach(code_example => {
-        const source = code_example.querySelector('.code-example-source');
-        if (!source) {
-            return;
-        }
-
-        reset_code_example_element(code_example);
-
-        const open = code_example.classList.contains('open');
-        set_code_example_source_collapsed(source, !open);
-        set_code_example_source_accessibility(source, open);
-    });
-}
-
-async function set_code_example_open(code_example, toggle, open) {
+export async function set_code_example_open(code_example, toggle, open) {
     const source = code_example.querySelector('.code-example-source');
     if (!source) {
         return;
@@ -134,7 +104,7 @@ async function set_code_example_open(code_example, toggle, open) {
     cancel_source_animations(source);
     source.classList.remove('is-animating');
 
-    if (prefers_reduced_motion() || source.classList.contains('no-animation')) {
+    if (WingyAnimation.prefers_reduced_motion() || source.classList.contains('no-animation')) {
         toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
         code_example.classList.toggle('open', open);
         set_code_example_source_collapsed(source, !open);
@@ -154,7 +124,7 @@ async function set_code_example_open(code_example, toggle, open) {
 
         await new Promise(resolve => requestAnimationFrame(resolve));
 
-        await animate(
+        await WingyAnimation.animate(
             source,
             [
                 { height: '0', opacity: '0' },
@@ -181,7 +151,7 @@ async function set_code_example_open(code_example, toggle, open) {
         const startHeight = source.scrollHeight;
         source.style.height = `${startHeight}px`;
 
-        await animate(
+        await WingyAnimation.animate(
             source,
             [
                 { height: `${startHeight}px`, opacity: '1' },
@@ -200,6 +170,37 @@ async function set_code_example_open(code_example, toggle, open) {
     }
 }
 
-// Initial pass for first paint; turbo:load re-syncs after client-side navigation.
-init_code_examples();
-document.addEventListener('turbo:load', init_code_examples);
+export function init_code_examples() {
+    document.querySelectorAll('.code-example').forEach(code_example => {
+        const source = code_example.querySelector('.code-example-source');
+        if (!source) {
+            return;
+        }
+
+        reset_code_example_element(code_example);
+
+        const open = code_example.classList.contains('open');
+        set_code_example_source_collapsed(source, !open);
+        set_code_example_source_accessibility(source, open);
+    });
+}
+
+export function listen_code_examples() {
+    document.addEventListener('turbo:load', init_code_examples);
+
+    document.addEventListener('mousedown', handleResizerDrag);
+    document.addEventListener('touchstart', handleResizerDrag, { passive: true });
+    document.addEventListener('click', event => {
+        const toggle = event.target?.closest('.code-example-toggle');
+
+        if (toggle) {
+            const code_example = toggle.closest('.code-example');
+            if (!code_example) {
+            return;
+            }
+
+            const open = !code_example.classList.contains('open');
+            void set_code_example_open(code_example, toggle, open);
+        }
+    });
+}

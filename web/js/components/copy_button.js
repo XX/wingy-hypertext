@@ -1,4 +1,4 @@
-async function handle_copy(event, from) {
+export async function handle_copy(event, from) {
     let target = event.target.closest('.copy-button');
     if (!target) return;
 
@@ -50,27 +50,31 @@ async function handle_copy(event, from) {
     }
 }
 
-async function show_status(target, status) {
+export async function show_status(target, status) {
     const copy_icon = target.querySelector('.copy-button-copy');
     const success_icon = target.querySelector('.copy-button-success');
     const error_icon = target.querySelector('.copy-button-error');
 
     if (copy_icon) {
         const icon_to_show = status === "success" ? success_icon : error_icon;
-        await animate_with_class(copy_icon, "hide");
+        await WingyAnimation.animate_with_class(copy_icon, "hide");
         copy_icon.hidden = true;
         if (icon_to_show) icon_to_show.hidden = false;
-        await animate_with_class(icon_to_show, "show");
+        await WingyAnimation.animate_with_class(icon_to_show, "show");
     }
     setTimeout(async () => {
         if (copy_icon) {
             const icon_to_show = status === "success" ? success_icon : error_icon;
-            await animate_with_class(icon_to_show, "hide");
+            await WingyAnimation.animate_with_class(icon_to_show, "hide");
             if (icon_to_show) icon_to_show.hidden = true;
             copy_icon.hidden = false;
-            await animate_with_class(copy_icon, "show");
+            await WingyAnimation.animate_with_class(copy_icon, "show");
         }
     }, 1000);
 }
 
-window.handle_copy = handle_copy;
+export function register_copy_action() {
+    WingyAction.register("copy", ({ from }, { event, element: _ }) => {
+        handle_copy(event, from);
+    });
+}

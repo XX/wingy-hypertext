@@ -5,6 +5,7 @@ use hypertext::prelude::{GlobalAttributes, SvgGlobalAttributes, hypertext_elemen
 use hypertext::{Buffer, Renderable, rsx};
 use wingy_hypertext_macros::{Props, const_str};
 
+use crate::action::ActionSetters;
 use crate::appearance::Appearance::Plain;
 use crate::attributes::{CommonAttributeSetters, CommonAttrs};
 use crate::components::button::Button;
@@ -17,9 +18,6 @@ pub struct CopyButton<R: Renderable = ()> {
 
     #[prop(into)]
     pub from: Option<Cow<'static, str>>,
-
-    #[prop(into)]
-    pub onclick: Option<Cow<'static, str>>,
 
     #[as_ref]
     #[as_mut]
@@ -69,12 +67,9 @@ impl<R: Renderable> Renderable for CopyButton<R> {
                 classes.insert(0, Self::CLASS.into());
                 classes
             };
-            @let onclick = self
-                .onclick
-                .clone()
-                .unwrap_or_else(|| Cow::Owned(format!("handle_copy(event, '{}')", self.from.as_deref().unwrap_or(""))));
+            @let from = format!(r#"{{"from":"{}"}}"#, self.from.as_deref().unwrap_or(""));
 
-            <Button attrs=(self.attrs.clone()) classes appearance=Plain disabled=(self.disabled) onclick>
+            <Button attrs=(self.attrs.clone()) classes appearance=Plain disabled=(self.disabled) action="copy" args=from>
                 (content)
             </Button>
         }

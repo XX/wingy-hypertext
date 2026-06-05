@@ -15,7 +15,6 @@ fn empty() {
             </div>
             <footer class="page-footer"></footer>
         </div>
-        <script>set_page_header_height()</script>
     "#
     .lines()
     .map(str::trim_start)

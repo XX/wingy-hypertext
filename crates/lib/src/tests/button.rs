@@ -1,5 +1,6 @@
 use hypertext::{RenderableExt, rsx};
 
+use crate::action::ActionSetters;
 use crate::appearance::Appearance::*;
 use crate::appearance::AppearanceConstructor;
 use crate::attributes::CommonAttributeSetters;
@@ -138,22 +139,22 @@ fn additional_attributes() {
 }
 
 #[test]
-fn onclick() {
-    let button_markup = r#"<button class="button neutral accent" onclick="alert('Hello')">Hello</button>"#;
+fn action() {
+    let button_markup = r#"<button class="button neutral accent" data-action="alert" data-args="{&quot;msg&quot;:&quot;Hello&quot;}">Hello</button>"#;
 
-    let button = rsx! { <Button onclick="alert('Hello')">"Hello"</Button> };
+    let button = rsx! { <Button action="alert" args=r#"{"msg":"Hello"}"#>"Hello"</Button> };
     assert_eq!(button.render().as_inner(), button_markup);
 
     let label = "Hello";
-    let button = rsx! { <Button onclick="alert('Hello')">(label)</Button> };
+    let button = rsx! { <Button action="alert" args=r#"{"msg":"Hello"}"#>(label)</Button> };
     assert_eq!(button.render().as_inner(), button_markup);
 
-    let button_link_markup = r#"<a class="button neutral accent" href="" onclick="alert('Hello')">Hello</a>"#;
+    let button_link_markup = r#"<a class="button neutral accent" href="" data-action="alert" data-args="{&quot;msg&quot;:&quot;Hello&quot;}">Hello</a>"#;
 
-    let button_link = rsx! { <Button href="" onclick="alert('Hello')">"Hello"</Button> };
+    let button_link = rsx! { <Button href="" action="alert" args=r#"{"msg":"Hello"}"#>"Hello"</Button> };
     assert_eq!(button_link.render().as_inner(), button_link_markup);
 
     let label = "Hello";
-    let button_link = rsx! { <Button href="" onclick="alert('Hello')">(label)</Button> };
+    let button_link = rsx! { <Button href="" action="alert" args=r#"{"msg":"Hello"}"#>(label)</Button> };
     assert_eq!(button_link.render().as_inner(), button_link_markup);
 }
