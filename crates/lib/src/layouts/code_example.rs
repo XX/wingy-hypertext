@@ -101,11 +101,7 @@ pub struct CodeExampleSource<R: Renderable = ()> {
 impl<R: Renderable> Renderable for CodeExampleSource<R> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
-        let class_line = if self.is_not_animated {
-            self.class_line_with([Self::CLASS, "no-animation"])
-        } else {
-            self.class_line_with([Self::CLASS])
-        };
+        let class_line = self.class_line_with([Self::CLASS, if self.is_not_animated { "no-animation" } else { "" }]);
         let style_line = self.style_line_with([]);
 
         rsx! {

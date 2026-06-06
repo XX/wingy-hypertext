@@ -26,6 +26,7 @@ fn main_section(route_path: &str) -> impl Renderable {
             "badge" => (components::badge::overview()),
             "button" => (components::button::overview()),
             "copy-button" => (components::copy_button::overview()),
+            "input" => (components::input::overview()),
             _ => {},
         }
     }
@@ -87,6 +88,16 @@ pub fn render_root(url_path: &str) -> String {
                             hx-push-url="true"
                         >
                             <span>"Copy Button"</span>
+                        </a>
+                        <a
+                            class="wa-flank"
+                            href="/input"
+                            hx-get="/input"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Input"</span>
                         </a>
                     </nav>
                     <nav class="page-menu-nav border-end">
