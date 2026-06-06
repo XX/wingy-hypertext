@@ -1,6 +1,7 @@
 **/target/
 **/*.rs.bk
 tmp/
+issues/
 
 TODO.*
 NOTES.*
