@@ -8,10 +8,11 @@ use wingy_hypertext_macros::{Props, const_str};
 use crate::action::ActionSetters;
 use crate::appearance::Appearance::Plain;
 use crate::attributes::{CommonAttributeSetters, CommonAttrs};
+use crate::class::{COPY_BUTTON, COPY_BUTTON_COPY, COPY_BUTTON_ERROR, COPY_BUTTON_SUCCESS, ICON};
 use crate::components::button::Button;
 
 #[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = "copy-button")]
+#[const_str(CLASS = COPY_BUTTON)]
 #[props(builder)]
 pub struct CopyButton<R: Renderable = ()> {
     pub disabled: bool,
@@ -34,7 +35,7 @@ impl<R: Renderable> Renderable for CopyButton<R> {
                 (children)
             }
             @else {
-                <span class="icon copy-button-copy">
+                <span class=(ICON, " ", COPY_BUTTON_COPY)>
                     // Copy icon
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                         // !Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com
@@ -42,7 +43,7 @@ impl<R: Renderable> Renderable for CopyButton<R> {
                         <path fill="currentColor" d="M384 336l-192 0c-8.8 0-16-7.2-16-16l0-256c0-8.8 7.2-16 16-16l133.5 0c4.2 0 8.3 1.7 11.3 4.7l58.5 58.5c3 3 4.7 7.1 4.7 11.3L400 320c0 8.8-7.2 16-16 16zM192 384l192 0c35.3 0 64-28.7 64-64l0-197.5c0-17-6.7-33.3-18.7-45.3L370.7 18.7C358.7 6.7 342.5 0 325.5 0L192 0c-35.3 0-64 28.7-64 64l0 256c0 35.3 28.7 64 64 64zM64 128c-35.3 0-64 28.7-64 64L0 448c0 35.3 28.7 64 64 64l192 0c35.3 0 64-28.7 64-64l0-16-48 0 0 16c0 8.8-7.2 16-16 16L64 464c-8.8 0-16-7.2-16-16l0-256c0-8.8 7.2-16 16-16l16 0 0-48-16 0z"/>
                     </svg>
                 </span>
-                <span class="icon copy-button-success" hidden>
+                <span class=(ICON, " ", COPY_BUTTON_SUCCESS) hidden>
                     // Check icon
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                         // !Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com
@@ -50,7 +51,7 @@ impl<R: Renderable> Renderable for CopyButton<R> {
                         <path fill="currentColor" d="M434.8 70.1c14.3 10.4 17.5 30.4 7.1 44.7l-256 352c-5.5 7.6-14 12.3-23.4 13.1s-18.5-2.7-25.1-9.3l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l101.5 101.5 234-321.7c10.4-14.3 30.4-17.5 44.7-7.1z"/>
                     </svg>
                 </span>
-                <span class="icon copy-button-error" hidden>
+                <span class=(ICON, " ", COPY_BUTTON_ERROR) hidden>
                     // Xmark icon
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
                         // !Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com

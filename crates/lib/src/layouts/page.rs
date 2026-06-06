@@ -4,9 +4,10 @@ use hypertext::{Buffer, Renderable, rsx};
 use wingy_hypertext_macros::{Props, const_str};
 
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
+use crate::class::{PAGE, PAGE_ASIDE, PAGE_BODY, PAGE_FOOTER, PAGE_HEADER, PAGE_MAIN, PAGE_MENU};
 
 #[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = "page")]
+#[const_str(CLASS = PAGE)]
 #[props(builder)]
 pub struct Page<R: Renderable = ()> {
     #[as_ref]
@@ -33,7 +34,7 @@ impl<R: Renderable> Renderable for Page<R> {
 }
 
 #[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = "page-header")]
+#[const_str(CLASS = PAGE_HEADER)]
 #[props(builder)]
 pub struct PageHeader<R: Renderable = ()> {
     #[as_ref]
@@ -60,7 +61,7 @@ impl<R: Renderable> Renderable for PageHeader<R> {
 }
 
 #[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = "page-body")]
+#[const_str(CLASS = PAGE_BODY)]
 #[props(builder)]
 pub struct PageBody<R: Renderable = ()> {
     #[as_ref]
@@ -87,7 +88,7 @@ impl<R: Renderable> Renderable for PageBody<R> {
 }
 
 #[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = "page-menu")]
+#[const_str(CLASS = PAGE_MENU)]
 #[props(builder)]
 pub struct PageMenu<R: Renderable = ()> {
     #[as_ref]
@@ -114,7 +115,7 @@ impl<R: Renderable> Renderable for PageMenu<R> {
 }
 
 #[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = "page-main")]
+#[const_str(CLASS = PAGE_MAIN)]
 #[props(builder)]
 pub struct PageMain<R: Renderable = ()> {
     #[as_ref]
@@ -141,7 +142,7 @@ impl<R: Renderable> Renderable for PageMain<R> {
 }
 
 #[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = "page-aside")]
+#[const_str(CLASS = PAGE_ASIDE)]
 #[props(builder)]
 pub struct PageAside<R: Renderable = ()> {
     #[as_ref]
@@ -168,7 +169,7 @@ impl<R: Renderable> Renderable for PageAside<R> {
 }
 
 #[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = "page-footer")]
+#[const_str(CLASS = PAGE_FOOTER)]
 #[props(builder)]
 pub struct PageFooter<R: Renderable = ()> {
     #[as_ref]

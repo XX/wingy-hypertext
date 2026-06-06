@@ -2,6 +2,7 @@ use hypertext::prelude::{GlobalAttributes, SvgGlobalAttributes, hypertext_elemen
 use hypertext::{Renderable, rsx};
 use wingy_hypertext::appearance::Appearance::*;
 use wingy_hypertext::attributes::CommonAttributeSetters;
+use wingy_hypertext::class::ICON;
 use wingy_hypertext::components::button::Button;
 use wingy_hypertext::components::head::Head;
 use wingy_hypertext::components::head::HeadLevel::*;
@@ -253,7 +254,7 @@ pub fn overview() -> impl Renderable {
             <CodeExamplePreview resize=true>
                 <div class="wa-cluster wa-gap-2xs">
                     <Button appearance=Accent>
-                        <span class="icon">
+                        <span class=ICON>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                                 // !Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com
                                 // License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.
@@ -262,7 +263,7 @@ pub fn overview() -> impl Renderable {
                         </span>
                     </Button>
                     <Button appearance=FilledOutlined>
-                        <span class="icon">
+                        <span class=ICON>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                                 // !Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com
                                 // License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.
@@ -271,7 +272,7 @@ pub fn overview() -> impl Renderable {
                         </span>
                     </Button>
                     <Button appearance=Filled>
-                        <span class="icon">
+                        <span class=ICON>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                                 // !Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com
                                 // License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.
@@ -280,7 +281,7 @@ pub fn overview() -> impl Renderable {
                         </span>
                     </Button>
                     <Button appearance=Outlined>
-                        <span class="icon">
+                        <span class=ICON>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                                 // !Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com
                                 // License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.
@@ -289,7 +290,7 @@ pub fn overview() -> impl Renderable {
                         </span>
                     </Button>
                     <Button appearance=Plain>
-                        <span class="icon">
+                        <span class=ICON>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                                 // !Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com
                                 // License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.
@@ -302,7 +303,7 @@ pub fn overview() -> impl Renderable {
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
                     <Button appearance=Accent>
-                        <span class="icon">
+                        <span class=ICON>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                                 // !Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com
                                 // License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.
@@ -311,22 +312,22 @@ pub fn overview() -> impl Renderable {
                         </span>
                     </Button>
                     <Button appearance=FilledOutlined>
-                        <span class="icon">
+                        <span class=ICON>
                             ...
                         </span>
                     </Button>
                     <Button appearance=Filled>
-                        <span class="icon">
+                        <span class=ICON>
                             ...
                         </span>
                     </Button>
                     <Button appearance=Outlined>
-                        <span class="icon">
+                        <span class=ICON>
                             ...
                         </span>
                     </Button>
                     <Button appearance=Plain>
-                        <span class="icon">
+                        <span class=ICON>
                             ...
                         </span>
                     </Button>

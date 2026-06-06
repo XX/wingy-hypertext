@@ -6,11 +6,12 @@ use wingy_hypertext_macros::{Props, const_str};
 use crate::action::Action;
 use crate::appearance::Appearance;
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
+use crate::class::BUTTON;
 use crate::link::Link;
 use crate::variant::Variant;
 
 #[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = "button")]
+#[const_str(CLASS = BUTTON)]
 #[props(builder)]
 pub struct Button<R: Renderable = ()> {
     #[prop(from)]

@@ -3,6 +3,7 @@ use hypertext::{Renderable, RenderableExt, rsx};
 use wasm_bindgen::prelude::*;
 use wingy_hypertext::appearance::Appearance::*;
 use wingy_hypertext::attributes::CommonAttributeSetters;
+use wingy_hypertext::class::ICON;
 use wingy_hypertext::components::button::Button;
 use wingy_hypertext::layouts::page::{Page, PageAside, PageBody, PageFooter, PageHeader, PageMain, PageMenu};
 use wingy_hypertext::link::LinkSetters;
@@ -38,7 +39,7 @@ pub fn render_root(url_path: &str) -> String {
         <Page>
             <PageHeader class="wa-split">
                 <div class="wa-cluster">
-                    <span class="icon" style="color: var(--wa-color-brand-fill-loud); font-size: 1.5em; --rotate-angle: 0deg;">
+                    <span class=ICON style="color: var(--wa-color-brand-fill-loud); font-size: 1.5em; --rotate-angle: 0deg;">
                         (fontawesome::icon("puzzle-piece"))
                     </span>
                     <span id="brand-name" class="wa-heading-m wa-desktop-only">"Wingy Hypertext"</span>
@@ -116,7 +117,7 @@ pub fn render_root(url_path: &str) -> String {
             </PageBody>
             <PageFooter class="wa-grid wa-gap-xl">
                 <div class="wa-cluster" style="flex-wrap: nowrap">
-                    <span class="icon">
+                    <span class=ICON>
                         (fontawesome::icon("puzzle-piece"))
                     </span>
                     <span id="brand-name" class="wa-heading-m">"Wingy Hypertext"</span>

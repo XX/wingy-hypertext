@@ -6,10 +6,14 @@ use hypertext::{Buffer, Renderable, rsx};
 use wingy_hypertext_macros::{Props, const_str};
 
 use crate::attributes::{CommonAttributeGetters, CommonAttributeSetters, CommonAttrs};
+use crate::class::{
+    CODE_EXAMPLE, CODE_EXAMPLE_BUTTONS, CODE_EXAMPLE_PREVIEW, CODE_EXAMPLE_RESIZER, CODE_EXAMPLE_SOURCE,
+    CODE_EXAMPLE_TOGGLE, DARK, ICON, NO_ANIMATION, OPEN,
+};
 use crate::components::copy_button::CopyButton;
 
 #[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = "code-example")]
+#[const_str(CLASS = CODE_EXAMPLE)]
 #[props(builder)]
 pub struct CodeExample<R: Renderable = ()> {
     pub open: bool,
@@ -25,7 +29,7 @@ pub struct CodeExample<R: Renderable = ()> {
 impl<R: Renderable> Renderable for CodeExample<R> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
-        let classes = [Self::CLASS, if self.open { "open" } else { "" }];
+        let classes = [Self::CLASS, if self.open { OPEN } else { "" }];
         let class_line = self.class_line_with(classes);
         let style_line = self.style_line_with([]);
 
@@ -39,7 +43,7 @@ impl<R: Renderable> Renderable for CodeExample<R> {
 }
 
 #[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = "code-example-preview")]
+#[const_str(CLASS = CODE_EXAMPLE_PREVIEW)]
 #[props(builder)]
 pub struct CodeExamplePreview<R: Renderable = ()> {
     pub resize: bool,
@@ -62,8 +66,8 @@ impl<R: Renderable> Renderable for CodeExamplePreview<R> {
             <div id=[id] class=[&class_line] style=[&style_line]>
                 (self.children)
                 @if self.resize {
-                    <div class=(CodeExample::class(), "-resizer")>
-                        <span class="icon">
+                    <div class=CODE_EXAMPLE_RESIZER>
+                        <span class=ICON>
                             // grip-lines-vertical
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 512">
                                 // ! Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com
@@ -80,7 +84,7 @@ impl<R: Renderable> Renderable for CodeExamplePreview<R> {
 }
 
 #[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = "code-example-source")]
+#[const_str(CLASS = CODE_EXAMPLE_SOURCE)]
 #[props(builder)]
 pub struct CodeExampleSource<R: Renderable = ()> {
     #[prop(into)]
@@ -101,7 +105,7 @@ pub struct CodeExampleSource<R: Renderable = ()> {
 impl<R: Renderable> Renderable for CodeExampleSource<R> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
-        let class_line = self.class_line_with([Self::CLASS, if self.is_not_animated { "no-animation" } else { "" }]);
+        let class_line = self.class_line_with([Self::CLASS, if self.is_not_animated { NO_ANIMATION } else { "" }]);
         let style_line = self.style_line_with([]);
 
         rsx! {
@@ -114,7 +118,7 @@ impl<R: Renderable> Renderable for CodeExampleSource<R> {
                 <pre id=[code_block_id.as_ref()]>
                     (self.children)
                     @if self.copy_button {
-                        <CopyButton class="wa-dark" from=(code_block_id.unwrap_or_default()) />
+                        <CopyButton class=DARK from=(code_block_id.unwrap_or_default()) />
                     }
                 </pre>
             </div>
@@ -124,7 +128,7 @@ impl<R: Renderable> Renderable for CodeExampleSource<R> {
 }
 
 #[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = "code-example-buttons")]
+#[const_str(CLASS = CODE_EXAMPLE_BUTTONS)]
 #[props(builder)]
 pub struct CodeExampleButton<R: Renderable = ()> {
     #[as_ref]
@@ -143,10 +147,10 @@ impl<R: Renderable> Renderable for CodeExampleButton<R> {
 
         rsx! {
             <div id=[id] class=[&class_line] style=[&style_line]>
-                <button class=(CodeExample::class(), "-toggle") type="button">
+                <button class=CODE_EXAMPLE_TOGGLE type="button">
                     (self.children)
                     " "
-                    <span class="icon">
+                    <span class=ICON>
                         // chevron-down
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                             // ! Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com
