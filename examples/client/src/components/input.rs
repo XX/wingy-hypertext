@@ -2,10 +2,11 @@ use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Renderable, rsx};
 use wingy_hypertext::appearance::Appearance::*;
 use wingy_hypertext::attributes::CommonAttributeSetters;
+use wingy_hypertext::class::{HINT, LABEL};
 use wingy_hypertext::components::head::Head;
 use wingy_hypertext::components::head::HeadLevel::*;
-use wingy_hypertext::components::input::Input;
 use wingy_hypertext::components::input::InputType::*;
+use wingy_hypertext::components::input::{Input, TextField};
 use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
 
 pub fn overview() -> impl Renderable {
@@ -110,6 +111,67 @@ pub fn overview() -> impl Renderable {
                     <Input appearance=Outlined placeholder="Outlined" />
                     <Input appearance=Filled placeholder="Filled" />
                     <Input appearance=FilledOutlined placeholder="Filled-Outlined" />
+                "#</code>
+            </CodeExampleSource>
+            <CodeExampleButton>"Code"</CodeExampleButton>
+        </CodeExample>
+
+        <Head level=H3 id="composite" anchor=true>
+            "Composite Structure"
+        </Head>
+        <p>"For full control over the markup, compose an "<code>"Input"</code>" from the "
+            <code>"<label class=LABEL>"</code>", "<code>"<small class=HINT>"</code>" elements and "
+            <code>"TextField"</code>" sub-component in the body. Shorthand attributes like "
+            <code>"hint"</code>" can still be mixed in for the parts you don't customize."
+        </p>
+        <CodeExample>
+            <CodeExamplePreview resize=true>
+                <Input>
+                    <label class=LABEL>
+                        <div class="custom wa-heading-s">"Input label"</div>
+                    </label>
+                    <TextField placeholder="Enter your name" />
+                    <small class=HINT>
+                        <span>"Custom "<code>"Hint"</code>" markup"</span>
+                    </small>
+                </Input>
+            </CodeExamplePreview>
+            <CodeExampleSource copy_button=true>
+                <code class="language-html">r#"
+                    <Input>
+                        <label class=LABEL>
+                            <div class="custom wa-heading-s">"Input label"</div>
+                        </label>
+                        <TextField placeholder="Enter your name" />
+                        <small class=HINT>
+                            <span>"Custom "<code>"Hint"</code>" markup"</span>
+                        </small>
+                    </Input>
+                "#</code>
+            </CodeExampleSource>
+            <CodeExampleButton>"Code"</CodeExampleButton>
+        </CodeExample>
+
+        <p>"Shorthand attributes can be mixed with composition: a "<code>"hint"</code>
+            " attribute is rendered even when the label and field come from the body."
+        </p>
+        <CodeExample>
+            <CodeExamplePreview resize=true>
+                <Input hint="Input hint">
+                    <label class=LABEL>
+                        <div class="custom wa-heading-s">"Input label"</div>
+                    </label>
+                    <TextField placeholder="Enter your name" />
+                </Input>
+            </CodeExamplePreview>
+            <CodeExampleSource copy_button=true>
+                <code class="language-html">r#"
+                    <Input hint="Input hint">
+                        <label class=LABEL>
+                            <div class="custom wa-heading-s">"Input label"</div>
+                        </label>
+                        <TextField placeholder="Enter your name" />
+                    </Input>
                 "#</code>
             </CodeExampleSource>
             <CodeExampleButton>"Code"</CodeExampleButton>

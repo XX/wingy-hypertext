@@ -8,6 +8,7 @@ use wingy_hypertext_macros::{Props, const_str};
 
 use crate::appearance::Appearance;
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
+use crate::class::{CONTROL, HINT, INPUT, LABEL, PILL, REQUIRED, TEXT_FIELD};
 
 /// The type of data the input collects. Mirrors a subset of the native `<input>` `type` attribute.
 #[derive(Copy, Clone, Debug, Default, IntoStaticStr, AsRefStr, PartialEq, Eq)]
@@ -40,9 +41,9 @@ impl InputType {
 }
 
 #[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = "input")]
+#[const_str(CLASS = INPUT)]
 #[props(builder)]
-pub struct Input {
+pub struct Input<R: Renderable = ()> {
     #[prop(from)]
     pub input_type: InputType,
 
@@ -75,17 +76,93 @@ pub struct Input {
     #[as_ref]
     #[as_mut]
     pub attrs: CommonAttrs,
+
+    #[prop(convert)]
+    pub children: Option<R>,
 }
 
-impl Renderable for Input {
+impl<R: Renderable> Input<R> {
+    fn has_text_field_props(&self) -> bool {
+        self.input_type != InputType::default()
+            || self.disabled
+            || self.readonly
+            || self.required
+            || self.name.is_some()
+            || self.value.is_some()
+            || self.placeholder.is_some()
+    }
+}
+
+impl<R: Renderable> Renderable for Input<R> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
         let class_line = self.class_line_with([
             Self::CLASS,
-            if self.pill { "pill" } else { "" },
-            if self.required { "required" } else { "" },
+            if self.pill { PILL } else { "" },
+            if self.required { REQUIRED } else { "" },
             self.appearance.into_str(),
         ]);
+        let style_line = self.style_line_with([]);
+
+        let text_field = (self.children.is_none() || self.has_text_field_props()).then(|| TextField {
+            input_type: self.input_type,
+            disabled: self.disabled,
+            readonly: self.readonly,
+            required: self.required,
+            name: self.name.clone(),
+            value: self.value.clone(),
+            placeholder: self.placeholder.clone(),
+            ..TextField::default()
+        });
+
+        rsx! {
+            <div id=[id] class=[&class_line] style=[&style_line]>
+                @if let Some(label) = &self.label {
+                    <label class=LABEL>(label)</label>
+                }
+                (text_field)
+                (self.children)
+                @if let Some(hint) = &self.hint {
+                    <small class=HINT>(hint)</small>
+                }
+            </div>
+        }
+        .render_to(buffer);
+    }
+}
+
+/// The field box wrapping the native `<input>` control.
+#[derive(Default, AsRef, AsMut, Props)]
+#[const_str(CLASS = TEXT_FIELD)]
+#[props(builder)]
+pub struct TextField {
+    #[prop(from)]
+    pub input_type: InputType,
+
+    pub disabled: bool,
+
+    pub readonly: bool,
+
+    pub required: bool,
+
+    #[prop(into)]
+    pub name: Option<Cow<'static, str>>,
+
+    #[prop(into)]
+    pub value: Option<Cow<'static, str>>,
+
+    #[prop(into)]
+    pub placeholder: Option<Cow<'static, str>>,
+
+    #[as_ref]
+    #[as_mut]
+    pub attrs: CommonAttrs,
+}
+
+impl Renderable for TextField {
+    fn render_to(&self, buffer: &mut Buffer) {
+        let id = self.id();
+        let class_line = self.class_line_with([Self::CLASS]);
         let style_line = self.style_line_with([]);
 
         let disabled = self.disabled.then_some(true);
@@ -94,24 +171,16 @@ impl Renderable for Input {
 
         rsx! {
             <div id=[id] class=[&class_line] style=[&style_line]>
-                @if let Some(label) = &self.label {
-                    <label class="label">(label)</label>
-                }
-                <div class="text-field">
-                    <input
-                        class="control"
-                        type=(self.input_type.into_str())
-                        name=[&self.name]
-                        value=[&self.value]
-                        placeholder=[&self.placeholder]
-                        disabled=[disabled]
-                        readonly=[readonly]
-                        required=[required]
-                    />
-                </div>
-                @if let Some(hint) = &self.hint {
-                    <small class="hint">(hint)</small>
-                }
+                <input
+                    class=CONTROL
+                    type=(self.input_type.into_str())
+                    name=[&self.name]
+                    value=[&self.value]
+                    placeholder=[&self.placeholder]
+                    disabled=[disabled]
+                    readonly=[readonly]
+                    required=[required]
+                />
             </div>
         }
         .render_to(buffer);

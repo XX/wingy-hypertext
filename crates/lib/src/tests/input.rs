@@ -1,9 +1,11 @@
+use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{RenderableExt, rsx};
 
 use crate::appearance::Appearance::*;
 use crate::attributes::CommonAttributeSetters;
-use crate::components::input::Input;
+use crate::class::LABEL;
 use crate::components::input::InputType::*;
+use crate::components::input::{Input, TextField};
 
 #[test]
 fn default() {
@@ -30,7 +32,7 @@ fn input_type() {
 }
 
 #[test]
-fn label_and_hint() {
+fn shorthand_label_and_hint() {
     let input_markup = r#"<div class="input accent"><label class="label">Name</label><div class="text-field"><input class="control" type="text" placeholder="Enter your name"></div><small class="hint">What should we call you?</small></div>"#;
 
     let input = Input::builder()
@@ -63,5 +65,30 @@ fn additional_attributes() {
         .id("email")
         .class("test")
         .style("color: red");
+    assert_eq!(input.render().as_inner(), input_markup);
+}
+
+#[test]
+fn composite_children() {
+    let input_markup = r#"<div class="input accent"><label class="label"><div class="custom">Input label</div></label><div class="text-field"><input class="control" type="text" placeholder="Enter your name"></div><small class="hint">Input hint</small></div>"#;
+
+    let input = rsx! {
+        <Input hint="Input hint">
+            <label class=LABEL><div class="custom">"Input label"</div></label>
+            <TextField placeholder="Enter your name" />
+        </Input>
+    };
+    assert_eq!(input.render().as_inner(), input_markup);
+}
+
+#[test]
+fn double_text_field() {
+    let input_markup = r#"<div class="input accent"><div class="text-field"><input class="control" type="text" placeholder="first"></div><div class="text-field"><input class="control" type="text" placeholder="second"></div></div>"#;
+
+    let input = rsx! {
+        <Input placeholder="first">
+            <TextField placeholder="second" />
+        </Input>
+    };
     assert_eq!(input.render().as_inner(), input_markup);
 }
