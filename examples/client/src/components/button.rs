@@ -2,7 +2,9 @@ use hypertext::prelude::{GlobalAttributes, SvgGlobalAttributes, hypertext_elemen
 use hypertext::{Renderable, rsx};
 use wingy_hypertext::appearance::Appearance::*;
 use wingy_hypertext::attributes::CommonAttributeSetters;
-use wingy_hypertext::class::ICON;
+use wingy_hypertext::class::{
+    CLUSTER, GAP_2XS, ICON, SIZE_EXTRA_LARGE, SIZE_EXTRA_SMALL, SIZE_LARGE, SIZE_MEDIUM, SIZE_SMALL,
+};
 use wingy_hypertext::components::button::Button;
 use wingy_hypertext::components::head::Head;
 use wingy_hypertext::components::head::HeadLevel::*;
@@ -34,7 +36,7 @@ pub fn overview() -> impl Renderable {
         <p>"Use the "<code>variant</code>" attribute to set the button's semantic variant."</p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <div class="wa-cluster wa-gap-2xs">
+                <div class=(CLUSTER, " ", GAP_2XS)>
                     <Button variant=Neutral>"Neutral"</Button>
                     <Button variant=Brand>"Brand"</Button>
                     <Button variant=Success>"Success"</Button>
@@ -60,35 +62,35 @@ pub fn overview() -> impl Renderable {
         <p>"Use the "<code>appearance</code>" property to change the button's visual appearance."</p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <div class="wa-cluster wa-gap-2xs" style="margin-block-end: 1rem;">
+                <div class=(CLUSTER, " ", GAP_2XS) style="margin-block-end: 1rem;">
                     <Button variant=Neutral appearance=Accent>"Accent"</Button>
                     <Button variant=Neutral appearance=FilledOutlined>"Filled-Outlined"</Button>
                     <Button variant=Neutral appearance=Filled>"Filled"</Button>
                     <Button variant=Neutral appearance=Outlined>"Outlined"</Button>
                     <Button variant=Neutral appearance=Plain>"Plain"</Button>
                 </div>
-                <div class="wa-cluster wa-gap-2xs" style="margin-block-end: 1rem;">
+                <div class=(CLUSTER, " ", GAP_2XS) style="margin-block-end: 1rem;">
                     <Button variant=Brand appearance=Accent>"Accent"</Button>
                     <Button variant=Brand appearance=FilledOutlined>"Filled-Outlined"</Button>
                     <Button variant=Brand appearance=Filled>"Filled"</Button>
                     <Button variant=Brand appearance=Outlined>"Outlined"</Button>
                     <Button variant=Brand appearance=Plain>"Plain"</Button>
                 </div>
-                <div class="wa-cluster wa-gap-2xs" style="margin-block-end: 1rem;">
+                <div class=(CLUSTER, " ", GAP_2XS) style="margin-block-end: 1rem;">
                     <Button variant=Success appearance=Accent>"Accent"</Button>
                     <Button variant=Success appearance=FilledOutlined>"Filled-Outlined"</Button>
                     <Button variant=Success appearance=Filled>"Filled"</Button>
                     <Button variant=Success appearance=Outlined>"Outlined"</Button>
                     <Button variant=Success appearance=Plain>"Plain"</Button>
                 </div>
-                <div class="wa-cluster wa-gap-2xs" style="margin-block-end: 1rem;">
+                <div class=(CLUSTER, " ", GAP_2XS) style="margin-block-end: 1rem;">
                     <Button variant=Warning appearance=Accent>"Accent"</Button>
                     <Button variant=Warning appearance=FilledOutlined>"Filled-Outlined"</Button>
                     <Button variant=Warning appearance=Filled>"Filled"</Button>
                     <Button variant=Warning appearance=Outlined>"Outlined"</Button>
                     <Button variant=Warning appearance=Plain>"Plain"</Button>
                 </div>
-                <div class="wa-cluster wa-gap-2xs">
+                <div class=(CLUSTER, " ", GAP_2XS)>
                     <Button variant=Danger appearance=Accent>"Accent"</Button>
                     <Button variant=Danger appearance=FilledOutlined>"Filled-Outlined"</Button>
                     <Button variant=Danger appearance=Filled>"Filled"</Button>
@@ -98,35 +100,35 @@ pub fn overview() -> impl Renderable {
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <div class="wa-cluster wa-gap-2xs" style="margin-block-end: 1rem;">
+                    <div class=(CLUSTER, " ", GAP_2XS) style="margin-block-end: 1rem;">
                         <Button variant=Neutral appearance=Accent>"Accent"</Button>
                         <Button variant=Neutral appearance=FilledOutlined>"Filled-Outlined"</Button>
                         <Button variant=Neutral appearance=Filled>"Filled"</Button>
                         <Button variant=Neutral appearance=Outlined>"Outlined"</Button>
                         <Button variant=Neutral appearance=Plain>"Plain"</Button>
                     </div>
-                    <div class="wa-cluster wa-gap-2xs" style="margin-block-end: 1rem;">
+                    <div class=(CLUSTER, " ", GAP_2XS) style="margin-block-end: 1rem;">
                         <Button variant=Brand appearance=Accent>"Accent"</Button>
                         <Button variant=Brand appearance=FilledOutlined>"Filled-Outlined"</Button>
                         <Button variant=Brand appearance=Filled>"Filled"</Button>
                         <Button variant=Brand appearance=Outlined>"Outlined"</Button>
                         <Button variant=Brand appearance=Plain>"Plain"</Button>
                     </div>
-                    <div class="wa-cluster wa-gap-2xs" style="margin-block-end: 1rem;">
+                    <div class=(CLUSTER, " ", GAP_2XS) style="margin-block-end: 1rem;">
                         <Button variant=Success appearance=Accent>"Accent"</Button>
                         <Button variant=Success appearance=FilledOutlined>"Filled-Outlined"</Button>
                         <Button variant=Success appearance=Filled>"Filled"</Button>
                         <Button variant=Success appearance=Outlined>"Outlined"</Button>
                         <Button variant=Success appearance=Plain>"Plain"</Button>
                     </div>
-                    <div class="wa-cluster wa-gap-2xs" style="margin-block-end: 1rem;">
+                    <div class=(CLUSTER, " ", GAP_2XS) style="margin-block-end: 1rem;">
                         <Button variant=Warning appearance=Accent>"Accent"</Button>
                         <Button variant=Warning appearance=FilledOutlined>"Filled-Outlined"</Button>
                         <Button variant=Warning appearance=Filled>"Filled"</Button>
                         <Button variant=Warning appearance=Outlined>"Outlined"</Button>
                         <Button variant=Warning appearance=Plain>"Plain"</Button>
                     </div>
-                    <div class="wa-cluster wa-gap-2xs">
+                    <div class=(CLUSTER, " ", GAP_2XS)>
                         <Button variant=Danger appearance=Accent>"Accent"</Button>
                         <Button variant=Danger appearance=FilledOutlined>"Filled-Outlined"</Button>
                         <Button variant=Danger appearance=Filled>"Filled"</Button>
@@ -142,28 +144,27 @@ pub fn overview() -> impl Renderable {
             "Size"
         </Head>
         <p>"Buttons are sized relative to the current font size. You can set "
-            <code>"font-size"</code>
-            " style or the corresponding "
+            <code>"font-size"</code>" style or the corresponding "
             <code>"size-*"</code>
             " class on any button (or an ancestor element) to change it."
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <div class="wa-cluster wa-gap-2xs" style="margin-block-end: 1rem;">
-                    <Button variant=Brand class="size-extra-small">"Brand"</Button>
-                    <Button variant=Brand class="size-small">"Brand"</Button>
-                    <Button variant=Brand class="size-medium">"Brand"</Button>
-                    <Button variant=Brand class="size-large">"Brand"</Button>
-                    <Button variant=Brand class="size-extra-large">"Brand"</Button>
+                <div class=(CLUSTER, " ", GAP_2XS) style="margin-block-end: 1rem;">
+                    <Button variant=Brand class=SIZE_EXTRA_SMALL>"Brand"</Button>
+                    <Button variant=Brand class=SIZE_SMALL>"Brand"</Button>
+                    <Button variant=Brand class=SIZE_MEDIUM>"Brand"</Button>
+                    <Button variant=Brand class=SIZE_LARGE>"Brand"</Button>
+                    <Button variant=Brand class=SIZE_EXTRA_LARGE>"Brand"</Button>
                 </div>
-                <div class="wa-cluster wa-gap-2xs" style="margin-block-end: 1rem;">
+                <div class=(CLUSTER, " ", GAP_2XS) style="margin-block-end: 1rem;">
                     <Button variant=Brand style="font-size: var(--wa-font-size-xs)">"Brand"</Button>
                     <Button variant=Brand style="font-size: var(--wa-font-size-s)">"Brand"</Button>
                     <Button variant=Brand style="font-size: var(--wa-font-size-m)">"Brand"</Button>
                     <Button variant=Brand style="font-size: var(--wa-font-size-l)">"Brand"</Button>
                     <Button variant=Brand style="font-size: var(--wa-font-size-xl)">"Brand"</Button>
                 </div>
-                <div class="wa-cluster wa-gap-2xs">
+                <div class=(CLUSTER, " ", GAP_2XS)>
                     <Button variant=Brand style="font-size: var(--wa-font-size-2xs)">"Brand"</Button>
                     <Button variant=Brand style="font-size: var(--wa-font-size-2xl)">"Brand"</Button>
                     <Button variant=Brand style="font-size: var(--wa-font-size-3xl)">"Brand"</Button>
@@ -171,21 +172,21 @@ pub fn overview() -> impl Renderable {
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <div class="wa-cluster wa-gap-2xs" style="margin-block-end: 1rem;">
-                        <Button variant=Brand class="size-extra-small">"Brand"</Button>
-                        <Button variant=Brand class="size-small">"Brand"</Button>
-                        <Button variant=Brand class="size-medium">"Brand"</Button>
-                        <Button variant=Brand class="size-large">"Brand"</Button>
-                        <Button variant=Brand class="size-extra-large">"Brand"</Button>
+                    <div class=(CLUSTER, " ", GAP_2XS) style="margin-block-end: 1rem;">
+                        <Button variant=Brand class=SIZE_EXTRA_SMALL>"Brand"</Button>
+                        <Button variant=Brand class=SIZE_SMALL>"Brand"</Button>
+                        <Button variant=Brand class=SIZE_MEDIUM>"Brand"</Button>
+                        <Button variant=Brand class=SIZE_LARGE>"Brand"</Button>
+                        <Button variant=Brand class=SIZE_EXTRA_LARGE>"Brand"</Button>
                     </div>
-                    <div class="wa-cluster wa-gap-2xs" style="margin-block-end: 1rem;">
+                    <div class=(CLUSTER, " ", GAP_2XS) style="margin-block-end: 1rem;">
                         <Button variant=Brand style="font-size: var(--wa-font-size-xs)">"Brand"</Button>
                         <Button variant=Brand style="font-size: var(--wa-font-size-s)">"Brand"</Button>
                         <Button variant=Brand style="font-size: var(--wa-font-size-m)">"Brand"</Button>
                         <Button variant=Brand style="font-size: var(--wa-font-size-l)">"Brand"</Button>
                         <Button variant=Brand style="font-size: var(--wa-font-size-xl)">"Brand"</Button>
                     </div>
-                    <div class="wa-cluster wa-gap-2xs">
+                    <div class=(CLUSTER, " ", GAP_2XS)>
                         <Button variant=Brand style="font-size: var(--wa-font-size-2xs)">"Brand"</Button>
                         <Button variant=Brand style="font-size: var(--wa-font-size-2xl)">"Brand"</Button>
                         <Button variant=Brand style="font-size: var(--wa-font-size-3xl)">"Brand"</Button>
@@ -201,21 +202,21 @@ pub fn overview() -> impl Renderable {
         <p>"Use the "<code>"pill"</code>" attribute to give buttons rounded edges."</p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <div class="wa-cluster wa-gap-2xs">
-                    <Button variant=Neutral pill=true class="size-extra-small">"Neutral"</Button>
-                    <Button variant=Brand pill=true class="size-small">"Brand"</Button>
-                    <Button variant=Success pill=true class="size-medium">"Success"</Button>
-                    <Button variant=Warning pill=true class="size-large">"Warning"</Button>
-                    <Button variant=Danger pill=true class="size-extra-large">"Danger"</Button>
+                <div class=(CLUSTER, " ", GAP_2XS)>
+                    <Button variant=Neutral pill=true class=SIZE_EXTRA_SMALL>"Neutral"</Button>
+                    <Button variant=Brand pill=true class=SIZE_SMALL>"Brand"</Button>
+                    <Button variant=Success pill=true class=SIZE_MEDIUM>"Success"</Button>
+                    <Button variant=Warning pill=true class=SIZE_LARGE>"Warning"</Button>
+                    <Button variant=Danger pill=true class=SIZE_EXTRA_LARGE>"Danger"</Button>
                 </div>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Button variant=Neutral pill=true class="size-extra-small">"Neutral"</Button>
-                    <Button variant=Brand pill=true class="size-small">"Brand"</Button>
-                    <Button variant=Success pill=true class="size-medium">"Success"</Button>
-                    <Button variant=Warning pill=true class="size-large">"Warning"</Button>
-                    <Button variant=Danger pill=true class="size-extra-large">"Danger"</Button>
+                    <Button variant=Neutral pill=true class=SIZE_EXTRA_SMALL>"Neutral"</Button>
+                    <Button variant=Brand pill=true class=SIZE_SMALL>"Brand"</Button>
+                    <Button variant=Success pill=true class=SIZE_MEDIUM>"Success"</Button>
+                    <Button variant=Warning pill=true class=SIZE_LARGE>"Warning"</Button>
+                    <Button variant=Danger pill=true class=SIZE_EXTRA_LARGE>"Danger"</Button>
                 "#</code>
             </CodeExampleSource>
             <CodeExampleButton>"Code"</CodeExampleButton>
@@ -231,7 +232,7 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <div class="wa-cluster wa-gap-2xs">
+                <div class=(CLUSTER, " ", GAP_2XS)>
                     <Button href="https://example.com/">"Link"</Button>
                     <Button href="https://example.com/" target=Blank>"New Window"</Button>
                     <Button href="https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/car.svg" download="auto.svg">"Download"</Button>
@@ -252,7 +253,7 @@ pub fn overview() -> impl Renderable {
         </Head>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <div class="wa-cluster wa-gap-2xs">
+                <div class=(CLUSTER, " ", GAP_2XS)>
                     <Button appearance=Accent>
                         <span class=ICON>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">

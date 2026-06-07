@@ -2,7 +2,7 @@ use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Renderable, rsx};
 use wingy_hypertext::appearance::Appearance::*;
 use wingy_hypertext::attributes::CommonAttributeSetters;
-use wingy_hypertext::class::{HINT, LABEL};
+use wingy_hypertext::class::{GAP_S, HEADING_S, HINT, LABEL, SIZE_LARGE, SIZE_MEDIUM, SIZE_SMALL, STACK};
 use wingy_hypertext::components::head::Head;
 use wingy_hypertext::components::head::HeadLevel::*;
 use wingy_hypertext::components::input::InputType::*;
@@ -74,7 +74,7 @@ pub fn overview() -> impl Renderable {
         <p>"Use the "<code>"input_type"</code>" attribute to change the type of data the input accepts."</p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <div class="wa-stack wa-gap-s">
+                <div class=(STACK, " ", GAP_S)>
                     <Input input_type=Email placeholder="Email" />
                     <Input input_type=Password placeholder="Password" />
                     <Input input_type=Number placeholder="Number" />
@@ -100,7 +100,7 @@ pub fn overview() -> impl Renderable {
         <p>"Use the "<code>appearance</code>" property to change the input's visual appearance."</p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <div class="wa-stack wa-gap-s">
+                <div class=(STACK, " ", GAP_S)>
                     <Input appearance=Outlined placeholder="Outlined" />
                     <Input appearance=Filled placeholder="Filled" />
                     <Input appearance=FilledOutlined placeholder="Filled-Outlined" />
@@ -128,7 +128,7 @@ pub fn overview() -> impl Renderable {
             <CodeExamplePreview resize=true>
                 <Input>
                     <label class=LABEL>
-                        <div class="custom wa-heading-s">"Input label"</div>
+                        <div class=(HEADING_S, " custom")>"Input label"</div>
                     </label>
                     <TextField placeholder="Enter your name" />
                     <small class=HINT>
@@ -140,7 +140,7 @@ pub fn overview() -> impl Renderable {
                 <code class="language-html">r#"
                     <Input>
                         <label class=LABEL>
-                            <div class="custom wa-heading-s">"Input label"</div>
+                            <div class=(HEADING_S, " custom")>"Input label"</div>
                         </label>
                         <TextField placeholder="Enter your name" />
                         <small class=HINT>
@@ -159,7 +159,7 @@ pub fn overview() -> impl Renderable {
             <CodeExamplePreview resize=true>
                 <Input hint="Input hint">
                     <label class=LABEL>
-                        <div class="custom wa-heading-s">"Input label"</div>
+                        <div class=(HEADING_S, " custom")>"Input label"</div>
                     </label>
                     <TextField placeholder="Enter your name" />
                 </Input>
@@ -168,7 +168,7 @@ pub fn overview() -> impl Renderable {
                 <code class="language-html">r#"
                     <Input hint="Input hint">
                         <label class=LABEL>
-                            <div class="custom wa-heading-s">"Input label"</div>
+                            <div class=(HEADING_S, " custom")>"Input label"</div>
                         </label>
                         <TextField placeholder="Enter your name" />
                     </Input>
@@ -188,17 +188,17 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <div class="wa-stack wa-gap-s">
-                    <Input class="size-small" placeholder="Small" />
-                    <Input class="size-medium" placeholder="Medium" />
-                    <Input class="size-large" placeholder="Large" />
+                <div class=(STACK, " ", GAP_S)>
+                    <Input class=SIZE_SMALL placeholder="Small" />
+                    <Input class=SIZE_MEDIUM placeholder="Medium" />
+                    <Input class=SIZE_LARGE placeholder="Large" />
                 </div>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Input class="size-small" placeholder="Small" />
-                    <Input class="size-medium" placeholder="Medium" />
-                    <Input class="size-large" placeholder="Large" />
+                    <Input class=SIZE_SMALL placeholder="Small" />
+                    <Input class=SIZE_MEDIUM placeholder="Medium" />
+                    <Input class=SIZE_LARGE placeholder="Large" />
                 "#</code>
             </CodeExampleSource>
             <CodeExampleButton>"Code"</CodeExampleButton>
@@ -224,7 +224,7 @@ pub fn overview() -> impl Renderable {
         <p>"Use the "<code>"disabled"</code>", "<code>"readonly"</code>", and "<code>"required"</code>" attributes to control the input's state."</p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <div class="wa-stack wa-gap-s">
+                <div class=(STACK, " ", GAP_S)>
                     <Input label="Disabled" placeholder="You can't edit me" disabled=true />
                     <Input label="Readonly" value="Read-only value" readonly=true />
                     <Input label="Required" placeholder="This field is required" required=true />

@@ -4,7 +4,8 @@ use wasm_bindgen::prelude::*;
 use wingy_hypertext::appearance::Appearance::*;
 use wingy_hypertext::attributes::CommonAttributeSetters;
 use wingy_hypertext::class::{
-    BORDER_END, CLUSTER, FLANK, HEADING_M, HEADING_S, ICON, PAGE_MENU_NAV, SPLIT, STACK, START,
+    BORDER_END, CLUSTER, FLANK, GAP_XL, GAP_XS, GRID, HEADING_M, HEADING_S, ICON, PAGE_MENU_NAV, SIZE_SMALL, SPLIT,
+    STACK, START,
 };
 use wingy_hypertext::components::button::Button;
 use wingy_hypertext::layouts::page::{Page, PageBody, PageMenu};
@@ -47,8 +48,8 @@ pub fn render_root(url_path: &str) -> String {
                     <span id="brand-name" class=(HEADING_M, " ", "wa-desktop-only")>"Wingy Hypertext"</span>
                     <a href="#">"Example Link"</a>
                 </div>
-                <div class=(CLUSTER, " ", "wa-gap-xs")>
-                    <Button variant=Brand appearance=Accent class="size-small" href="https://github.com/XX/wingy-hypertext" target=Blank>
+                <div class=(CLUSTER, " ", GAP_XS)>
+                    <Button variant=Brand appearance=Accent class=SIZE_SMALL href="https://github.com/XX/wingy-hypertext" target=Blank>
                         <span class=(START, " ", ICON)>
                             (fontawesome::icon("github"))
                         </span>
@@ -117,7 +118,7 @@ pub fn render_root(url_path: &str) -> String {
                 <aside>
                 </aside>
             </PageBody>
-            <footer class="wa-grid wa-gap-xl">
+            <footer class=(GRID, " ", GAP_XL)>
                 <div class=CLUSTER style="flex-wrap: nowrap">
                     <span class=ICON>
                         (fontawesome::icon("puzzle-piece"))
