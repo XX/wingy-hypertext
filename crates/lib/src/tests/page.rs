@@ -1,19 +1,19 @@
+use hypertext::prelude::hypertext_elements;
 use hypertext::{RenderableExt, rsx};
 
-use crate::layouts::page::{Page, PageAside, PageBody, PageFooter, PageHeader, PageMain, PageMenu};
+use crate::layouts::page::{Page, PageBody, PageMenu};
 
 #[test]
 fn empty() {
     let page_markup = r#"
         <div class="page">
-            <header class="page-header">
-            </header>
+            <header></header>
             <div class="page-body">
                 <div class="page-menu"></div>
-                <main class="page-main"></main>
-                <aside class="page-aside"></aside>
+                <main></main>
+                <aside></aside>
             </div>
-            <footer class="page-footer"></footer>
+            <footer></footer>
         </div>
     "#
     .lines()
@@ -22,18 +22,14 @@ fn empty() {
 
     let page = rsx! {
         <Page>
-            <PageHeader>
-            </PageHeader>
+            <header></header>
             <PageBody>
                 <PageMenu>
                 </PageMenu>
-                <PageMain>
-                </PageMain>
-                <PageAside>
-                </PageAside>
+                <main></main>
+                <aside></aside>
             </PageBody>
-            <PageFooter>
-            </PageFooter>
+            <footer></footer>
         </Page>
     };
     assert_eq!(page.render().as_inner(), &page_markup);

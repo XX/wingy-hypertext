@@ -32,7 +32,7 @@
     "body  " 
     "footer";
 
-  .page-header {
+  .page-header, > header {
     display: flex;
     flex-wrap: wrap;
     grid-area: header;
@@ -82,10 +82,10 @@
     padding: var(--wa-space-m);
   }
 
-  .page-main {
+  .page-main, .page-body > main {
   }
 
-  .page-aside {
+  .page-aside, .page-body > aside {
     position: sticky;
     top: var(--page-header-height, 0);
     z-index: 4;
@@ -94,7 +94,7 @@
     overflow: auto;
   }
 
-  .page-footer {
+  .page-footer, > footer {
     align-items: start;
     justify-content: space-between;
     flex-wrap: wrap;

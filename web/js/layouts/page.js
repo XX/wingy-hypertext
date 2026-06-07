@@ -1,5 +1,7 @@
 export function set_page_header_height() {
-    const header = document.querySelector('.page-header');
+    let header = document.querySelector('.page-header');
+    header = header ? header : document.querySelector('.page > header');
+    
     if (header) {
         document.documentElement.style.setProperty('--page-header-height', header.offsetHeight + 'px');
     }

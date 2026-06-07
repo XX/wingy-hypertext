@@ -3,9 +3,11 @@ use hypertext::{Renderable, RenderableExt, rsx};
 use wasm_bindgen::prelude::*;
 use wingy_hypertext::appearance::Appearance::*;
 use wingy_hypertext::attributes::CommonAttributeSetters;
-use wingy_hypertext::class::ICON;
+use wingy_hypertext::class::{
+    BORDER_END, CLUSTER, FLANK, HEADING_M, HEADING_S, ICON, PAGE_MENU_NAV, SPLIT, STACK, START,
+};
 use wingy_hypertext::components::button::Button;
-use wingy_hypertext::layouts::page::{Page, PageAside, PageBody, PageFooter, PageHeader, PageMain, PageMenu};
+use wingy_hypertext::layouts::page::{Page, PageBody, PageMenu};
 use wingy_hypertext::link::LinkSetters;
 use wingy_hypertext::link::Target::*;
 use wingy_hypertext::variant::Variant::*;
@@ -37,31 +39,31 @@ fn main_section(route_path: &str) -> impl Renderable {
 pub fn render_root(url_path: &str) -> String {
     rsx! {
         <Page>
-            <PageHeader class="wa-split">
-                <div class="wa-cluster">
+            <header class=SPLIT>
+                <div class=CLUSTER>
                     <span class=ICON style="color: var(--wa-color-brand-fill-loud); font-size: 1.5em; --rotate-angle: 0deg;">
                         (fontawesome::icon("puzzle-piece"))
                     </span>
-                    <span id="brand-name" class="wa-heading-m wa-desktop-only">"Wingy Hypertext"</span>
+                    <span id="brand-name" class=(HEADING_M, " ", "wa-desktop-only")>"Wingy Hypertext"</span>
                     <a href="#">"Example Link"</a>
                 </div>
-                <div class="wa-cluster wa-gap-xs">
+                <div class=(CLUSTER, " ", "wa-gap-xs")>
                     <Button variant=Brand appearance=Accent class="size-small" href="https://github.com/XX/wingy-hypertext" target=Blank>
-                        <span class="start icon">
+                        <span class=(START, " ", ICON)>
                             (fontawesome::icon("github"))
                         </span>
                         "GitHub"
                     </Button>
                 </div>
-            </PageHeader>
+            </header>
             <PageBody>
                 <PageMenu>
-                    <nav class="page-menu-nav border-end">
-                        <div class="wa-flank"><span class="wa-heading-m">"Components"</span></div>
+                    <nav class=(PAGE_MENU_NAV, " ", BORDER_END)>
+                        <div class=FLANK><span class=HEADING_M>"Components"</span></div>
                     </nav>
-                    <nav class="page-menu-nav border-end">
+                    <nav class=(PAGE_MENU_NAV, " ", BORDER_END)>
                         <a
-                            class="wa-flank"
+                            class=FLANK
                             href="/badge"
                             hx-get="/badge"
                             hx-target=".main-content"
@@ -71,7 +73,7 @@ pub fn render_root(url_path: &str) -> String {
                             <span>"Badge"</span>
                         </a>
                         <a
-                            class="wa-flank"
+                            class=FLANK
                             href="/button"
                             hx-get="/button"
                             hx-target=".main-content"
@@ -81,7 +83,7 @@ pub fn render_root(url_path: &str) -> String {
                             <span>"Button"</span>
                         </a>
                         <a
-                            class="wa-flank"
+                            class=FLANK
                             href="/copy-button"
                             hx-get="/copy-button"
                             hx-target=".main-content"
@@ -91,7 +93,7 @@ pub fn render_root(url_path: &str) -> String {
                             <span>"Copy Button"</span>
                         </a>
                         <a
-                            class="wa-flank"
+                            class=FLANK
                             href="/input"
                             hx-get="/input"
                             hx-target=".main-content"
@@ -101,52 +103,52 @@ pub fn render_root(url_path: &str) -> String {
                             <span>"Input"</span>
                         </a>
                     </nav>
-                    <nav class="page-menu-nav border-end">
-                        <div class="wa-flank"><span class="wa-heading-m">"Layouts"</span></div>
+                    <nav class=(PAGE_MENU_NAV, " ", BORDER_END)>
+                        <div class=FLANK><span class=HEADING_M>"Layouts"</span></div>
                     </nav>
-                    <nav class="page-menu-nav">
-                        <a class="wa-flank" href="#"><span>"Code Example"</span></a>
-                        <a class="wa-flank" href="#"><span>"Page"</span></a>
+                    <nav class=PAGE_MENU_NAV>
+                        <a class=FLANK href="#"><span>"Code Example"</span></a>
+                        <a class=FLANK href="#"><span>"Page"</span></a>
                     </nav>
                 </PageMenu>
-                <PageMain class="main-content">
+                <main class="main-content">
                     (main_section(url_path))
-                </PageMain>
-                <PageAside>
-                </PageAside>
+                </main>
+                <aside>
+                </aside>
             </PageBody>
-            <PageFooter class="wa-grid wa-gap-xl">
-                <div class="wa-cluster" style="flex-wrap: nowrap">
+            <footer class="wa-grid wa-gap-xl">
+                <div class=CLUSTER style="flex-wrap: nowrap">
                     <span class=ICON>
                         (fontawesome::icon("puzzle-piece"))
                     </span>
-                    <span id="brand-name" class="wa-heading-m">"Wingy Hypertext"</span>
+                    <span id="brand-name" class=HEADING_M>"Wingy Hypertext"</span>
                 </div>
-                <div class="wa-stack">
-                    <h3 class="wa-heading-s">Our Work</h3>
+                <div class=STACK>
+                    <h3 class=HEADING_S>Our Work</h3>
                     <a href="#">Habitat Restoration</a>
                     <a href="#">Migration Science</a>
                     <a href="#">Advocacy</a>
                 </div>
-                <div class="wa-stack">
-                    <h3 class="wa-heading-s">About Us</h3>
+                <div class=STACK>
+                    <h3 class=HEADING_S>About Us</h3>
                     <a href="#">Our History</a>
                     <a href="#">Leadership</a>
                     <a href="#">Fiscal Reports</a>
                 </div>
-                <div class="wa-stack">
-                    <h3 class="wa-heading-s">Discover</h3>
+                <div class=STACK>
+                    <h3 class=HEADING_S>Discover</h3>
                     <a href="#">Field Guides</a>
                     <a href="#">Photo Search</a>
                     <a href="#">Gear and Resources</a>
                 </div>
-                <div class="wa-stack">
-                    <h3 class="wa-heading-s">Get Involved</h3>
+                <div class=STACK>
+                    <h3 class=HEADING_S>Get Involved</h3>
                     <a href="#">Adopt a Bird</a>
                     <a href="#">Your Local Audubon</a>
                     <a href="#">Youth Audubon Camps</a>
                 </div>
-            </PageFooter>
+            </footer>
         </Page>
     }
     .render()
