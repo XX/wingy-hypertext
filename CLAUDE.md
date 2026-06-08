@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Workspace layout
 
 - `crates/lib` (`wingy-hypertext`) — the component library. This is the product.
-- `crates/macros` (`wingy-hypertext-macros`) — proc-macros (`#[derive(Props)]`, `#[const_str(...)]`) used by the library.
+- `crates/macros` (`wingy-hypertext-macros`) — proc-macros (`#[derive(Props)]`, `#[const_str(...)]`, `htmx_rsx!`) used by the library.
 - `examples/client` (`example-client`) — `cdylib`/`rlib` compiled to `wasm32-unknown-unknown`; renders the gallery pages.
 - `examples/server` (`example-server`) — serves `target/web` over `127.0.0.1:9080`.
 - `web/` — shared CSS (`web/style/`) and JS (`web/js/`) for components/layouts; copied into `target/web` at build time.
@@ -42,7 +42,7 @@ Tooling required for the example build: the `wasm32-unknown-unknown` target, `wa
 Every component/layout is a struct that follows the same recipe (see `crates/lib/src/components/button.rs` as the canonical example):
 
 1. Derives `Default, AsRef, AsMut, Props`.
-2. Is annotated `#[const_str(CLASS = "...")]` to attach the base CSS class as an associated `const CLASS`.
+2. Is annotated `#[const_str(CLASS = BUTTON)]` to attach the base CSS class as an associated `const CLASS` — the value is a `&str` constant from `crate::class` (see Conventions), not a string literal.
 3. Is annotated `#[props(builder)]` to get `builder()`/`build()`.
 4. Embeds shared sub-structs as fields tagged `#[as_ref] #[as_mut]`: `CommonAttrs` (id/classes/styles), `Link` (href/target/...), `Action` (data-action/data-args). These `AsRef`/`AsMut` impls are what make the blanket trait impls (below) apply to the component.
 5. Has an `Option<R: Renderable>` `children` field tagged `#[prop(convert)]`.
@@ -56,6 +56,11 @@ Capabilities are mixed in via traits with blanket impls keyed off `AsRef`/`AsMut
 - `LinkSetters` (`link.rs`) — any `T: AsMut<Link>` gets `.href()`, `.target()`, `.download()`, `.rel()`.
 - `ActionSetters` (`action.rs`) — any `T: AsMut<Action>` gets `.action()`, `.args()`.
 - `VariantSetters`/`AppearanceSetters` (`variant.rs`, `appearance.rs`) — opt-in by implementing the marker traits `UseVariant`/`UseAppearance`; the enums (`Variant`, `Appearance`) derive strum `IntoStaticStr` with kebab-case serialization and expose `const` string forms via `#[strum(const_into_str)]`.
+- `HtmxSetters` (`htmx.rs`) — any `T: AsMut<Htmx>` gets `.hx_get(..)`, `.hx_target(..)`, etc. `Htmx` stores htmx attributes as a *collection* (not a field per attribute) and exposes inherent accessors `hx_get(&self) -> Option<&str>` for reading them back.
+
+### HTMX attributes
+
+To attach htmx attributes to elements without hand-listing all ~40, a component's `render_to` uses `htmx_rsx!` instead of `rsx!` and writes a single `htmx=[self.htmx]` pseudo-attribute, which the macro expands into `hx-*=[(self.htmx).hx_*()]` for every attribute before forwarding to `hypertext::rsx!` (see `button.rs`). The component needs `HtmxAttributes` (from `hypertext::prelude`) in scope for rsx to accept the generated `hx-*` names. The canonical attribute list is **duplicated** and must stay in sync: the `htmx_attrs!` declarative-macro invocation in `crates/lib/src/htmx.rs` generates the `Htmx` type/accessors/setters, and `HTMX_ATTRS` in `crates/macros/src/htmx.rs` drives the `htmx_rsx!` expansion. `hx-on` (namespaced) and the deprecated `hx-vars` are intentionally excluded.
 
 The `#[derive(Props)]` macro (`crates/macros/src/derive.rs`) generates per-field `.field(self, value) -> Self` (chainable) and `set_field(&mut self) -> &mut Self` setters. Field attributes change codegen: `#[prop(into)]` accepts `impl Into<T>`; `#[prop(from)]` generates a `From<T>` impl for the whole struct; `#[prop(convert)]` produces a setter that changes the generic type parameter (used for `children: Option<R>` so the renderable child type is inferred from the call site); `#[prop(skip)]` omits setters. `Option<T>` fields auto-wrap the assigned value in `Some(...)`.
 
@@ -71,6 +76,7 @@ So changing gallery content means editing the Rust in `examples/client/src/` (an
 
 ## Conventions
 
+- CSS class names are not hardcoded as string literals. They live as `&str` constants in `crates/lib/src/class.rs` (e.g. `BUTTON`, `LABEL`, `HINT`, `STACK`, `HEADING_M`, and `wa-*` utility classes). Reference these constants both in `#[const_str(CLASS = …)]` on components and in `class=(…)` attributes throughout the gallery; add new entries there rather than inlining a literal. Because `class=` then takes constants, multi-class attributes are built by tupling with separators, e.g. `class=(STACK, " ", GAP_S)`.
 - Rust edition 2024 across the workspace.
 - The library is rendering-only and intentionally minimal — it produces Web Awesome-classed markup; the actual styling/behavior lives in `web/style` and `web/js` (and Web Awesome itself).
 - Inline JS is deliberately avoided (see git history `feat: dont use inline JS`); behavior is wired through external modules in `web/js/` and gallery assets.

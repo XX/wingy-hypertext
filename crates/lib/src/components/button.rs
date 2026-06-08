@@ -1,12 +1,13 @@
 use derive_more::{AsMut, AsRef};
-use hypertext::prelude::{GlobalAttributes, hypertext_elements};
-use hypertext::{Buffer, Renderable, rsx};
-use wingy_hypertext_macros::{Props, const_str};
+use hypertext::prelude::{GlobalAttributes, HtmxAttributes, hypertext_elements};
+use hypertext::{Buffer, Renderable};
+use wingy_hypertext_macros::{Props, const_str, htmx_rsx};
 
 use crate::action::Action;
 use crate::appearance::Appearance;
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
-use crate::class::BUTTON;
+use crate::class::{BUTTON, PILL};
+use crate::htmx::Htmx;
 use crate::link::Link;
 use crate::variant::Variant;
 
@@ -38,6 +39,10 @@ pub struct Button<R: Renderable = ()> {
     #[as_mut]
     pub attrs: CommonAttrs,
 
+    #[as_ref]
+    #[as_mut]
+    pub htmx: Htmx,
+
     #[prop(convert)]
     pub children: Option<R>,
 }
@@ -47,14 +52,14 @@ impl<R: Renderable> Renderable for Button<R> {
         let id = self.id();
         let class_line = self.class_line_with([
             Self::CLASS,
-            if self.pill { "pill" } else { "" },
+            if self.pill { PILL } else { "" },
             self.variant.into_str(),
             self.appearance.into_str(),
         ]);
         let style_line = self.style_line_with([]);
 
         if let Some(href) = &self.link.href {
-            rsx! {
+            htmx_rsx! {
                 <a
                     id=[id]
                     class=[&class_line]
@@ -65,6 +70,7 @@ impl<R: Renderable> Renderable for Button<R> {
                     rel=[&self.link.rel]
                     data-action=[&self.action_data.action]
                     data-args=[&self.action_data.args]
+                    htmx=[self.htmx]
                 >
                     (self.children)
                 </a>
@@ -72,7 +78,7 @@ impl<R: Renderable> Renderable for Button<R> {
             .render_to(buffer);
         } else {
             let disabled = self.disabled.then_some(true);
-            rsx! {
+            htmx_rsx! {
                 <button
                     id=[id]
                     class=[&class_line]
@@ -80,6 +86,7 @@ impl<R: Renderable> Renderable for Button<R> {
                     disabled=[disabled]
                     data-action=[&self.action_data.action]
                     data-args=[&self.action_data.args]
+                    htmx=[self.htmx]
                 >
                     (self.children)
                 </button>

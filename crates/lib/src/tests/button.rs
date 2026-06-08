@@ -5,6 +5,7 @@ use crate::appearance::Appearance::*;
 use crate::appearance::AppearanceConstructor;
 use crate::attributes::CommonAttributeSetters;
 use crate::components::button::Button;
+use crate::htmx::{Htmx, HtmxSetters};
 use crate::link::LinkSetters;
 use crate::variant::Variant::*;
 use crate::variant::VariantConstructor;
@@ -136,6 +137,36 @@ fn additional_attributes() {
         </Button>
     };
     assert_eq!(button.render().as_inner(), button_markup);
+}
+
+#[test]
+fn htmx() {
+    // Attributes render in the canonical order (hx-get, hx-swap, hx-target), not insertion order.
+    let button_markup =
+        r##"<button class="button neutral accent" hx-get="/items" hx-swap="innerHTML" hx-target="#list"></button>"##;
+
+    let button = Button::builder()
+        .hx_target("#list")
+        .hx_get("/items")
+        .hx_swap("innerHTML");
+    assert_eq!(button.render().as_inner(), button_markup);
+
+    let button = rsx! {
+        <Button htmx=(Htmx::new().hx_get("/items").hx_target("#list").hx_swap("innerHTML")) />
+    };
+    assert_eq!(button.render().as_inner(), button_markup);
+
+    let button_markup = r##"<button class="button neutral accent" hx-get="/items" hx-swap="innerHTML" hx-target="#list">Load</button>"##;
+
+    let button = rsx! {
+        <Button hx_get="/items" hx_target="#list" hx_swap="innerHTML">"Load"</Button>
+    };
+    assert_eq!(button.render().as_inner(), button_markup);
+
+    let button_link_markup = r#"<a class="button neutral accent" href="/items" hx-boost="true">Load</a>"#;
+
+    let button_link = rsx! { <Button href="/items" hx_boost="true">"Load"</Button> };
+    assert_eq!(button_link.render().as_inner(), button_link_markup);
 }
 
 #[test]
