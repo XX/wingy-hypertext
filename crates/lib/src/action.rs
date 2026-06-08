@@ -17,9 +17,15 @@ pub trait ActionSetters {
         self
     }
 
-    fn set_action(&mut self, action: impl Into<Cow<'static, str>>);
+    fn action_mut(&mut self) -> &mut Action;
 
-    fn set_args(&mut self, args: impl Into<Cow<'static, str>>);
+    fn set_action(&mut self, action: impl Into<Cow<'static, str>>) {
+        self.action_mut().action = Some(action.into());
+    }
+
+    fn set_args(&mut self, args: impl Into<Cow<'static, str>>) {
+        self.action_mut().args = Some(args.into());
+    }
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -35,21 +41,13 @@ impl Action {
 }
 
 impl ActionSetters for Action {
-    fn set_action(&mut self, action: impl Into<Cow<'static, str>>) {
-        self.action = Some(action.into());
-    }
-
-    fn set_args(&mut self, args: impl Into<Cow<'static, str>>) {
-        self.args = Some(args.into());
+    fn action_mut(&mut self) -> &mut Action {
+        self
     }
 }
 
 impl<T: AsMut<Action>> ActionSetters for T {
-    fn set_action(&mut self, action: impl Into<Cow<'static, str>>) {
-        self.as_mut().set_action(action);
-    }
-
-    fn set_args(&mut self, args: impl Into<Cow<'static, str>>) {
-        self.as_mut().set_args(args);
+    fn action_mut(&mut self) -> &mut Action {
+        self.as_mut()
     }
 }

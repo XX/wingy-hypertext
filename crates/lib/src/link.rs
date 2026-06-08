@@ -36,13 +36,23 @@ pub trait LinkSetters {
         self
     }
 
-    fn set_href(&mut self, href: impl Into<Cow<'static, str>>);
+    fn link_mut(&mut self) -> &mut Link;
 
-    fn set_target(&mut self, target: Target);
+    fn set_href(&mut self, href: impl Into<Cow<'static, str>>) {
+        self.link_mut().href = Some(href.into());
+    }
 
-    fn set_download(&mut self, download: impl Into<Cow<'static, str>>);
+    fn set_target(&mut self, target: Target) {
+        self.link_mut().target = Some(target);
+    }
 
-    fn set_rel(&mut self, rel: impl Into<Cow<'static, str>>);
+    fn set_download(&mut self, download: impl Into<Cow<'static, str>>) {
+        self.link_mut().download = Some(download.into());
+    }
+
+    fn set_rel(&mut self, rel: impl Into<Cow<'static, str>>) {
+        self.link_mut().rel = Some(rel.into());
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -85,37 +95,13 @@ impl Link {
 }
 
 impl LinkSetters for Link {
-    fn set_href(&mut self, href: impl Into<Cow<'static, str>>) {
-        self.href = Some(href.into());
-    }
-
-    fn set_target(&mut self, target: Target) {
-        self.target = Some(target);
-    }
-
-    fn set_download(&mut self, download: impl Into<Cow<'static, str>>) {
-        self.download = Some(download.into());
-    }
-
-    fn set_rel(&mut self, rel: impl Into<Cow<'static, str>>) {
-        self.rel = Some(rel.into());
+    fn link_mut(&mut self) -> &mut Link {
+        self
     }
 }
 
 impl<T: AsMut<Link>> LinkSetters for T {
-    fn set_href(&mut self, href: impl Into<Cow<'static, str>>) {
-        self.as_mut().set_href(href);
-    }
-
-    fn set_target(&mut self, target: Target) {
-        self.as_mut().set_target(target);
-    }
-
-    fn set_download(&mut self, download: impl Into<Cow<'static, str>>) {
-        self.as_mut().set_download(download);
-    }
-
-    fn set_rel(&mut self, rel: impl Into<Cow<'static, str>>) {
-        self.as_mut().set_rel(rel);
+    fn link_mut(&mut self) -> &mut Link {
+        self.as_mut()
     }
 }

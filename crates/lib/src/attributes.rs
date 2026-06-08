@@ -36,15 +36,27 @@ pub trait CommonAttributeSetters {
         self
     }
 
-    fn set_id(&mut self, id: impl Into<Cow<'static, str>>);
+    fn common_attrs_mut(&mut self) -> &mut CommonAttrs;
 
-    fn set_classes(&mut self, classes: Vec<Cow<'static, str>>);
+    fn set_id(&mut self, id: impl Into<Cow<'static, str>>) {
+        self.common_attrs_mut().id = id.into();
+    }
 
-    fn set_styles(&mut self, styles: Vec<Cow<'static, str>>);
+    fn set_classes(&mut self, classes: Vec<Cow<'static, str>>) {
+        self.common_attrs_mut().classes = classes;
+    }
 
-    fn add_class(&mut self, class: impl Into<Cow<'static, str>>);
+    fn set_styles(&mut self, styles: Vec<Cow<'static, str>>) {
+        self.common_attrs_mut().styles = styles;
+    }
 
-    fn add_style(&mut self, style: impl Into<Cow<'static, str>>);
+    fn add_class(&mut self, class: impl Into<Cow<'static, str>>) {
+        self.common_attrs_mut().classes.push(class.into());
+    }
+
+    fn add_style(&mut self, style: impl Into<Cow<'static, str>>) {
+        self.common_attrs_mut().styles.push(style.into());
+    }
 }
 
 pub trait CommonAttributeGetters {
@@ -70,15 +82,23 @@ pub trait CommonAttributeGetters {
             .into_not_empty()
     }
 
-    fn get_id(&self) -> &Cow<'static, str>;
+    fn common_attrs_ref(&self) -> &CommonAttrs;
 
-    fn get_classes(&self) -> &[Cow<'static, str>];
+    fn get_id(&self) -> &Cow<'static, str> {
+        &self.common_attrs_ref().id
+    }
+
+    fn get_classes(&self) -> &[Cow<'static, str>] {
+        &self.common_attrs_ref().classes
+    }
+
+    fn get_styles(&self) -> &[Cow<'static, str>] {
+        &self.common_attrs_ref().styles
+    }
 
     fn get_class_line(&self) -> String {
         self.get_classes().join(" ")
     }
-
-    fn get_styles(&self) -> &[Cow<'static, str>];
 
     fn get_style_line(&self) -> String {
         self.get_styles().join("; ")
@@ -99,74 +119,26 @@ impl CommonAttrs {
 }
 
 impl CommonAttributeSetters for CommonAttrs {
-    fn set_id(&mut self, id: impl Into<Cow<'static, str>>) {
-        self.id = id.into();
-    }
-
-    fn set_classes(&mut self, classes: Vec<Cow<'static, str>>) {
-        self.classes = classes;
-    }
-
-    fn set_styles(&mut self, styles: Vec<Cow<'static, str>>) {
-        self.styles = styles;
-    }
-
-    fn add_class(&mut self, class: impl Into<Cow<'static, str>>) {
-        self.classes.push(class.into());
-    }
-
-    fn add_style(&mut self, style: impl Into<Cow<'static, str>>) {
-        self.styles.push(style.into());
+    fn common_attrs_mut(&mut self) -> &mut CommonAttrs {
+        self
     }
 }
 
 impl CommonAttributeGetters for CommonAttrs {
-    fn get_id(&self) -> &Cow<'static, str> {
-        &self.id
-    }
-
-    fn get_classes(&self) -> &[Cow<'static, str>] {
-        &self.classes
-    }
-
-    fn get_styles(&self) -> &[Cow<'static, str>] {
-        &self.styles
+    fn common_attrs_ref(&self) -> &CommonAttrs {
+        self
     }
 }
 
 impl<T: AsMut<CommonAttrs>> CommonAttributeSetters for T {
-    fn set_id(&mut self, id: impl Into<Cow<'static, str>>) {
-        self.as_mut().set_id(id);
-    }
-
-    fn set_classes(&mut self, classes: Vec<Cow<'static, str>>) {
-        self.as_mut().set_classes(classes);
-    }
-
-    fn set_styles(&mut self, styles: Vec<Cow<'static, str>>) {
-        self.as_mut().set_styles(styles);
-    }
-
-    fn add_class(&mut self, class: impl Into<Cow<'static, str>>) {
-        self.as_mut().add_class(class);
-    }
-
-    fn add_style(&mut self, style: impl Into<Cow<'static, str>>) {
-        self.as_mut().add_style(style);
+    fn common_attrs_mut(&mut self) -> &mut CommonAttrs {
+        self.as_mut()
     }
 }
 
 impl<T: AsRef<CommonAttrs>> CommonAttributeGetters for T {
-    fn get_id(&self) -> &Cow<'static, str> {
-        self.as_ref().get_id()
-    }
-
-    fn get_classes(&self) -> &[Cow<'static, str>] {
-        self.as_ref().get_classes()
-    }
-
-    fn get_styles(&self) -> &[Cow<'static, str>] {
-        self.as_ref().get_styles()
+    fn common_attrs_ref(&self) -> &CommonAttrs {
+        self.as_ref()
     }
 }
 
