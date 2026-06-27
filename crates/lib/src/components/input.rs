@@ -44,10 +44,10 @@ impl InputType {
 #[const_str(CLASS = INPUT)]
 #[props(builder)]
 pub struct Input<R: Renderable = ()> {
-    #[prop(from)]
+    #[prop(impl_from)]
     pub input_type: InputType,
 
-    #[prop(from)]
+    #[prop(impl_from)]
     pub appearance: Appearance,
 
     pub pill: bool,
@@ -136,7 +136,7 @@ impl<R: Renderable> Renderable for Input<R> {
 #[const_str(CLASS = TEXT_FIELD)]
 #[props(builder)]
 pub struct TextField {
-    #[prop(from)]
+    #[prop(impl_from)]
     pub input_type: InputType,
 
     pub disabled: bool,

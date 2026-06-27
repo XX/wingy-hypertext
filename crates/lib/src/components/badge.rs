@@ -12,10 +12,10 @@ use crate::variant::Variant;
 #[const_str(CLASS = BADGE)]
 #[props(builder)]
 pub struct Badge<R: Renderable = ()> {
-    #[prop(from)]
+    #[prop(impl_from)]
     pub variant: Variant,
 
-    #[prop(from)]
+    #[prop(impl_from)]
     pub appearance: Appearance,
 
     pub pill: bool,

@@ -84,7 +84,7 @@ pub fn props(input: DeriveInput) -> syn::Result<TokenStream> {
             let ty = &field.ty;
             let mut is_skip = false;
             let mut is_skip_setter = false;
-            let mut is_from = false;
+            let mut is_impl_from = false;
             let mut is_into = false;
             let mut is_convert = false;
 
@@ -95,8 +95,8 @@ pub fn props(input: DeriveInput) -> syn::Result<TokenStream> {
                         return Ok(());
                     }
 
-                    if meta.path.is_ident("from") {
-                        is_from = true;
+                    if meta.path.is_ident("impl_from") {
+                        is_impl_from = true;
                         return Ok(());
                     }
 
@@ -186,7 +186,7 @@ pub fn props(input: DeriveInput) -> syn::Result<TokenStream> {
                 }
             }
 
-            if is_from {
+            if is_impl_from {
                 let builder = if generate_builder {
                     quote!(Self::builder())
                 } else {

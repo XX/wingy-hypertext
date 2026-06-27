@@ -15,10 +15,10 @@ use crate::variant::Variant;
 #[const_str(CLASS = BUTTON)]
 #[props(builder)]
 pub struct Button<R: Renderable = ()> {
-    #[prop(from)]
+    #[prop(impl_from)]
     pub variant: Variant,
 
-    #[prop(from)]
+    #[prop(impl_from)]
     pub appearance: Appearance,
 
     pub pill: bool,

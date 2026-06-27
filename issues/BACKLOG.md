@@ -1,3 +1,5 @@
-- Переименовать #[prop(from)] в #[prop(impl_from)] или #[prop(construct_from)]
 - Внести дорабоки в hypertext на основе Props derive
 - Переписать JS-функции на Rust для wasm
+- Разработать рабочий процесс переноса кода из Rust в JS
+- Сделать более подробным README
+- Разместить примеры компонентов на GitHub

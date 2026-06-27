@@ -111,7 +111,7 @@ impl HeadLevel {
 pub struct Head<R: Renderable = ()> {
     pub anchor: bool,
 
-    #[prop(from)]
+    #[prop(impl_from)]
     pub level: HeadLevel,
 
     #[as_ref]
