@@ -31,10 +31,14 @@ jobs:
           toolchain: stable, nightly
           components: clippy, rustfmt
 
+      - name: Install cargo-make
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-make
+
       - name: Run linting and formatting
         run: |
-          cargo +nightly fmt --check
-          cargo clippy --all-targets -- -D warnings
-          
+          cargo make lint-test
+
       - name: Run tests
         run: cargo test --verbose
