@@ -38,7 +38,7 @@ jobs:
 
       - name: Run linting and formatting
         run: |
-          cargo make lint-test
+          cargo make lint
 
       - name: Run tests
         run: cargo test --verbose

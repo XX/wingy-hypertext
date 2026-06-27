@@ -75,8 +75,14 @@ toolchain = "stable"
 command = "cargo"
 args = ["clippy", "--all-targets", "--", "-D", "warnings"]
 
+[tasks.lint]
+run_task = [
+    { name = ["clippy"] },
+]
+dependencies = ["fmt-check"]
+
 [tasks.lint-test]
 toolchain = "stable"
 command = "cargo"
 args = ["test"]
-dependencies = ["fmt-check", "clippy"]
+dependencies = ["lint"]
