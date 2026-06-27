@@ -12,8 +12,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `crates/macros` (`wingy-hypertext-macros`) — proc-macros (`#[derive(Props)]`, `#[const_str(...)]`, `htmx_rsx!`) used by the library.
 - `examples/client` (`example-client`) — `cdylib`/`rlib` compiled to `wasm32-unknown-unknown`; renders the gallery pages.
 - `examples/server` (`example-server`) — serves `target/web` over `127.0.0.1:9080`.
-- `web/` — shared CSS (`web/style/`) and JS (`web/js/`) for components/layouts; copied into `target/web` at build time.
-- `examples/client/web/` — gallery-specific static assets (`index.html`, `main.js`, vendored htmx/highlight.js); also copied into `target/web`.
+- `webassets/` — shared CSS (`webassets/style/`) and JS (`webassets/js/`) for components/layouts; copied into `target/web` at build time.
+- `examples/client/webassets/` — gallery-specific static assets (`index.html`, `main.js`, vendored htmx/highlight.js); also copied into `target/web`.
 - `tmp/` — scratch (git-ignored), including `client_old/` legacy code. Not part of the build.
 
 ## Commands
@@ -68,8 +68,8 @@ The `#[derive(Props)]` macro (`crates/macros/src/derive.rs`) generates per-field
 
 The gallery has **no real backend**. Flow:
 
-1. `examples/client/web/main.js` boots the WASM module, calls `wasm.render_root(path)` to render the full page shell, and inserts it into `#root`.
-2. `client_patch.js` monkey-patches `XMLHttpRequest` so htmx requests (anything not starting with `/api/`) are intercepted and answered synchronously by `wasm.request(url)` — see `examples/client/src/lib.rs`, which routes the path to the matching component overview (`badge`/`button`/`copy-button`).
+1. `examples/client/webassets/main.js` boots the WASM module, calls `wasm.render_root(path)` to render the full page shell, and inserts it into `#root`.
+2. `examples/client/webassets/vendor/htmx/client_patch.js` monkey-patches `XMLHttpRequest` so htmx requests (anything not starting with `/api/`) are intercepted and answered synchronously by `wasm.request(url)` — see `examples/client/src/lib.rs`, which routes the path to the matching component overview (`badge`/`button`/`copy-button`/`input`).
 3. htmx swaps the returned fragment into `.main-content`; `htmx:afterSettle` re-runs highlight.js and re-inits page/scroll JS.
 
 So changing gallery content means editing the Rust in `examples/client/src/` (and rebuilding the WASM), not adding server routes. The server (`examples/server/src/main.rs`) only serves static files from `target/web`.
@@ -78,6 +78,6 @@ So changing gallery content means editing the Rust in `examples/client/src/` (an
 
 - CSS class names are not hardcoded as string literals. They live as `&str` constants in `crates/lib/src/class.rs` (e.g. `BUTTON`, `LABEL`, `HINT`, `STACK`, `HEADING_M`, and `wa-*` utility classes). Reference these constants both in `#[const_str(CLASS = …)]` on components and in `class=(…)` attributes throughout the gallery; add new entries there rather than inlining a literal. Because `class=` then takes constants, multi-class attributes are built by tupling with separators, e.g. `class=(STACK, " ", GAP_S)`.
 - Rust edition 2024 across the workspace.
-- The library is rendering-only and intentionally minimal — it produces Web Awesome-classed markup; the actual styling/behavior lives in `web/style` and `web/js` (and Web Awesome itself).
-- Inline JS is deliberately avoided (see git history `feat: dont use inline JS`); behavior is wired through external modules in `web/js/` and gallery assets.
+- The library is rendering-only and intentionally minimal — it produces Web Awesome-classed markup; the actual styling/behavior lives in `webassets/style` and `webassets/js` (and Web Awesome itself).
+- Inline JS is deliberately avoided (see git history `feat: dont use inline JS`); behavior is wired through external modules in `webassets/js/` and gallery assets.
 - Dual-licensed MIT OR Apache-2.0.
