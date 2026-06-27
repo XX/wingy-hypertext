@@ -12,46 +12,31 @@ use wingy_hypertext::layouts::page::{Page, PageBody, PageMenu};
 use wingy_hypertext::link::LinkSetters;
 use wingy_hypertext::link::Target::*;
 use wingy_hypertext::variant::Variant::*;
+use wingy_hypertext_web::{
+    init_code_examples, init_page_element, init_scroll_to_anchor, listen_click_actions, listen_code_examples,
+    register_copy_action,
+};
 
 pub mod components;
 pub mod fontawesome;
 
 #[wasm_bindgen]
+pub fn init() {
+    register_copy_action();
+    init_code_examples();
+    listen_code_examples();
+    listen_click_actions();
+}
+
+#[wasm_bindgen]
+pub fn reinit() {
+    init_page_element();
+    init_scroll_to_anchor();
+}
+
+#[wasm_bindgen]
 pub fn request(route_path: &str) -> String {
     main_section(route_path).render().into_inner()
-}
-
-// Client-side behavior, ported from the former `webassets/js` modules to Rust/WASM in the
-// `wingy-hypertext-web` crate. These thin entry points expose it to the gallery's `main.js`.
-
-#[wasm_bindgen]
-pub fn register_copy_action() {
-    wingy_hypertext_web::register_copy_action();
-}
-
-#[wasm_bindgen]
-pub fn init_code_examples() {
-    wingy_hypertext_web::init_code_examples();
-}
-
-#[wasm_bindgen]
-pub fn listen_code_examples() {
-    wingy_hypertext_web::listen_code_examples();
-}
-
-#[wasm_bindgen]
-pub fn listen_click_actions() {
-    wingy_hypertext_web::listen_click_actions();
-}
-
-#[wasm_bindgen]
-pub fn init_page_element() {
-    wingy_hypertext_web::init_page_element();
-}
-
-#[wasm_bindgen]
-pub fn init_scroll_to_anchor() {
-    wingy_hypertext_web::init_scroll_to_anchor();
 }
 
 fn main_section(route_path: &str) -> impl Renderable {

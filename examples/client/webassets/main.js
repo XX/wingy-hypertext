@@ -16,10 +16,7 @@ highlight.registerLanguage('html', html);
 htmx.process(root);
 
 reinit(root);
-wasm.register_copy_action();
-wasm.init_code_examples();
-wasm.listen_code_examples();
-wasm.listen_click_actions();
+wasm.init();
 
 document.body.addEventListener("htmx:afterSettle", function (event) {
     reinit(event.target);
@@ -27,8 +24,5 @@ document.body.addEventListener("htmx:afterSettle", function (event) {
 
 function reinit(root) {
     highlight.highlightAll();
-
-    // Page metrics and anchor scrolling are handled by the wingy-hypertext-web WASM module.
-    wasm.init_page_element();
-    wasm.init_scroll_to_anchor();
+    wasm.reinit();
 }
