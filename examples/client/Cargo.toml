@@ -10,4 +10,5 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 hypertext = { workspace = true }
 wingy-hypertext = { workspace = true }
+wingy-hypertext-web = { workspace = true }
 wasm-bindgen = { workspace = true }

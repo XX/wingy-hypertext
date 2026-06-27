@@ -17,8 +17,12 @@ derive_more = { version = "2.1", features = ["as_ref"] }
 env_logger = "0.11"
 hypertext = { git = "https://github.com/vidhanio/hypertext.git", version = "0.12", features = ["axum", "htmx"] }
 itertools = "0.14"
+js-sys = "0.3"
 strum = { version = "0.28", features = ["derive"] }
 tiny_file_server = "0.1"
 wingy-hypertext = { path = "crates/lib" }
 wingy-hypertext-macros = { path = "crates/macros" }
+wingy-hypertext-web = { path = "crates/web" }
 wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+web-sys = "0.3"

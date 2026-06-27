@@ -21,6 +21,39 @@ pub fn request(route_path: &str) -> String {
     main_section(route_path).render().into_inner()
 }
 
+// Client-side behavior, ported from the former `webassets/js` modules to Rust/WASM in the
+// `wingy-hypertext-web` crate. These thin entry points expose it to the gallery's `main.js`.
+
+#[wasm_bindgen]
+pub fn register_copy_action() {
+    wingy_hypertext_web::register_copy_action();
+}
+
+#[wasm_bindgen]
+pub fn init_code_examples() {
+    wingy_hypertext_web::init_code_examples();
+}
+
+#[wasm_bindgen]
+pub fn listen_code_examples() {
+    wingy_hypertext_web::listen_code_examples();
+}
+
+#[wasm_bindgen]
+pub fn listen_click_actions() {
+    wingy_hypertext_web::listen_click_actions();
+}
+
+#[wasm_bindgen]
+pub fn init_page_element() {
+    wingy_hypertext_web::init_page_element();
+}
+
+#[wasm_bindgen]
+pub fn init_scroll_to_anchor() {
+    wingy_hypertext_web::init_scroll_to_anchor();
+}
+
 fn main_section(route_path: &str) -> impl Renderable {
     let parts: Vec<_> = route_path.split('#').collect();
     let path = parts.first().map(|path| path.trim_matches('/')).unwrap_or_default();
