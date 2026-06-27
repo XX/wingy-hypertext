@@ -13,7 +13,7 @@ ADDITIONAL = "--release"
     MODE = "debug"
     ADDITIONAL = "--profile=dev"
 
-# NOTE: `--cfg=web_sys_unstable_apis` enables the Web Animations bindings in web-sys used by `wingy-hypertext-web`.
+# NOTE: `web_sys_unstable_apis` cfg enables the Web Animations bindings in web-sys used by `wingy-hypertext-web`.
 [tasks.choose_profile_web.env]
 RUSTFLAGS = "-Copt-level=s --cfg=web_sys_unstable_apis"
 MODE = "release"
