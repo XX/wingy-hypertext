@@ -20,6 +20,7 @@ use wingy_hypertext_web::{
 pub mod components;
 pub mod fontawesome;
 
+/// One-time wiring: register actions and listeners.
 #[wasm_bindgen]
 pub fn init() {
     register_copy_action();
@@ -28,6 +29,7 @@ pub fn init() {
     listen_click_actions();
 }
 
+/// Re-initialization run after every htmx settle.
 #[wasm_bindgen]
 pub fn reinit() {
     init_page_element();

@@ -10,7 +10,8 @@ use wasm_bindgen_futures::spawn_local;
 use web_sys::{AddEventListenerOptions, Animation, Element, Event, HtmlElement, KeyframeAnimationOptions};
 
 use crate::dom::{document, next_animation_frame, window};
-use crate::utils::animate::{animate, parse_duration, parse_float, prefers_reduced_motion};
+use crate::utils::animate::{animate, prefers_reduced_motion};
+use crate::utils::numeric::{parse_duration_millis, parse_float};
 
 //
 // Resizing previews
@@ -151,7 +152,7 @@ fn get_code_example_durations(source: &Element) -> (f64, f64) {
             .unwrap_or_default();
         let trimmed = raw.trim();
         let value = if trimmed.is_empty() { "200ms" } else { trimmed };
-        parse_duration(value)
+        parse_duration_millis(value)
     };
     (
         read("--code-example-show-duration"),

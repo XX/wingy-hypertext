@@ -1,10 +1,8 @@
-//! Port of `webassets/js/components/head.js`.
-
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlElement, ScrollBehavior, ScrollToOptions};
 
 use crate::dom::{document, window};
-use crate::utils::animate::parse_float;
+use crate::utils::numeric::parse_float;
 
 /// Smoothly scrolls to the element referenced by the URL hash, or back to the top when there is none.
 pub fn init_scroll_to_anchor() {

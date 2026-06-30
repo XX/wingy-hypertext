@@ -1,4 +1,4 @@
-//! Small DOM access helpers shared across the ported scripts.
+//! Small DOM access helpers.
 
 use wasm_bindgen::JsCast;
 use wasm_bindgen::prelude::*;
@@ -6,11 +6,15 @@ use wasm_bindgen_futures::JsFuture;
 use web_sys::{Document, Element, HtmlElement, Window};
 
 pub fn window() -> Window {
-    web_sys::window().expect("no global `window`")
+    web_sys::window().expect_throw("no global `window`")
 }
 
 pub fn document() -> Document {
-    window().document().expect("no `document` on `window`")
+    window().document().expect_throw("no `document` on `window`")
+}
+
+pub fn body() -> HtmlElement {
+    document().body().expect_throw("no `body` on `document`")
 }
 
 /// `document.querySelector(selector)`, swallowing invalid-selector errors.
@@ -28,16 +32,19 @@ pub fn set_hidden(element: &Element, hidden: bool) {
 /// Awaits a single animation frame, like `await new Promise(r => requestAnimationFrame(r))`.
 pub async fn next_animation_frame() {
     let promise = js_sys::Promise::new(&mut |resolve, _reject| {
-        let cb = Closure::once_into_js(move |_ts: f64| {
-            let _ = resolve.call0(&JsValue::NULL);
+        let callback = Closure::once_into_js(move |_ts: f64| {
+            resolve.call0(&JsValue::NULL).ok();
         });
-        let _ = window().request_animation_frame(cb.as_ref().unchecked_ref());
+        window().request_animation_frame(callback.as_ref().unchecked_ref()).ok();
     });
-    let _ = JsFuture::from(promise).await;
+
+    JsFuture::from(promise).await.ok();
 }
 
 /// `setTimeout(fn, ms)` for a one-shot callback.
-pub fn set_timeout<F: FnOnce() + 'static>(ms: i32, f: F) {
-    let cb = Closure::once_into_js(f);
-    let _ = window().set_timeout_with_callback_and_timeout_and_arguments_0(cb.as_ref().unchecked_ref(), ms);
+pub fn set_timeout<F: FnOnce() + 'static>(ms: i32, func: F) {
+    let callback = Closure::once_into_js(func);
+    window()
+        .set_timeout_with_callback_and_timeout_and_arguments_0(callback.as_ref().unchecked_ref(), ms)
+        .ok();
 }
