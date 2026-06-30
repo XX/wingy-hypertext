@@ -1,8 +1,8 @@
 //! Small DOM access helpers.
 
-use wasm_bindgen::JsCast;
-use wasm_bindgen::prelude::*;
-use wasm_bindgen_futures::JsFuture;
+use futures::channel::oneshot;
+use wasm_bindgen::prelude::Closure;
+use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use web_sys::{Document, Element, HtmlElement, Window};
 
 pub fn window() -> Window {
@@ -31,14 +31,13 @@ pub fn set_hidden(element: &Element, hidden: bool) {
 
 /// Awaits a single animation frame, like `await new Promise(r => requestAnimationFrame(r))`.
 pub async fn next_animation_frame() {
-    let promise = js_sys::Promise::new(&mut |resolve, _reject| {
-        let callback = Closure::once_into_js(move |_ts: f64| {
-            resolve.call0(&JsValue::NULL).ok();
-        });
-        window().request_animation_frame(callback.as_ref().unchecked_ref()).ok();
+    let (tx, rx) = oneshot::channel::<()>();
+    let callback = Closure::once_into_js(move |_ts: f64| {
+        tx.send(()).ok();
     });
+    window().request_animation_frame(callback.unchecked_ref()).ok();
 
-    JsFuture::from(promise).await.ok();
+    rx.await.ok();
 }
 
 /// `setTimeout(fn, ms)` for a one-shot callback.
