@@ -1,120 +1,103 @@
-//! Port of `webassets/js/layouts/code_example.js`.
-
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use js_sys::{Array, Function, Object, Reflect};
+use js_sys::{Array, Function, Object};
 use wasm_bindgen::JsCast;
-use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::spawn_local;
-use web_sys::{AddEventListenerOptions, Animation, Element, Event, HtmlElement, KeyframeAnimationOptions};
+use wasm_dom as dom;
+use wasm_dom::event::EventListener;
+use wasm_dom::existing::JsObjectAccess;
+use wasm_dom::existing::access::{CastToElement, CastToHtmlElement};
+use web_sys::{AddEventListenerOptions, Animation, Element, Event, HtmlElement, MouseEvent, TouchEvent};
 
-use crate::dom::{document, next_animation_frame, window};
-use crate::utils::animate::{animate, prefers_reduced_motion};
-use crate::utils::numeric::{parse_duration_millis, parse_float};
+use crate::utils::animate::{linear_animate, prefers_reduced_motion};
+use crate::utils::convert::{bool_to_str, parse_duration_millis, parse_float};
 
 //
 // Resizing previews
 //
 
 /// Begins a drag-to-resize gesture when a `.code-example-resizer` inside a `.code-example-preview` is pressed.
-pub fn handle_resizer_drag(event: &Event) {
-    let Some(target) = event.target().and_then(|t| t.dyn_into::<Element>().ok()) else {
-        return;
-    };
-    let resizer = target.closest(".code-example-resizer").ok().flatten();
-    let preview = target.closest(".code-example-preview").ok().flatten();
-    let (Some(_resizer), Some(preview)) = (resizer, preview) else {
-        return;
-    };
-    let Some(preview) = preview.dyn_into::<HtmlElement>().ok() else {
-        return;
-    };
+pub fn handle_resizer_drag(event: &Event) -> Option<()> {
+    const PREVIEW_DRAGGING_CLASS: &str = "code-example-preview--dragging";
+
+    let target = event.target()?.maybe_into_element()?;
+    let _resizer = target.closest(".code-example-resizer").ok()??;
+    let preview = target.closest(".code-example-preview").ok()??.maybe_into_html()?;
 
     let start_x = pointer_client_x(event);
-    let start_width = parse_float(&computed_width(&preview));
+    let start_width = parse_float(
+        dom::existing::window()
+            .get_computed_style(&preview)
+            .ok()??
+            .get_property_value("width")
+            .unwrap_or_default(),
+    );
 
     event.prevent_default();
-    let _ = preview.class_list().add_1("code-example-preview--dragging");
+    preview.class_list().add_1(PREVIEW_DRAGGING_CLASS).ok();
 
-    let Some(doc_el) = document().document_element() else {
-        return;
-    };
+    let root = dom::document_element().ok()?;
 
-    let move_slot: Rc<RefCell<Option<Function>>> = Rc::new(RefCell::new(None));
+    let drag_move = dom::event::js_function({
+        let preview = preview.clone();
+        move |event| {
+            let width = start_width + pointer_page_x(&event) - start_x;
+            preview.style().set_property("width", &format!("{width}px")).ok();
+        }
+    });
+
+    // Слот нужен только для того, чтобы stop мог снять сам себя.
     let stop_slot: Rc<RefCell<Option<Function>>> = Rc::new(RefCell::new(None));
 
-    let drag_move = {
+    let drag_stop = dom::event::js_function({
         let preview = preview.clone();
-        Closure::<dyn FnMut(Event)>::new(move |event: Event| {
-            let width = start_width + pointer_page_x(&event) - start_x;
-            let _ = preview.style().set_property("width", &format!("{width}px"));
-        })
-    };
-    let drag_move_fn: Function = drag_move.as_ref().unchecked_ref::<Function>().clone();
-    drag_move.forget();
-    *move_slot.borrow_mut() = Some(drag_move_fn.clone());
-
-    let drag_stop = {
-        let preview = preview.clone();
-        let doc_el = doc_el.clone();
-        let move_slot = move_slot.clone();
+        let root = root.clone();
+        let drag_move = drag_move.clone();
         let stop_slot = stop_slot.clone();
-        Closure::<dyn FnMut()>::new(move || {
-            let _ = preview.class_list().remove_1("code-example-preview--dragging");
-            if let Some(move_fn) = move_slot.borrow().as_ref() {
-                let _ = doc_el.remove_event_listener_with_callback("mousemove", move_fn);
-                let _ = doc_el.remove_event_listener_with_callback("touchmove", move_fn);
-            }
-            if let Some(stop_fn) = stop_slot.borrow().as_ref() {
-                let _ = doc_el.remove_event_listener_with_callback("mouseup", stop_fn);
-                let _ = doc_el.remove_event_listener_with_callback("touchend", stop_fn);
-            }
-        })
-    };
-    let drag_stop_fn: Function = drag_stop.as_ref().unchecked_ref::<Function>().clone();
-    drag_stop.forget();
-    *stop_slot.borrow_mut() = Some(drag_stop_fn.clone());
+        move |_| {
+            preview.class_list().remove_1(PREVIEW_DRAGGING_CLASS).ok();
 
-    let _ = doc_el.add_event_listener_with_callback("mousemove", &drag_move_fn);
-    let _ = doc_el.add_event_listener_with_callback("touchmove", &drag_move_fn);
-    let _ = doc_el.add_event_listener_with_callback("mouseup", &drag_stop_fn);
-    let _ = doc_el.add_event_listener_with_callback("touchend", &drag_stop_fn);
+            root.remove_event_listener_with_callback("mousemove", &drag_move).ok();
+            root.remove_event_listener_with_callback("touchmove", &drag_move).ok();
+            if let Some(stop_fn) = stop_slot.borrow().as_ref() {
+                root.remove_event_listener_with_callback("mouseup", stop_fn).ok();
+                root.remove_event_listener_with_callback("touchend", stop_fn).ok();
+            }
+        }
+    });
+
+    *stop_slot.borrow_mut() = Some(drag_stop.clone());
+
+    root.add_event_listener_with_callback("mousemove", &drag_move).ok();
+    root.add_event_listener_with_callback("touchmove", &drag_move).ok();
+    root.add_event_listener_with_callback("mouseup", &drag_stop).ok();
+    root.add_event_listener_with_callback("touchend", &drag_stop).ok();
+
+    Some(())
 }
 
 /// `event.clientX`, or the first changed touch's `pageX` for touch events (mirrors the JS gesture start).
 fn pointer_client_x(event: &Event) -> f64 {
-    if let Some(touch) = event.dyn_ref::<web_sys::TouchEvent>()
-        && let Some(t) = touch.changed_touches().get(0)
-    {
-        return t.page_x() as f64;
-    }
-    event
-        .dyn_ref::<web_sys::MouseEvent>()
-        .map(|m| m.client_x())
-        .unwrap_or(0.0)
+    first_touch_page_x(event).unwrap_or_else(|| {
+        event
+            .dyn_ref::<MouseEvent>()
+            .map(|event| event.client_x())
+            .unwrap_or(0.0)
+    })
 }
 
 /// `event.pageX`, or the first changed touch's `pageX` for touch events (mirrors the JS drag move).
 fn pointer_page_x(event: &Event) -> f64 {
-    if let Some(touch) = event.dyn_ref::<web_sys::TouchEvent>()
-        && let Some(t) = touch.changed_touches().get(0)
-    {
-        return t.page_x() as f64;
-    }
-    event
-        .dyn_ref::<web_sys::MouseEvent>()
-        .map(|m| m.page_x())
-        .unwrap_or(0.0)
+    first_touch_page_x(event)
+        .unwrap_or_else(|| event.dyn_ref::<MouseEvent>().map(|event| event.page_x()).unwrap_or(0.0))
 }
 
-fn computed_width(element: &Element) -> String {
-    window()
-        .get_computed_style(element)
-        .ok()
-        .flatten()
-        .and_then(|style| style.get_property_value("width").ok())
-        .unwrap_or_default()
+fn first_touch_page_x(event: &Event) -> Option<f64> {
+    event
+        .dyn_ref::<TouchEvent>()
+        .and_then(|event| event.changed_touches().get(0))
+        .map(|touch| touch.page_x() as _)
 }
 
 //
@@ -130,7 +113,9 @@ fn get_animation_generation(code_example: &Element) -> u32 {
 
 fn bump_animation_generation(code_example: &Element) -> u32 {
     let generation = get_animation_generation(code_example) + 1;
-    let _ = code_example.set_attribute("data-animation-generation", &generation.to_string());
+    code_example
+        .set_attribute("data-animation-generation", &generation.to_string())
+        .ok();
     generation
 }
 
@@ -144,16 +129,20 @@ fn cancel_source_animations(source: &Element) {
 }
 
 fn get_code_example_durations(source: &Element) -> (f64, f64) {
-    let style = window().get_computed_style(source).ok().flatten();
+    let style = dom::existing::window().get_computed_style(source).ok().flatten();
     let read = |name: &str| -> f64 {
         let raw = style
             .as_ref()
-            .and_then(|s| s.get_property_value(name).ok())
+            .and_then(|style| style.get_property_value(name).ok())
             .unwrap_or_default();
         let trimmed = raw.trim();
-        let value = if trimmed.is_empty() { "200ms" } else { trimmed };
-        parse_duration_millis(value)
+        if trimmed.is_empty() {
+            200.0
+        } else {
+            parse_duration_millis(trimmed)
+        }
     };
+
     (
         read("--code-example-show-duration"),
         read("--code-example-hide-duration"),
@@ -162,113 +151,112 @@ fn get_code_example_durations(source: &Element) -> (f64, f64) {
 
 fn set_code_example_source_accessibility(source: &Element, open: bool) {
     if open {
-        let _ = source.remove_attribute("aria-hidden");
+        source.remove_attribute("aria-hidden").ok();
     } else {
-        let _ = source.set_attribute("aria-hidden", "true");
+        source.set_attribute("aria-hidden", "true").ok();
     }
 }
 
-fn set_code_example_source_collapsed(source: &Element, collapsed: bool) {
-    let Some(html) = source.dyn_ref::<HtmlElement>() else {
-        return;
-    };
+fn set_code_example_source_collapsed(source_html: &HtmlElement, collapsed: bool) {
     if collapsed {
-        let _ = html.style().set_property("height", "0");
-        let _ = html.style().set_property("opacity", "0");
+        source_html.style().set_property("height", "0").ok();
+        source_html.style().set_property("opacity", "0").ok();
     } else {
-        let _ = html.style().set_property("height", "auto");
-        let _ = html.style().remove_property("opacity");
+        source_html.style().set_property("height", "auto").ok();
+        source_html.style().remove_property("opacity").ok();
     }
 }
 
 fn reset_code_example_element(code_example: &Element) {
     if let Some(source) = code_example.query_selector(".code-example-source").ok().flatten() {
         cancel_source_animations(&source);
-        let _ = source.class_list().remove_1("is-animating");
+        source.class_list().remove_1("is-animating").ok();
     }
 
     if let Some(preview) = code_example.query_selector(".code-example-preview").ok().flatten() {
-        let _ = preview.class_list().remove_1("is-dragging");
+        preview.class_list().remove_1("is-dragging").ok();
         if let Some(html) = preview.dyn_ref::<HtmlElement>() {
-            let _ = html.style().remove_property("width");
+            html.style().remove_property("width").ok();
         }
     }
 }
 
 /// Opens or closes a code example, animating the source panel unless reduced motion is requested.
-pub async fn set_code_example_open(code_example: Element, toggle: Element, open: bool) {
-    let Some(source) = code_example.query_selector(".code-example-source").ok().flatten() else {
-        return;
-    };
+pub async fn set_code_example_open(code_example: Element, toggle: Element, open: bool) -> Option<()> {
+    let source = code_example.query_selector(".code-example-source").ok()??;
 
     let generation = bump_animation_generation(&code_example);
     cancel_source_animations(&source);
-    let _ = source.class_list().remove_1("is-animating");
+    source.class_list().remove_1("is-animating").ok();
+
+    let source_html = source.maybe_as_html()?;
 
     if prefers_reduced_motion() || source.class_list().contains("no-animation") {
-        let _ = toggle.set_attribute("aria-expanded", bool_str(open));
-        let _ = code_example.class_list().toggle_with_force("open", open);
-        set_code_example_source_collapsed(&source, !open);
+        toggle.set_attribute("aria-expanded", bool_to_str(open)).ok();
+        code_example.class_list().toggle_with_force("open", open).ok();
+        set_code_example_source_collapsed(source_html, !open);
         set_code_example_source_accessibility(&source, open);
-        return;
+        return None;
     }
 
     let (show_duration, hide_duration) = get_code_example_durations(&source);
-    let Some(source_html) = source.dyn_ref::<HtmlElement>().cloned() else {
-        return;
-    };
 
     if open {
-        let _ = toggle.set_attribute("aria-expanded", "true");
-        let _ = code_example.class_list().add_1("open");
+        toggle.set_attribute("aria-expanded", "true").ok();
+        code_example.class_list().add_1("open").ok();
         set_code_example_source_accessibility(&source, true);
-        let _ = source.class_list().add_1("is-animating");
-        let _ = source_html.style().set_property("height", "0");
-        let _ = source_html.style().set_property("opacity", "0");
+        source.class_list().add_1("is-animating").ok();
+        source_html.style().set_property("height", "0").ok();
+        source_html.style().set_property("opacity", "0").ok();
 
-        next_animation_frame().await;
+        dom::animation::next_frame().await.ok();
 
         let keyframes = Array::of2(
             &keyframe("0", "0"),
             &keyframe(&format!("{}px", source_html.scroll_height()), "1"),
         );
-        animate(&source, &keyframes, &options(show_duration)).await;
+        linear_animate(&source, &keyframes, show_duration).await;
 
         if get_animation_generation(&code_example) != generation {
-            return;
+            return None;
         }
 
-        let _ = source_html.style().set_property("height", "auto");
-        let _ = source_html.style().remove_property("opacity");
-        let _ = source.class_list().remove_1("is-animating");
+        source_html.style().set_property("height", "auto").ok();
+        source_html.style().remove_property("opacity").ok();
+        source.class_list().remove_1("is-animating").ok();
     } else {
-        let _ = toggle.set_attribute("aria-expanded", "false");
-        let _ = source.class_list().add_1("is-animating");
+        toggle.set_attribute("aria-expanded", "false").ok();
+        source.class_list().add_1("is-animating").ok();
         // Remove `.open` before the animation so the chevron rotation and panel collapse run together.
-        let _ = code_example.class_list().remove_1("open");
+        code_example.class_list().remove_1("open").ok();
         let start_height = source_html.scroll_height();
-        let _ = source_html.style().set_property("height", &format!("{start_height}px"));
+        source_html
+            .style()
+            .set_property("height", &format!("{start_height}px"))
+            .ok();
 
         let keyframes = Array::of2(&keyframe(&format!("{start_height}px"), "1"), &keyframe("0", "0"));
-        animate(&source, &keyframes, &options(hide_duration)).await;
+        linear_animate(&source, &keyframes, hide_duration).await;
 
         if get_animation_generation(&code_example) != generation {
-            return;
+            return None;
         }
 
-        set_code_example_source_collapsed(&source, true);
-        let _ = source.class_list().remove_1("is-animating");
+        set_code_example_source_collapsed(source_html, true);
+        source.class_list().remove_1("is-animating").ok();
         set_code_example_source_accessibility(&source, false);
     }
+
+    Some(())
 }
 
 /// Initializes all `.code-example` elements to match their current `open` state.
 pub fn init_code_examples() {
-    let examples = document()
+    let examples = dom::existing::document()
         .query_selector_all(".code-example")
         .expect("querySelectorAll failed");
     for i in 0..examples.length() {
-        let Some(code_example) = examples.get(i).and_then(|n| n.dyn_into::<Element>().ok()) else {
+        let Some(code_example) = examples.get(i).and_then(|node| node.maybe_into_element()) else {
             continue;
         };
         let Some(source) = code_example.query_selector(".code-example-source").ok().flatten() else {
@@ -278,66 +266,50 @@ pub fn init_code_examples() {
         reset_code_example_element(&code_example);
 
         let open = code_example.class_list().contains("open");
-        set_code_example_source_collapsed(&source, !open);
+        if let Some(source_html) = source.maybe_as_html() {
+            set_code_example_source_collapsed(source_html, !open);
+        }
         set_code_example_source_accessibility(&source, open);
     }
 }
 
 /// Installs the document-level listeners that drive code-example toggling and preview resizing.
 pub fn listen_code_examples() {
-    let doc = document();
+    let document = dom::existing::document();
 
-    add_listener(&doc, "turbo:load", |_event: Event| init_code_examples());
-    add_listener(&doc, "mousedown", |event: Event| handle_resizer_drag(&event));
+    document.add_steady_event_listener("turbo:load", |_| init_code_examples());
+    document.add_steady_event_listener("mousedown", |event| {
+        handle_resizer_drag(&event);
+    });
 
-    // touchstart is passive, like the JS prototype.
-    let touchstart = Closure::<dyn FnMut(Event)>::new(|event: Event| handle_resizer_drag(&event));
     let options = AddEventListenerOptions::new();
     options.set_passive(true);
-    let _ = doc.add_event_listener_with_callback_and_add_event_listener_options(
+    document.add_steady_event_listener_with_options(
         "touchstart",
-        touchstart.as_ref().unchecked_ref(),
+        |event| {
+            handle_resizer_drag(&event);
+        },
         &options,
     );
-    touchstart.forget();
 
-    add_listener(&doc, "click", |event: Event| {
-        let Some(target) = event.target().and_then(|t| t.dyn_into::<Element>().ok()) else {
-            return;
-        };
-        let Some(toggle) = target.closest(".code-example-toggle").ok().flatten() else {
-            return;
-        };
-        let Some(code_example) = toggle.closest(".code-example").ok().flatten() else {
-            return;
-        };
+    let click_handler = |event: Event| -> Option<()> {
+        let target = event.target()?.maybe_into_element()?;
+        let toggle = target.closest(".code-example-toggle").ok()??;
+        let code_example = toggle.closest(".code-example").ok()??;
         let open = !code_example.class_list().contains("open");
         spawn_local(async move {
             set_code_example_open(code_example, toggle, open).await;
         });
+        Some(())
+    };
+    document.add_steady_event_listener("click", move |event| {
+        click_handler(event);
     });
-}
-
-fn add_listener(target: &web_sys::EventTarget, event: &str, handler: impl FnMut(Event) + 'static) {
-    let cb = Closure::<dyn FnMut(Event)>::new(handler);
-    let _ = target.add_event_listener_with_callback(event, cb.as_ref().unchecked_ref());
-    cb.forget();
 }
 
 fn keyframe(height: &str, opacity: &str) -> Object {
     let object = Object::new();
-    let _ = Reflect::set(&object, &JsValue::from_str("height"), &JsValue::from_str(height));
-    let _ = Reflect::set(&object, &JsValue::from_str("opacity"), &JsValue::from_str(opacity));
+    object.set("height", height);
+    object.set("opacity", opacity);
     object
-}
-
-fn options(duration: f64) -> KeyframeAnimationOptions {
-    let options = KeyframeAnimationOptions::new();
-    options.set_duration(duration);
-    options.set_easing("linear");
-    options
-}
-
-fn bool_str(value: bool) -> &'static str {
-    if value { "true" } else { "false" }
 }

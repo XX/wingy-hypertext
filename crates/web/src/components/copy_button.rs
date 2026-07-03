@@ -1,10 +1,9 @@
-use js_sys::Reflect;
-use wasm_bindgen::JsCast;
-use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::{JsFuture, spawn_local};
+use wasm_dom as dom;
+use wasm_dom::existing::JsObjectAccess;
+use wasm_dom::existing::access::{CastToElement, CastToHtmlElement};
 use web_sys::{Element, Event};
 
-use crate::dom::{document, set_hidden, set_timeout, window};
 use crate::utils::action::register_action;
 use crate::utils::animate::animate_with_class;
 
@@ -18,14 +17,8 @@ enum Status {
 ///
 /// `from`: when present it selects the source by id, optionally with a  `.property` or `[attribute]`
 /// suffix; when absent the parent element's text content is copied.
-pub async fn handle_copy(event: &Event, from: Option<String>) {
-    let target = event
-        .target()
-        .and_then(|target| target.dyn_into::<Element>().ok())
-        .and_then(|element| element.closest(".copy-button").ok().flatten());
-    let Some(target) = target else {
-        return;
-    };
+pub async fn handle_copy(event: &Event, from: Option<String>) -> Option<()> {
+    let target = event.target()?.maybe_into_element()?.closest(".copy-button").ok()??;
 
     let (value_to_copy, element): (String, Option<Element>) = match from.as_deref() {
         Some(from) => {
@@ -44,7 +37,7 @@ pub async fn handle_copy(event: &Event, from: Option<String>) {
                 (trimmed_from, "")
             };
 
-            let element = document().get_element_by_id(id);
+            let element = dom::existing::document().get_element_by_id(id);
             let value = if let Some(element) = &element {
                 read_value(element, is_property, is_attribute, field).unwrap_or_default()
             } else {
@@ -54,7 +47,7 @@ pub async fn handle_copy(event: &Event, from: Option<String>) {
             (value, element)
         },
         None => {
-            let element = target.parent_node().and_then(|node| node.dyn_into::<Element>().ok());
+            let element = target.parent_node().and_then(|node| node.maybe_into_element());
             let value = element
                 .as_ref()
                 .and_then(|element| element.text_content())
@@ -69,12 +62,23 @@ pub async fn handle_copy(event: &Event, from: Option<String>) {
 
     if value_to_copy.is_empty() {
         show_status(&target, Status::Error).await;
-        return;
+        return None;
     }
 
-    match JsFuture::from(window().navigator().clipboard().write_text(&value_to_copy)).await {
-        Ok(_) => show_status(&target, Status::Success).await,
-        Err(_) => show_status(&target, Status::Error).await,
+    if JsFuture::from(
+        dom::existing::window()
+            .navigator()
+            .clipboard()
+            .write_text(&value_to_copy),
+    )
+    .await
+    .is_ok()
+    {
+        show_status(&target, Status::Success).await;
+        Some(())
+    } else {
+        show_status(&target, Status::Error).await;
+        None
     }
 }
 
@@ -82,9 +86,7 @@ fn read_value(element: &Element, is_property: bool, is_attribute: bool, field: &
     if is_attribute {
         element.get_attribute(field)
     } else if is_property {
-        Reflect::get(element, &JsValue::from_str(field))
-            .ok()
-            .and_then(|value| value.as_string())
+        element.get(field).as_string()
     } else {
         element.text_content()
     }
@@ -103,34 +105,35 @@ async fn show_status(target: &Element, status: Status) {
 
     if let Some(copy_icon) = &copy_icon {
         animate_with_class(copy_icon, "hide").await.ok();
-        set_hidden(copy_icon, true);
+        copy_icon.as_html().set_hidden(true);
         if let Some(icon) = &icon_to_show {
-            set_hidden(icon, false);
+            icon.as_html().set_hidden(false);
             animate_with_class(icon, "show").await.ok();
         }
     }
 
-    set_timeout(1000, move || {
-        spawn_local(async move {
-            if let Some(copy_icon) = &copy_icon {
-                if let Some(icon) = &icon_to_show {
-                    animate_with_class(icon, "hide").await.ok();
-                    set_hidden(icon, true);
+    dom::set_timeout(
+        move || {
+            spawn_local(async move {
+                if let Some(copy_icon) = &copy_icon {
+                    if let Some(icon) = &icon_to_show {
+                        animate_with_class(icon, "hide").await.ok();
+                        icon.as_html().set_hidden(true);
+                    }
+                    copy_icon.as_html().set_hidden(false);
+                    animate_with_class(copy_icon, "show").await.ok();
                 }
-                set_hidden(copy_icon, false);
-                animate_with_class(copy_icon, "show").await.ok();
-            }
-        });
-    });
+            });
+        },
+        1000,
+    )
+    .ok();
 }
 
 /// Registers the `copy` action with the action registry.
 pub fn register_copy_action() {
     register_action("copy", |args, ctx| {
-        let from = Reflect::get(args, &JsValue::from_str("from"))
-            .ok()
-            .and_then(|value| value.as_string())
-            .filter(|from| !from.is_empty());
+        let from = args.get("from").as_string().filter(|from| !from.is_empty());
         let event = ctx.event.clone();
 
         spawn_local(async move {

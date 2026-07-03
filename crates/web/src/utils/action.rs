@@ -5,11 +5,11 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use js_sys::JSON;
-use wasm_bindgen::JsCast;
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::prelude::{JsValue, UnwrapThrowExt};
+use wasm_dom as dom;
+use wasm_dom::event::EventListener;
+use wasm_dom::existing::access::CastToElement;
 use web_sys::{Element, Event};
-
-use crate::dom;
 
 /// Context passed to an action handler, mirroring `{ event, element }` in JS.
 pub struct ActionCtx {
@@ -43,13 +43,7 @@ pub fn run_action(name: &str, args: &JsValue, ctx: &ActionCtx) -> Option<()> {
 
 /// Resolves the nearest `[data-action]` ancestor of the event target and runs its action.
 pub fn dispatch_action(event: Event) -> Option<()> {
-    let element = event
-        .target()?
-        .dyn_into::<Element>()
-        .ok()?
-        .closest("[data-action]")
-        .ok()
-        .flatten()?;
+    let element = event.target()?.maybe_into_element()?.closest("[data-action]").ok()??;
 
     let name = element.get_attribute("data-action").unwrap_or_default();
     let args_raw = element.get_attribute("data-args");
@@ -60,13 +54,9 @@ pub fn dispatch_action(event: Event) -> Option<()> {
 
 /// Installs a delegated `click` listener on `document.body`.
 pub fn listen_click_actions() {
-    let callback = Closure::<dyn FnMut(Event)>::new(move |event: Event| {
-        dispatch_action(event);
-    });
-
-    dom::body()
-        .add_event_listener_with_callback("click", callback.as_ref().unchecked_ref())
+    dom::existing::body()
+        .add_steady_event_listener("click", move |event| {
+            dispatch_action(event);
+        })
         .unwrap_throw();
-
-    callback.forget();
 }

@@ -1,6 +1,6 @@
 /// Mimics JavaScript's `parseFloat`: reads a leading (optionally signed) decimal number, defaulting to 0.
-pub fn parse_float(input: &str) -> f64 {
-    let trimmed = input.trim_start();
+pub fn parse_float(input: impl AsRef<str>) -> f64 {
+    let trimmed = input.as_ref().trim_start();
     let bytes = trimmed.as_bytes();
     let mut end = 0;
     let mut seen_dot = false;
@@ -38,4 +38,9 @@ pub fn parse_duration_millis(duration: &str) -> f64 {
     }
 
     parse_float(&duration)
+}
+
+#[inline]
+pub fn bool_to_str(value: bool) -> &'static str {
+    if value { "true" } else { "false" }
 }

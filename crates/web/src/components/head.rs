@@ -1,46 +1,41 @@
-use wasm_bindgen::JsCast;
-use web_sys::{HtmlElement, ScrollBehavior, ScrollToOptions};
+use wasm_dom::existing::access::CastToHtmlElement;
+use wasm_dom::{self as dom};
+use web_sys::{ScrollBehavior, ScrollToOptions, Window};
 
-use crate::dom::{document, window};
-use crate::utils::numeric::parse_float;
+use crate::utils::convert::parse_float;
 
 /// Smoothly scrolls to the element referenced by the URL hash, or back to the top when there is none.
 pub fn init_scroll_to_anchor() {
-    let win = window();
-    let hash = win.location().hash().unwrap_or_default();
+    let window = dom::existing::window();
 
+    let hash = window.location().hash().unwrap_or_default();
     if hash.is_empty() {
-        scroll_to_top();
+        scroll_to(&window, 0.0);
         return;
     }
 
-    let Some(target) = document().query_selector(&hash).ok().flatten() else {
+    let Ok(target) = dom::select_element(&hash) else {
         return;
     };
 
-    let offset = document()
-        .document_element()
-        .and_then(|e| e.dyn_into::<HtmlElement>().ok())
-        .map(|root| {
-            root.style()
-                .get_property_value("--page-header-height")
-                .unwrap_or_default()
-        })
-        .map(|value| parse_float(&value))
-        .unwrap_or(0.0);
+    let document_element = dom::existing::document_element().into_html();
+    let offset = parse_float(
+        document_element
+            .style()
+            .get_property_value("--page-header-height")
+            .unwrap_or_default(),
+    );
 
     let element_pos = target.get_bounding_client_rect().top();
-    let to_pos = element_pos + win.page_y_offset().unwrap_or(0.0) - offset;
+    let to_pos = element_pos + window.page_y_offset().unwrap_or(0.0) - offset;
 
-    let options = ScrollToOptions::new();
-    options.set_top(to_pos);
-    options.set_behavior(ScrollBehavior::Smooth);
-    win.scroll_to_with_scroll_to_options(&options);
+    scroll_to(&window, to_pos);
 }
 
-fn scroll_to_top() {
+fn scroll_to(window: &Window, top: f64) {
     let options = ScrollToOptions::new();
-    options.set_top(0.0);
+    options.set_top(top);
     options.set_behavior(ScrollBehavior::Smooth);
-    window().scroll_to_with_scroll_to_options(&options);
+
+    window.scroll_to_with_scroll_to_options(&options);
 }

@@ -51,3 +51,6 @@
 
 Убрал .cargo/config.toml, добавил choose_profile_web в Makefile.
 
+---
+
+Отрефакторил сгенерированный Rust-код.
