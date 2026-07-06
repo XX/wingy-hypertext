@@ -12,9 +12,29 @@ use wingy_hypertext::layouts::page::{Page, PageBody, PageMenu};
 use wingy_hypertext::link::LinkSetters;
 use wingy_hypertext::link::Target::*;
 use wingy_hypertext::variant::Variant::*;
+use wingy_hypertext_web::{
+    init_code_examples, init_page_element, init_scroll_to_anchor, listen_click_actions, listen_code_examples,
+    register_copy_action,
+};
 
 pub mod components;
 pub mod fontawesome;
+
+/// One-time wiring: register actions and listeners.
+#[wasm_bindgen]
+pub fn init() {
+    register_copy_action();
+    init_code_examples();
+    listen_code_examples();
+    listen_click_actions();
+}
+
+/// Re-initialization run after every htmx settle.
+#[wasm_bindgen]
+pub fn reinit() {
+    init_page_element();
+    init_scroll_to_anchor();
+}
 
 #[wasm_bindgen]
 pub fn request(route_path: &str) -> String {

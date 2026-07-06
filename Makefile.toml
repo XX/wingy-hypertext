@@ -5,13 +5,22 @@ additional_profiles = ["debug"]
 [env]
 TARGET_DIR = "target"
 
-[tasks.choose_profile.env]
-RUSTFLAGS = "-Copt-level=s"
+[tasks.choose-profile.env]
 MODE = "release"
 ADDITIONAL = "--release"
 
-    [tasks.choose_profile.env.debug]
-    RUSTFLAGS = ""
+    [tasks.choose-profile.env.debug]
+    MODE = "debug"
+    ADDITIONAL = "--profile=dev"
+
+# NOTE: `web_sys_unstable_apis` cfg enables the Web Animations bindings in web-sys used by `wingy-hypertext-web`.
+[tasks.choose-profile-web.env]
+RUSTFLAGS = "-Copt-level=s --cfg=web_sys_unstable_apis"
+MODE = "release"
+ADDITIONAL = "--release"
+
+    [tasks.choose-profile-web.env.debug]
+    RUSTFLAGS = "--cfg=web_sys_unstable_apis"
     MODE = "debug"
     ADDITIONAL = "--profile=dev"
 
@@ -20,7 +29,7 @@ ADDITIONAL = "--release"
 command = "cargo"
 toolchain = "stable"
 args = ["build", "-p", "example-client", "--target", "wasm32-unknown-unknown", "${ADDITIONAL}"]
-dependencies = ["choose_profile"]
+dependencies = ["choose-profile-web"]
 
 [tasks.copy-static-files]
 script_runner = "@duckscript"
@@ -52,7 +61,7 @@ dependencies = ["build-client", "deploy-client"]
 command = "cargo"
 toolchain = "stable"
 args = ["run", "-p", "example-server", "${ADDITIONAL}"]
-dependencies = ["choose_profile"]
+dependencies = ["choose-profile"]
 
 [tasks.run]
 run_task = [

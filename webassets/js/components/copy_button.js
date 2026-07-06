@@ -20,7 +20,7 @@ export async function handle_copy(event, from) {
             [id, field] = from.trim().replace(/\]$/, "").split("[");
         }
 
-        const root = window;
+        const root = document;
         element = "getElementById" in root ? root.getElementById(id) : null;
     } else {
         element = target.parentNode;

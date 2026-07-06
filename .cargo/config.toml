@@ -1,0 +1,4 @@
+[build]
+# The Web Animations API bindings in web-sys (Element::animate, getAnimations,
+# KeyframeAnimationOptions) are still gated behind `web_sys_unstable_apis` cfg.
+rustflags = ["--cfg=web_sys_unstable_apis"]

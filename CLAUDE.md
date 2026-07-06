@@ -10,6 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `crates/lib` (`wingy-hypertext`) — the component library. This is the product.
 - `crates/macros` (`wingy-hypertext-macros`) — proc-macros (`#[derive(Props)]`, `#[const_str(...)]`, `htmx_rsx!`) used by the library.
+- `crates/web` (`wingy-hypertext-web`) — Rust/WASM port of the gallery's client-side scripts (web-sys/js-sys); modules mirror `webassets/js` one-to-one. Consumed by `example-client`.
 - `examples/client` (`example-client`) — `cdylib`/`rlib` compiled to `wasm32-unknown-unknown`; renders the gallery pages.
 - `examples/server` (`example-server`) — serves `target/web` over `127.0.0.1:9080`.
 - `webassets/` — shared CSS (`webassets/style/`) and JS (`webassets/js/`) for components/layouts; copied into `target/web` at build time.
@@ -73,6 +74,10 @@ The gallery has **no real backend**. Flow:
 3. htmx swaps the returned fragment into `.main-content`; `htmx:afterSettle` re-runs highlight.js and re-inits page/scroll JS.
 
 So changing gallery content means editing the Rust in `examples/client/src/` (and rebuilding the WASM), not adding server routes. The server (`examples/server/src/main.rs`) only serves static files from `target/web`.
+
+### Client-side behavior in Rust
+
+The interactive client-side behavior (copy button, code-example expand/resize, action dispatch, page/scroll init) is implemented in Rust in `crates/web` (`wingy-hypertext-web`) via `web-sys`/`js-sys`, as a close port of the JavaScript modules under `webassets/js` (each Rust module mirrors one JS module). `main.js` wires the gallery up by calling thin `#[wasm_bindgen]` entry points re-exported from `examples/client/src/lib.rs` (e.g. `register_copy_action`, `listen_code_examples`, `init_page_element`) instead of importing the `webassets/js` modules; only third-party vendor scripts (htmx, highlight.js) and the htmx request interception (`client_patch.js`) stay on the JS side. The old `webassets/js` modules are retained as reference. The crate uses still-unstable web-sys Web Animations bindings, so the build needs `--cfg=web_sys_unstable_apis` — set workspace-wide in `.cargo/config.toml` and repeated in `Makefile.toml`'s `RUSTFLAGS` (which would otherwise override the config).
 
 ## Conventions
 

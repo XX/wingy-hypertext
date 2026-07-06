@@ -2,12 +2,6 @@ import init, * as wasm from "./dist/client.js";
 import highlight from "./vendor/highlight/highlight.js";
 import html from './vendor/highlight/languages/xml.js';
 import init_htmx_request_interception from './vendor/htmx/client_patch.js';
-import { register_copy_action } from './js/components/copy_button.js';
-import { init_scroll_to_anchor } from './js/components/head.js';
-import { init_code_examples, listen_code_examples } from './js/layouts/code_example.js';
-import { init_page_element } from './js/layouts/page.js';
-import { listen_click_actions } from './js/utils/action.js';
-import './js/utils/animate.js';
 
 await init();
 init_htmx_request_interception(wasm);
@@ -22,10 +16,7 @@ highlight.registerLanguage('html', html);
 htmx.process(root);
 
 reinit(root);
-register_copy_action();
-init_code_examples();
-listen_code_examples();
-listen_click_actions();
+wasm.init();
 
 document.body.addEventListener("htmx:afterSettle", function (event) {
     reinit(event.target);
@@ -33,8 +24,5 @@ document.body.addEventListener("htmx:afterSettle", function (event) {
 
 function reinit(root) {
     highlight.highlightAll();
-
-    const page = root.querySelector('.page');
-    init_page_element(page);
-    init_scroll_to_anchor();
+    wasm.reinit();
 }
