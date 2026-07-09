@@ -2,7 +2,9 @@ use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Renderable, rsx};
 use wingy_hypertext::appearance::Appearance::*;
 use wingy_hypertext::attributes::CommonAttributeSetters;
-use wingy_hypertext::class::{SIZE_EXTRA_LARGE, SIZE_EXTRA_SMALL, SIZE_LARGE, SIZE_MEDIUM, SIZE_SMALL, STACK};
+use wingy_hypertext::class::{
+    CALLOUT_ICON, CALLOUT_MESSAGE, SIZE_EXTRA_LARGE, SIZE_EXTRA_SMALL, SIZE_LARGE, SIZE_MEDIUM, SIZE_SMALL, STACK,
+};
 use wingy_hypertext::components::callout::Callout;
 use wingy_hypertext::components::head::Head;
 use wingy_hypertext::components::head::HeadLevel::*;
@@ -183,6 +185,42 @@ pub fn overview() -> impl Renderable {
                     </Callout>
                     <Callout class=SIZE_EXTRA_LARGE icon=(fontawesome::icon("circle-info"))>
                         "Extra-large callout for maximum emphasis."
+                    </Callout>
+                "#</code>
+            </CodeExampleSource>
+            <CodeExampleButton>"Code"</CodeExampleButton>
+        </CodeExample>
+
+        <Head level=H3 id="bare-body" anchor=true>
+            "Bare Body"
+        </Head>
+        <p>"Use the "<code>bare</code>
+            " attribute to take full control of the callout's body: children are rendered as is, without the "
+            <code>"callout-message"</code>
+            " container, so you can lay out the markup manually — including the icon."
+        </p>
+        <CodeExample>
+            <CodeExamplePreview resize=true>
+                <Callout variant=Success bare=true>
+                    <div class=CALLOUT_ICON>
+                        (fontawesome::icon("circle-check"))
+                    </div>
+                    <div class=CALLOUT_MESSAGE>
+                        <strong>"All checks have passed"</strong><br/>
+                        "This body markup is provided entirely by hand via children."
+                    </div>
+                </Callout>
+            </CodeExamplePreview>
+            <CodeExampleSource copy_button=true>
+                <code class="language-html">r#"
+                    <Callout variant=Success bare=true>
+                        <div class=CALLOUT_ICON>
+                            (fontawesome::icon("circle-check"))
+                        </div>
+                        <div class=CALLOUT_MESSAGE>
+                            <strong>"All checks have passed"</strong><br/>
+                            "This body markup is provided entirely by hand via children."
+                        </div>
                     </Callout>
                 "#</code>
             </CodeExampleSource>

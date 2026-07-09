@@ -107,3 +107,30 @@
   explicitly». Тест bare теперь проверяет, что с bare=true icon="*" контейнер иконки присутствует, а обёртки сообщения нет.
 
   Все проверки прошли: fmt, clippy (-D warnings), 31 тест.
+
+---
+
+Добавь в examples/client для Callout ещё один пример, в котором используется bare prop и внутренняя разметка компонента задаётся явно вручную (включая иконку).
+
+---
+
+● Добавил в галерею раздел Bare Body (между «Size» и «Without an Icon» в examples/client/src/components/callout.rs). В примере тело компонента задаётся полностью вручную через children с флагом bare, включая
+  иконку:
+
+  <Callout variant=Success bare=true>
+      <div class=CALLOUT_ICON>
+          (fontawesome::icon("circle-check"))
+      </div>
+      <div class=CALLOUT_MESSAGE>
+          <strong>"All checks have passed"</strong><br/>
+          "This body markup is provided entirely by hand via children."
+      </div>
+  </Callout>
+
+  Разметка использует константы CALLOUT_ICON/CALLOUT_MESSAGE из wingy_hypertext::class (по конвенции репозитория — без строковых литералов), поэтому визуально пример совпадает со стандартным рендером, но
+  демонстрирует ручную сборку тела. Раздел оформлен как остальные: превью с resize, исходник с кнопкой копирования и пояснительный текст про bare.
+
+  Проверки пройдены: fmt, clippy (-D warnings), 31 тест, WASM-клиент собран (cargo make client).
+
+---
+
