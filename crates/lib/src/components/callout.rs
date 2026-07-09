@@ -34,7 +34,7 @@ pub struct Callout<I: Renderable = (), R: Renderable = ()> {
 }
 
 // Manual impl: unlike the enum defaults (`Neutral`/`Accent`), a callout defaults
-// to the `brand` variant with a quiet fill and border, as in Web Awesome.
+// to the `brand` variant with a quiet fill and border.
 impl<I: Renderable, R: Renderable> Default for Callout<I, R> {
     fn default() -> Self {
         Self {

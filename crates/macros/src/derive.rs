@@ -136,6 +136,7 @@ pub fn props(input: DeriveInput) -> syn::Result<TokenStream> {
                         else {
                             return Err(Error::new_spanned(ty, "type param not found for `#[prop(convert)]`"));
                         };
+
                         let new_ty_ident = new_ty_param.ident.clone();
                         // The method must declare only the replaced param: the rest are already
                         // in scope from the surrounding impl block.

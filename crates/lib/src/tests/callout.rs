@@ -89,11 +89,10 @@ fn bare() {
     let callout = rsx! { <Callout bare=true><span>"Hello, world!"</span></Callout> };
     assert_eq!(callout.render().as_inner(), callout_markup);
 
-    // The explicitly set `icon` prop is rendered even with `bare`.
-    let callout_with_icon_markup = r#"<div class="callout brand filled-outlined"><div class="callout-icon">*</div><span>Hello, world!</span></div>"#;
+    let callout_markup = r#"<div class="callout brand filled-outlined"><div class="callout-icon">*</div><span>Hello, world!</span></div>"#;
 
     let callout = rsx! { <Callout bare=true icon="*"><span>"Hello, world!"</span></Callout> };
-    assert_eq!(callout.render().as_inner(), callout_with_icon_markup);
+    assert_eq!(callout.render().as_inner(), callout_markup);
 
     let callout = rsx! { <Callout bare=true/> };
     assert_eq!(

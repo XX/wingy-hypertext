@@ -191,6 +191,20 @@ pub fn overview() -> impl Renderable {
             <CodeExampleButton>"Code"</CodeExampleButton>
         </CodeExample>
 
+        <Head level=H3 id="without-icon" anchor=true>
+            "Without an Icon"
+        </Head>
+        <p>"Icons are optional. Omit the "<code>icon</code>" attribute for a text-only callout."</p>
+        <CodeExample>
+            <CodeExamplePreview resize=true>
+                <Callout variant=Brand>"All times are shown in your local timezone."</Callout>
+            </CodeExamplePreview>
+            <CodeExampleSource copy_button=true>
+                <code class="language-html">r#"<Callout variant=Brand>"All times are shown in your local timezone."</Callout>"#</code>
+            </CodeExampleSource>
+            <CodeExampleButton>"Code"</CodeExampleButton>
+        </CodeExample>
+
         <Head level=H3 id="bare-body" anchor=true>
             "Bare Body"
         </Head>
@@ -223,20 +237,6 @@ pub fn overview() -> impl Renderable {
                         </div>
                     </Callout>
                 "#</code>
-            </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
-        </CodeExample>
-
-        <Head level=H3 id="without-icon" anchor=true>
-            "Without an Icon"
-        </Head>
-        <p>"Icons are optional. Omit the "<code>icon</code>" attribute for a text-only callout."</p>
-        <CodeExample>
-            <CodeExamplePreview resize=true>
-                <Callout variant=Brand>"All times are shown in your local timezone."</Callout>
-            </CodeExamplePreview>
-            <CodeExampleSource copy_button=true>
-                <code class="language-html">r#"<Callout variant=Brand>"All times are shown in your local timezone."</Callout>"#</code>
             </CodeExampleSource>
             <CodeExampleButton>"Code"</CodeExampleButton>
         </CodeExample>
