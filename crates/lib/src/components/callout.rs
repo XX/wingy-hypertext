@@ -18,6 +18,10 @@ pub struct Callout<I: Renderable = (), R: Renderable = ()> {
     #[prop(impl_from)]
     pub appearance: Appearance,
 
+    /// Render `children` as the whole body markup: no icon/message containers
+    /// are emitted, and the `icon` prop is ignored.
+    pub bare: bool,
+
     #[as_ref]
     #[as_mut]
     pub attrs: CommonAttrs,
@@ -36,6 +40,7 @@ impl<I: Renderable, R: Renderable> Default for Callout<I, R> {
         Self {
             variant: Variant::Brand,
             appearance: Appearance::FilledOutlined,
+            bare: false,
             attrs: CommonAttrs::default(),
             icon: None,
             children: None,
@@ -51,12 +56,16 @@ impl<I: Renderable, R: Renderable> Renderable for Callout<I, R> {
 
         rsx! {
             <div id=[id] class=[&class_line] style=[&style_line]>
-                @if let Some(icon) = &self.icon {
-                    <div class=CALLOUT_ICON>(icon)</div>
-                }
-                <div class=CALLOUT_MESSAGE>
+                @if self.bare {
                     (self.children)
-                </div>
+                } @else {
+                    @if let Some(icon) = &self.icon {
+                        <div class=CALLOUT_ICON>(icon)</div>
+                    }
+                    <div class=CALLOUT_MESSAGE>
+                        (self.children)
+                    </div>
+                }
             </div>
         }
         .render_to(buffer);

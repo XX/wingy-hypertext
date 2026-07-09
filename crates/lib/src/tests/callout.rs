@@ -1,3 +1,4 @@
+use hypertext::prelude::hypertext_elements;
 use hypertext::{RenderableExt, rsx};
 
 use crate::appearance::Appearance::*;
@@ -74,6 +75,29 @@ fn icon() {
 
     let callout = rsx! { <Callout icon="*">"Hello, world!"</Callout> };
     assert_eq!(callout.render().as_inner(), callout_markup);
+}
+
+#[test]
+fn bare() {
+    let callout_markup = r#"<div class="callout brand filled-outlined"><span>Hello, world!</span></div>"#;
+
+    let callout = Callout::builder().bare(true).children(rsx! {
+        <span>"Hello, world!"</span>
+    });
+    assert_eq!(callout.render().as_inner(), callout_markup);
+
+    let callout = rsx! { <Callout bare=true><span>"Hello, world!"</span></Callout> };
+    assert_eq!(callout.render().as_inner(), callout_markup);
+
+    // With `bare` the `icon` prop is ignored.
+    let callout = rsx! { <Callout bare=true icon="*"><span>"Hello, world!"</span></Callout> };
+    assert_eq!(callout.render().as_inner(), callout_markup);
+
+    let callout = rsx! { <Callout bare=true/> };
+    assert_eq!(
+        callout.render().as_inner(),
+        r#"<div class="callout brand filled-outlined"></div>"#
+    );
 }
 
 #[test]
