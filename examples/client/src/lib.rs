@@ -49,6 +49,7 @@ fn main_section(route_path: &str) -> impl Renderable {
         @match path {
             "badge" => (components::badge::overview()),
             "button" => (components::button::overview()),
+            "callout" => (components::callout::overview()),
             "copy-button" => (components::copy_button::overview()),
             "input" => (components::input::overview()),
             _ => {},
@@ -102,6 +103,16 @@ pub fn render_root(url_path: &str) -> String {
                             hx-push-url="true"
                         >
                             <span>"Button"</span>
+                        </a>
+                        <a
+                            class=FLANK
+                            href="/callout"
+                            hx-get="/callout"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Callout"</span>
                         </a>
                         <a
                             class=FLANK
