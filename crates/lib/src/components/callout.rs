@@ -18,8 +18,8 @@ pub struct Callout<I: Renderable = (), R: Renderable = ()> {
     #[prop(impl_from)]
     pub appearance: Appearance,
 
-    /// Render `children` as the whole body markup: no icon/message containers
-    /// are emitted, and the `icon` prop is ignored.
+    /// Render `children` as the body markup as is, without the message container.
+    /// The icon container is still emitted when the `icon` prop is set explicitly.
     pub bare: bool,
 
     #[as_ref]
@@ -56,12 +56,12 @@ impl<I: Renderable, R: Renderable> Renderable for Callout<I, R> {
 
         rsx! {
             <div id=[id] class=[&class_line] style=[&style_line]>
+                @if let Some(icon) = &self.icon {
+                    <div class=CALLOUT_ICON>(icon)</div>
+                }
                 @if self.bare {
                     (self.children)
                 } @else {
-                    @if let Some(icon) = &self.icon {
-                        <div class=CALLOUT_ICON>(icon)</div>
-                    }
                     <div class=CALLOUT_MESSAGE>
                         (self.children)
                     </div>
