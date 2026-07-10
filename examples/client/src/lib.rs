@@ -12,6 +12,7 @@ use wingy_hypertext::layouts::page::{Page, PageBody, PageMenu};
 use wingy_hypertext::link::LinkSetters;
 use wingy_hypertext::link::Target::*;
 use wingy_hypertext::variant::Variant::*;
+use wingy_hypertext_web::components::callout::listen_close_callout;
 use wingy_hypertext_web::{
     init_code_examples, init_page_element, init_scroll_to_anchor, listen_click_actions, listen_code_examples,
     register_copy_action,
@@ -27,6 +28,7 @@ pub fn init() {
     init_code_examples();
     listen_code_examples();
     listen_click_actions();
+    listen_close_callout();
 }
 
 /// Re-initialization run after every htmx settle.
@@ -49,6 +51,7 @@ fn main_section(route_path: &str) -> impl Renderable {
         @match path {
             "badge" => (components::badge::overview()),
             "button" => (components::button::overview()),
+            "callout" => (components::callout::overview()),
             "copy-button" => (components::copy_button::overview()),
             "input" => (components::input::overview()),
             _ => {},
@@ -102,6 +105,16 @@ pub fn render_root(url_path: &str) -> String {
                             hx-push-url="true"
                         >
                             <span>"Button"</span>
+                        </a>
+                        <a
+                            class=FLANK
+                            href="/callout"
+                            hx-get="/callout"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Callout"</span>
                         </a>
                         <a
                             class=FLANK

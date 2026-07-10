@@ -136,8 +136,18 @@ pub fn props(input: DeriveInput) -> syn::Result<TokenStream> {
                         else {
                             return Err(Error::new_spanned(ty, "type param not found for `#[prop(convert)]`"));
                         };
-                        let new_ty_ident = &new_ty_param.ident;
-                        let (impl_generics, new_ty_generics, where_clause) = generics.split_for_impl();
+
+                        let new_ty_ident = new_ty_param.ident.clone();
+                        // The method must declare only the replaced param: the rest are already
+                        // in scope from the surrounding impl block.
+                        let method_generics = Generics {
+                            lt_token: Some(Default::default()),
+                            params: [GenericParam::Type(new_ty_param)].into_iter().collect(),
+                            gt_token: Some(Default::default()),
+                            where_clause: None,
+                        };
+                        let (impl_generics, ..) = method_generics.split_for_impl();
+                        let (_, new_ty_generics, where_clause) = generics.split_for_impl();
 
                         let fields = data_struct.fields.iter().filter_map(|field| {
                             field.ident.as_ref().map(|ident| {
