@@ -245,7 +245,14 @@ pub fn overview() -> impl Renderable {
         <Head level=H3 id="close-button" anchor=true>
             "With close button"
         </Head>
-        <p>
+        <p>"A callout has no built-in close behavior, but you can place a close "
+            <code>Button</code>" with the "<code>close</code>
+            " class anywhere inside its content. The click on the button must be handled explicitly: either call the ready-made "
+            <code>"wingy_hypertext_web::components::callout::listen_close_callout"</code>
+            " once at startup (as this page does in "<code>"init()"</code>
+            ") — it listens for clicks on a "<code>close</code>
+            " element and removes the closest "<code>callout</code>
+            " from the DOM — or register your own handler manually."
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
