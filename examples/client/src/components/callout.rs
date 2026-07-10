@@ -242,17 +242,24 @@ pub fn overview() -> impl Renderable {
             <CodeExampleButton>"Code"</CodeExampleButton>
         </CodeExample>
 
-        <Head level=H3 id="close-button" anchor=true>
+        <Head level=H3 id="with-close-button" anchor=true>
             "With close button"
         </Head>
         <p>"A callout has no built-in close behavior, but you can place a close "
             <code>Button</code>" with the "<code>close</code>
             " class anywhere inside its content. The click on the button must be handled explicitly: either call the ready-made "
             <code>"wingy_hypertext_web::components::callout::listen_close_callout"</code>
-            " once at startup (as this page does in "<code>"init()"</code>
-            ") — it listens for clicks on a "<code>close</code>
-            " element and removes the closest "<code>callout</code>
-            " from the DOM — or register your own handler manually."
+            " once at startup — it listens for clicks on a "<code>close</code>" element and removes the closest "
+            <code>callout</code>" from the DOM — or register your own handler manually:"
+            <pre>
+                <code class="language-rust">r#"
+                    let document = wasm_dom::existing::document();
+
+                    document.add_steady_event_listener("click", |event| {
+                        handle_close_callout(&event);
+                    });
+                "#</code>
+            </pre>
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
