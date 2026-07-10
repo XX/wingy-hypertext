@@ -41,6 +41,19 @@
     color: currentColor;
 }
 
+/* A plain button (e.g. a close button) hovered inside a callout gets the same
+ * quiet fill the callout itself is painted with, so the hover state is invisible
+ * on filled/filled-outlined callouts. Mix it further, like filled buttons do. */
+@media (hover: hover) {
+  .callout .button.plain:not(.disabled):not(.loading):hover {
+    background-color: color-mix(
+      in oklab,
+      var(--wa-color-fill-quiet, var(--wa-color-brand-fill-quiet)),
+      var(--wa-color-mix-hover)
+    );
+  }
+}
+
 @scope (.callout) {
     .callout-icon {
         flex: 0 0 auto;
