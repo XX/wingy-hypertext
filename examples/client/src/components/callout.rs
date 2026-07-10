@@ -263,25 +263,58 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Callout variant=Danger icon=(fontawesome::icon("circle-exclamation"))>
-                    <div class="wa-flank:end wa-align-items-start">
-                        <div>
-                            <strong>"This action can't be undone"</strong><br/>
-                            "Deleting a project removes it for everyone on the team."
+                <div class=STACK>
+                    <Callout variant=Success icon=(fontawesome::icon("circle-check"))>
+                        <div class="wa-flank:end wa-align-items-start">
+                            <div>
+                                <strong>"All checks have passed"</strong><br/>
+                                "This body markup is provided entirely by hand via children."
+                            </div>
+                            <div>
+                                <Button class="close" class=SIZE_SMALL appearance=Plain variant=Success pill=true>
+                                    <span class=ICON>
+                                        (fontawesome::icon("xmark"))
+                                    </span>
+                                </Button>
+                            </div>
                         </div>
-                        <div>
-                            <Button class="close" class=SIZE_SMALL appearance=Plain variant=Danger pill=true>
-                                <span class=ICON>
-                                    (fontawesome::icon("xmark"))
-                                </span>
-                            </Button>
+                    </Callout>
+                    <Callout variant=Danger appearance=Accent icon=(fontawesome::icon("circle-exclamation"))>
+                        <div class="wa-flank:end wa-align-items-start">
+                            <div>
+                                <strong>"This action can't be undone"</strong><br/>
+                                "Deleting a project removes it for everyone on the team."
+                            </div>
+                            <div>
+                                <Button class="close" class=SIZE_SMALL appearance=Plain variant=Danger pill=true>
+                                    <span class=ICON>
+                                        (fontawesome::icon("xmark"))
+                                    </span>
+                                </Button>
+                            </div>
                         </div>
-                    </div>
-                </Callout>
+                    </Callout>
+                </div>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Callout variant=Danger icon=(fontawesome::icon("circle-exclamation"))>
+                    <Callout variant=Success icon=(fontawesome::icon("circle-check"))>
+                        <div class="wa-flank:end wa-align-items-start">
+                            <div>
+                                <strong>"All checks have passed"</strong><br/>
+                                "This body markup is provided entirely by hand via children."
+                            </div>
+                            <div>
+                                <Button class="close" class=SIZE_SMALL appearance=Plain variant=Success pill=true>
+                                    <span class=ICON>
+                                        (fontawesome::icon("xmark"))
+                                    </span>
+                                </Button>
+                            </div>
+                        </div>
+                    </Callout>
+                    
+                    <Callout variant=Danger appearance=Accent icon=(fontawesome::icon("circle-exclamation"))>
                         <div class="wa-flank:end wa-align-items-start">
                             <div>
                                 <strong>"This action can't be undone"</strong><br/>

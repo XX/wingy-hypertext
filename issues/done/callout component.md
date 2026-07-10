@@ -152,3 +152,38 @@
   - либо зарегистрировать собственный обработчик вручную.
 
   Проверки пройдены: fmt, clippy (-D warnings), 31 тест, WASM-клиент пересобран (cargo make client).
+
+---
+
+В примере Callout с кнопкой закрытия (with close button) в examples/client при наведении на xmark icon button в danger callout бэкграунд кнопки закрытия не меняется. Почему это происходит? И как сделать так, чтобы бэкграунд немного менялся для того, чтобы пользователь видел, что курсор уже над кнопкой (как меняется в примере plain icon button в разделе button examples/client)?
+
+---
+
+● Разберусь: у plain-кнопки hover-фон — это --wa-color-fill-quiet, а фон самого callout (filled-outlined) — та же переменная. Проверю правило hover в button.css и переменные вариантов:
+● Диагноз подтверждён. Добавляю правило в callout.css, чтобы hover plain-кнопки внутри callout отличался от его фона:
+● Почему фон «не меняется». На самом деле hover-правило срабатывает, просто новый фон совпадает со старым. Цепочка такая:
+
+  1. У plain-кнопки hover-фон — var(--wa-color-fill-quiet) (правило .button.plain:hover в button.css).
+  2. Класс варианта (danger на кнопке и на самом callout) через variants.css задаёт --wa-color-fill-quiet: var(--wa-color-danger-fill-quiet).
+  3. Callout в примере — danger с дефолтным appearance filled-outlined, то есть его собственный фон — тот же var(--wa-color-fill-quiet).
+
+  Итог: при наведении кнопка закрашивается ровно тем же danger-fill-quiet, на котором и так лежит, — визуально ничего не происходит. В разделе Button тот же plain icon button стоит на белой поверхности
+  страницы, поэтому там заливка fill-quiet видна. Это, кстати, не наше расхождение с Web Awesome — upstream-кнопка ведёт себя так же; просто паттерн «кнопка внутри callout» там не встречается.
+
+  Исправление. В webassets/style/components/callout.css добавил правило: plain-кнопка внутри callout при hover домешивает к fill-quiet токен --wa-color-mix-hover — так же, как это делают filled-кнопки, у
+  которых hover-цвет обязан отличаться от их собственного фона:
+
+  @media (hover: hover) {
+    .callout .button.plain:not(.disabled):not(.loading):hover {
+      background-color: color-mix(in oklab,
+        var(--wa-color-fill-quiet, var(--wa-color-brand-fill-quiet)),
+        var(--wa-color-mix-hover));
+    }
+  }
+
+  Специфичность у правила выше, чем у базового hover в button.css, так что оно надёжно перекрывает его для любых plain-кнопок в любых callout (в plain/outlined callout с прозрачным фоном такой hover тоже
+  остаётся видимым). Состояние :active не трогал — оно и так использует --wa-color-mix-active и отличается от фона. Статика пересобрана, правило в target/web на месте.
+
+---
+
+Доработал руками
