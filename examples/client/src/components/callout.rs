@@ -3,8 +3,9 @@ use hypertext::{Renderable, rsx};
 use wingy_hypertext::appearance::Appearance::*;
 use wingy_hypertext::attributes::CommonAttributeSetters;
 use wingy_hypertext::class::{
-    CALLOUT_ICON, CALLOUT_MESSAGE, SIZE_EXTRA_LARGE, SIZE_EXTRA_SMALL, SIZE_LARGE, SIZE_MEDIUM, SIZE_SMALL, STACK,
+    CALLOUT_ICON, CALLOUT_MESSAGE, ICON, SIZE_EXTRA_LARGE, SIZE_EXTRA_SMALL, SIZE_LARGE, SIZE_MEDIUM, SIZE_SMALL, STACK,
 };
+use wingy_hypertext::components::button::Button;
 use wingy_hypertext::components::callout::Callout;
 use wingy_hypertext::components::head::Head;
 use wingy_hypertext::components::head::HeadLevel::*;
@@ -234,6 +235,51 @@ pub fn overview() -> impl Renderable {
                         <div class=CALLOUT_MESSAGE>
                             <strong>"All checks have passed"</strong><br/>
                             "This body markup is provided entirely by hand via children."
+                        </div>
+                    </Callout>
+                "#</code>
+            </CodeExampleSource>
+            <CodeExampleButton>"Code"</CodeExampleButton>
+        </CodeExample>
+
+        <Head level=H3 id="close-button" anchor=true>
+            "With close button"
+        </Head>
+        <p>
+        </p>
+        <CodeExample>
+            <CodeExamplePreview resize=true>
+                <Callout variant=Danger icon=(fontawesome::icon("circle-exclamation"))>
+                    <div class="wa-flank:end wa-align-items-start">
+                        <div>
+                            <strong>"This action can't be undone"</strong><br/>
+                            "Deleting a project removes it for everyone on the team."
+                        </div>
+                        <div>
+                            <Button class="close" class=SIZE_SMALL appearance=Plain variant=Danger pill=true>
+                                <span class=ICON>
+                                    (fontawesome::icon("xmark"))
+                                </span>
+                            </Button>
+                        </div>
+                    </div>
+                </Callout>
+            </CodeExamplePreview>
+            <CodeExampleSource copy_button=true>
+                <code class="language-html">r#"
+                    <Callout variant=Danger icon=(fontawesome::icon("circle-exclamation"))>
+                        <div class="wa-flank:end wa-align-items-start">
+                            <div>
+                                <strong>"This action can't be undone"</strong><br/>
+                                "Deleting a project removes it for everyone on the team."
+                            </div>
+                            <div>
+                                <Button class="close" class=SIZE_SMALL appearance=Plain variant=Danger pill=true>
+                                    <span class=ICON>
+                                        (fontawesome::icon("xmark"))
+                                    </span>
+                                </Button>
+                            </div>
                         </div>
                     </Callout>
                 "#</code>
