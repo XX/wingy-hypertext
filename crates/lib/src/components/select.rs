@@ -140,11 +140,11 @@ impl<R: Renderable> Renderable for Select<R> {
                         />
                         @if self.with_clear {
                             <button class=CLEAR_BUTTON type="button" tabindex="-1" aria-label="Clear entry" hidden>
-                                // Circle-xmark icon
+                                // Circle-xmark regular icon
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                    // !Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com
+                                    // !Font Awesome Free v7.3.0 by @fontawesome - https://fontawesome.com
                                     // License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.
-                                    <path fill="currentColor" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z"/>
+                                    <path fill="currentColor"  d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464a256 256 0 1 0 0-512 256 256 0 1 0 0 512zM167 167c-9.4 9.4-9.4 24.6 0 33.9l55 55-55 55c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l55-55 55 55c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-55-55 55-55c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-55 55-55-55c-9.4-9.4-24.6-9.4-33.9 0z"/>
                                 </svg>
                             </button>
                         }

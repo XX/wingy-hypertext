@@ -314,7 +314,7 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Select label="Favorite Animals" multiple=true>
+                <Select label="Favorite Animals" multiple=true with_clear=true>
                     <SelectOption value="birds" selected=true>"Birds"</SelectOption>
                     <SelectOption value="cats">"Cats"</SelectOption>
                     <SelectOption value="dogs" selected=true>"Dogs"</SelectOption>
@@ -323,7 +323,7 @@ pub fn overview() -> impl Renderable {
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Select label="Favorite Animals" multiple=true>
+                    <Select label="Favorite Animals" multiple=true with_clear=true>
                         <SelectOption value="birds" selected=true>"Birds"</SelectOption>
                         <SelectOption value="cats">"Cats"</SelectOption>
                         <SelectOption value="dogs" selected=true>"Dogs"</SelectOption>
