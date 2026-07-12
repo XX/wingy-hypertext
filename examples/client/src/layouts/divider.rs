@@ -7,7 +7,7 @@ use wingy_hypertext::components::head::Head;
 use wingy_hypertext::components::head::HeadLevel::*;
 use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
 use wingy_hypertext::layouts::divider::Divider;
-use wingy_hypertext::layouts::divider::Orientation::*;
+use wingy_hypertext::orientation::Orientation::*;
 
 use crate::fontawesome;
 
