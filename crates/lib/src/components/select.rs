@@ -5,6 +5,7 @@ use hypertext::prelude::{
     AriaAttributes, GlobalAttributes, SvgGlobalAttributes, hypertext_elements, hypertext_svg_elements,
 };
 use hypertext::{Buffer, Renderable, rsx};
+use strum::{AsRefStr, IntoStaticStr};
 use wingy_hypertext_macros::{Props, const_str};
 
 use crate::appearance::Appearance;
@@ -13,6 +14,16 @@ use crate::class::{
     CHECK, CLEAR_BUTTON, COMBOBOX, DISABLED, DISPLAY_INPUT, EXPAND_ICON, HINT, LABEL, LISTBOX, MULTIPLE, OPTION,
     OPTION_LABEL, PILL, POPUP, POPUP_BODY, REQUIRED, SELECT, SELECT_POPUP, SELECTED, VALUE_INPUT,
 };
+
+/// The preferred placement of the select's menu. The actual placement may
+/// flip to keep the listbox in the viewport.
+#[derive(Copy, Clone, Debug, Default, IntoStaticStr, AsRefStr, PartialEq, Eq)]
+#[strum(const_into_str, serialize_all = "kebab-case")]
+pub enum SelectPlacement {
+    #[default]
+    Bottom,
+    Top,
+}
 
 /// A dropdown control mirroring Web Awesome's `wa-select`: a combobox with a
 /// display input and a listbox of [`SelectOption`] children. The interactive
@@ -25,6 +36,8 @@ use crate::class::{
 pub struct Select<R: Renderable = ()> {
     #[prop(impl_from)]
     pub appearance: Appearance,
+
+    pub placement: SelectPlacement,
 
     pub pill: bool,
 
@@ -80,7 +93,7 @@ impl<R: Renderable> Renderable for Select<R> {
                 }
                 <div
                     class=(SELECT_POPUP, " ", POPUP)
-                    data-placement="bottom"
+                    data-placement=(self.placement.into_str())
                     data-flip
                     data-shift
                     data-sync="width"

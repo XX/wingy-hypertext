@@ -108,6 +108,10 @@
   width: 100%;
   font: inherit;
   border: none;
+  /* Kill the native input focus ring entirely (not just on :focus): switching
+   * back to the transitioned transparent outline from native.css on blur
+   * would flash a currentColor ring for a moment. */
+  outline: none;
   background: none;
   line-height: var(--wa-form-control-value-line-height);
   color: var(--wa-form-control-value-color);
@@ -116,10 +120,6 @@
   padding: 0;
   margin: 0;
   -webkit-appearance: none;
-}
-
-.select .display-input:focus {
-  outline: none;
 }
 
 .select .display-input::placeholder {
@@ -139,6 +139,7 @@
   padding: 0;
   margin: 0;
   border: none;
+  outline: none;
 }
 
 /* Clear button */
@@ -219,6 +220,20 @@
 
 .select .select-popup[data-current-placement^='top'] .listbox {
   transform-origin: bottom;
+}
+
+/* Grouping: dividers and small group labels inside the listbox */
+.select .listbox .divider {
+  --spacing: 0.5em;
+}
+
+.select .listbox small {
+  display: block;
+  font-size: var(--wa-font-size-smaller);
+  font-weight: var(--wa-font-weight-semibold);
+  color: var(--wa-color-text-quiet);
+  padding-block: 0.5em;
+  padding-inline: 2.25em;
 }
 
 .select .listbox.show {

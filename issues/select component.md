@@ -112,3 +112,60 @@
 ---
 
 Реализуй созданную задачу
+
+---
+
+Проверь корректность переноса компонента Select и реализации примеров из документации wa-select, с учётом обновлений в компонентах Popup, Select, Input, Switch и других.
+
+---
+
+● Задача ревизионная. Сначала соберу текущее состояние (компоненты обновлялись параллельно) — lib/web/CSS/галерея Select:
+● Ревизия завершена, найденные расхождения исправлены. Все проверки прошли: fmt, clippy (-D warnings), 55 тестов, WASM-клиент собран.
+
+  Что проверял и что оказалось корректным. Сверил crates/web/components/select.rs с обработчиками select.ts (mousedown/клик по опции/clear/label, Escape/Enter/Space/стрелки/Home/End/type-to-select с таймаутом,
+  focusin-закрытие, форматы «N options selected»), интеграцию с Popup (порядок «снять hidden → активировать попап → мерить», деактивация после hide-анимации, конфигурация flip shift sync=width 
+  auto-size=vertical padding=10 — байт-в-байт как у wa-select), разметку и ARIA, CSS листбокса/комбобокса. Обновления Switch/Divider/Input конфликтов с Select не внесли.
+
+  Найденные расхождения — исправлены:
+
+  1. Нет пропа placement — у wa-select есть placement: 'top' | 'bottom' (default bottom), прокидываемый в popup; наш Select жёстко рендерил data-placement="bottom". Добавил enum SelectPlacement { Bottom 
+  (default), Top } и проп placement (+ тест).
+  2. Фокус после клика по опции в multiple — WA всегда возвращает фокус на display-input после pointer-выбора (handleOptionClick, строка 589), у нас — только в single. Исправил в handle_option_click (для
+  клавиатурного выбора фокус остаётся на опции — тоже как в WA).
+  3. Guard на clear-button в keydown — WA игнорирует нажатия, когда таргет — кнопка очистки (handleDocumentKeyDown, строки 383–389); добавил.
+  4. Не было стилей группировки — порт ::slotted(wa-divider) { --spacing: 0.5em } и стилей small-заголовков из select.styles.ts в select.css (наш Divider использует ту же переменную --spacing).
+
+  Примеры из доки wa-select. Было покрыто: базовый, Label, Hint, Placeholder, Clearable, Appearance, Pill, Size, Disabled, Initial Value, Multiple. Добавил ставшие реализуемыми:
+  - Grouping Options — Divider + <small> заголовки внутри Select (один в один пример из доки, включая оговорку про скринридеры);
+  - Placement — placement=Top с примечанием про flip.
+
+  Осталось непокрытым осознанно (требует того, чего нет в light-DOM-порте): Start & End Decorations (слоты в комбобоксе — потребует двух дополнительных generic-слотов у Select; реализуемо, но это расширение
+  API, а не исправление), Custom Tags и Lazy Loading Options (переопределение рендера тегов и динамическая подгрузка — JS-паттерны поверх wa-select, не сам компонент). Если Start/End нужны — скажите, добавлю
+  отдельно.
+
+---
+
+Заметил баг: при снятии фокуса с элемента после выбора опции в поле самого select промеликивает чёрная линия слева и справа, как будто некоторая рамка обводки поля ввода чёрного цвета, которая по ширине меньше самого элемента, на долю секунды становится видна внутри него и пропадает.
+
+---
+
+● Разберу симптом: чёрная рамка ýже комбобокса, видна слева/справа, мигает при потере фокуса — это похоже на outline внутреннего display-input, возвращающийся из outline: none (цвет = currentColor, почти
+  чёрный) с transition в transparent. Проверю взаимодействие с глобальными стилями native.css:
+
+● Баг исправлен. Причина была не в логике, а в каскаде CSS:
+  
+  Механизм. Глобальный native.css даёт всем текстовым <input> (наши display-input/value-input в light DOM под него попадают, в отличие от shadow DOM у WA) базовый outline: <style> <width> transparent с
+  transition: outline-color. Наш select.css глушил outline только в состоянии :focus через outline: none — а этот шортхенд сбрасывает outline-color в initial-значение currentColor (почти чёрный). В момент
+  потери фокуса правило :focus переставало действовать, возвращался базовый outline из native.css: стиль solid применялся мгновенно, а outline-color плавно анимировался от прежнего computed-значения 
+  (currentColor = чёрный) к transparent. Сверху и снизу кольцо срезал overflow: hidden комбобокса (input почти на всю его высоту), поэтому видны были только вертикальные чёрные чёрточки слева и справа — ровно
+  то, что вы описали.
+  
+  Исправление (webassets/style/components/select.css):
+  - outline: none перенесён из :focus-правила в базовое правило .select .display-input (с комментарием, почему именно так) — теперь у внутреннего инпута нативного фокус-кольца нет ни в каком состоянии, и
+  анимировать при блюре нечего. Отдельное :focus-правило удалено за ненадобностью.
+  - То же добавлено скрытому .select .value-input — он невидим (opacity: 0), но подвержен той же механике.
+  
+  Видимое поведение фокуса не изменилось: кольцо фокуса, как и раньше (и как в WA), рисуется на самом комбобоксе через .select:focus-within .combobox { outline-color: var(--wa-color-focus) }. Именно так уже
+  сделано у Input (outline: none в базовом правиле .control) — поэтому там этого мерцания не было.
+  
+  Статика пересобрана, фикс в target/web проверен.

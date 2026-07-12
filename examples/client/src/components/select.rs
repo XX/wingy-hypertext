@@ -5,8 +5,10 @@ use wingy_hypertext::attributes::CommonAttributeSetters;
 use wingy_hypertext::class::{SIZE_EXTRA_SMALL, SIZE_LARGE, SIZE_MEDIUM, SIZE_SMALL, STACK};
 use wingy_hypertext::components::head::Head;
 use wingy_hypertext::components::head::HeadLevel::*;
+use wingy_hypertext::components::select::SelectPlacement::Top;
 use wingy_hypertext::components::select::{Select, SelectOption};
 use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
+use wingy_hypertext::layouts::divider::Divider;
 
 pub fn overview() -> impl Renderable {
     rsx! {
@@ -323,6 +325,70 @@ pub fn overview() -> impl Renderable {
                         <SelectOption value="cats">"Cats"</SelectOption>
                         <SelectOption value="dogs" selected=true>"Dogs"</SelectOption>
                         <SelectOption value="other">"Other"</SelectOption>
+                    </Select>
+                "#</code>
+            </CodeExampleSource>
+            <CodeExampleButton>"Code"</CodeExampleButton>
+        </CodeExample>
+
+        <Head level=H3 id="grouping-options" anchor=true>
+            "Grouping Options"
+        </Head>
+        <p>"Use a "<code>Divider</code>" to separate groups of options visually. You can also add "
+            <code>small</code>
+            " labels, but note that most assistive technologies won't announce them."
+        </p>
+        <CodeExample>
+            <CodeExamplePreview resize=true>
+                <Select label="Add a language" placeholder="Select one">
+                    <small>"Frontend"</small>
+                    <SelectOption value="ts">"TypeScript"</SelectOption>
+                    <SelectOption value="css">"CSS"</SelectOption>
+                    <Divider/>
+                    <small>"Backend"</small>
+                    <SelectOption value="go">"Go"</SelectOption>
+                    <SelectOption value="rust">"Rust"</SelectOption>
+                    <SelectOption value="python">"Python"</SelectOption>
+                </Select>
+            </CodeExamplePreview>
+            <CodeExampleSource copy_button=true>
+                <code class="language-html">r#"
+                    <Select label="Add a language" placeholder="Select one">
+                        <small>"Frontend"</small>
+                        <SelectOption value="ts">"TypeScript"</SelectOption>
+                        <SelectOption value="css">"CSS"</SelectOption>
+                        <Divider/>
+                        <small>"Backend"</small>
+                        <SelectOption value="go">"Go"</SelectOption>
+                        <SelectOption value="rust">"Rust"</SelectOption>
+                        <SelectOption value="python">"Python"</SelectOption>
+                    </Select>
+                "#</code>
+            </CodeExampleSource>
+            <CodeExampleButton>"Code"</CodeExampleButton>
+        </CodeExample>
+
+        <Head level=H3 id="placement" anchor=true>
+            "Placement"
+        </Head>
+        <p>"Set the "<code>placement</code>" attribute to control where the listbox opens: "
+            <code>Bottom</code>" (default) or "<code>Top</code>
+            ". The actual position may flip to keep the panel in the viewport."
+        </p>
+        <CodeExample>
+            <CodeExamplePreview resize=true>
+                <Select placement=Top placeholder="Opens upward">
+                    <SelectOption value="option-1">"Option 1"</SelectOption>
+                    <SelectOption value="option-2">"Option 2"</SelectOption>
+                    <SelectOption value="option-3">"Option 3"</SelectOption>
+                </Select>
+            </CodeExamplePreview>
+            <CodeExampleSource copy_button=true>
+                <code class="language-html">r#"
+                    <Select placement=Top placeholder="Opens upward">
+                        <SelectOption value="option-1">"Option 1"</SelectOption>
+                        <SelectOption value="option-2">"Option 2"</SelectOption>
+                        <SelectOption value="option-3">"Option 3"</SelectOption>
                     </Select>
                 "#</code>
             </CodeExampleSource>

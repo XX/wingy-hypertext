@@ -289,6 +289,15 @@ fn handle_option_click(event: &Event) -> Option<()> {
 
     if !option.class_list().contains("disabled") {
         select_option(&select, &option);
+
+        // A pointer selection always returns focus to the display input; with
+        // `multiple` the listbox stays open (keyboard selection keeps the
+        // focus on the current option instead).
+        if is_multiple(&select)
+            && let Some(display) = display_input(&select)
+        {
+            display.focus().ok();
+        }
     }
     Some(())
 }
@@ -338,6 +347,11 @@ fn handle_select_keydown(event: &Event) -> Option<()> {
     let keyboard: &KeyboardEvent = event.dyn_ref()?;
     let target = event.target()?.maybe_into_element()?;
     let select = target.closest(".select").ok()??;
+
+    // Ignore presses when the target is the clear button
+    if target.closest(".clear-button").ok()?.is_some() {
+        return None;
+    }
 
     if is_disabled(&select) {
         return None;

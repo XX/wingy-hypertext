@@ -102,6 +102,15 @@ fn states() {
 }
 
 #[test]
+fn placement() {
+    let select = Select::builder().placement(crate::components::select::SelectPlacement::Top);
+    let markup = select.render();
+    let markup = markup.as_inner();
+
+    assert!(markup.contains(r#"data-placement="top""#));
+}
+
+#[test]
 fn with_clear() {
     let select = Select::builder().with_clear(true);
     let markup = select.render();
