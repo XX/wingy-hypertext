@@ -61,12 +61,18 @@ fn states() {
         r#"<div class="switch disabled"><label><input class="control" type="checkbox" role="switch" disabled="true">{TRACK_MARKUP}<span class="label"></span></label></div>"#
     );
 
+    let switch = Switch::builder().disabled(true);
+    assert_eq!(switch.render().as_inner(), &switch_markup);
+
     let switch = rsx! { <Switch disabled=true/> };
     assert_eq!(switch.render().as_inner(), &switch_markup);
 
     let switch_markup = format!(
         r#"<div class="switch required"><label><input class="control" type="checkbox" role="switch" required="true">{TRACK_MARKUP}<span class="label"></span></label></div>"#
     );
+
+    let switch = Switch::builder().required(true);
+    assert_eq!(switch.render().as_inner(), &switch_markup);
 
     let switch = rsx! { <Switch required=true/> };
     assert_eq!(switch.render().as_inner(), &switch_markup);

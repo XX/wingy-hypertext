@@ -17,7 +17,6 @@ use crate::class::{CONTROL, DISABLED, HINT, LABEL, REQUIRED, SWITCH, THUMB, TRAC
 #[const_str(CLASS = SWITCH)]
 #[props(builder)]
 pub struct Switch<R: Renderable = ()> {
-    /// Draws the switch in a checked state (the control's initial value).
     pub checked: bool,
 
     pub disabled: bool,
