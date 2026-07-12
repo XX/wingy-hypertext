@@ -199,6 +199,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  /* The native button styles give every button the full form control height,
+   * which would stretch the combobox; size the button to its 1em icon. */
+  width: 1em;
+  height: 1em;
   font-size: inherit;
   color: var(--wa-color-neutral-on-quiet);
   border: none;
