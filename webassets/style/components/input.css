@@ -47,6 +47,10 @@
   width: 100%;
   background-color: var(--wa-form-control-background-color);
   padding: 0 var(--wa-form-control-padding-inline);
+  /* The base outline must stay transparent (not absent): the focus ring color
+   * is transitioned, and with no base outline it would animate from
+   * currentColor, flashing a dark ring at the focus moment. */
+  outline: var(--wa-focus-ring-style) var(--wa-focus-ring-width) transparent;
   outline-offset: var(--wa-focus-ring-offset);
   transition:
     background-color var(--wa-transition-normal),
@@ -56,7 +60,6 @@
 }
 
 .input .text-field:focus-within {
-  outline: var(--wa-focus-ring-style) var(--wa-focus-ring-width) transparent;
   outline-color: var(--wa-color-focus);
 }
 
@@ -109,8 +112,4 @@
   color: var(--wa-form-control-placeholder-color);
   user-select: none;
   -webkit-user-select: none;
-}
-
-.input .control:focus {
-  outline: none;
 }
