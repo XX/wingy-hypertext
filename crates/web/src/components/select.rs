@@ -1,0 +1,497 @@
+//! A Rust port of the `wa-select` behavior: opening/closing the listbox with
+//! animation, single and multiple selection, keyboard navigation with
+//! type-to-select, clearing, and closing on outside interaction. The state
+//! lives entirely in the DOM (classes and attributes), matching the markup
+//! produced by `wingy_hypertext::components::select`.
+
+use wasm_bindgen::JsCast;
+use wasm_bindgen_futures::spawn_local;
+use wasm_dom as dom;
+use wasm_dom::event::EventListener;
+use wasm_dom::existing::access::{CastToElement, CastToHtmlElement};
+use web_sys::{
+    Element, Event, EventInit, HtmlInputElement, KeyboardEvent, ScrollIntoViewOptions, ScrollLogicalPosition,
+};
+
+use crate::components::popup;
+use crate::utils::animate::animate_with_class;
+use crate::utils::convert::bool_to_str;
+
+/// How long the type-to-select buffer lives without new keystrokes.
+const TYPEAHEAD_TIMEOUT_MILLIS: f64 = 1000.0;
+
+fn display_input(select: &Element) -> Option<HtmlInputElement> {
+    select.query_selector(".display-input").ok()??.dyn_into().ok()
+}
+
+fn value_input(select: &Element) -> Option<HtmlInputElement> {
+    select.query_selector(".value-input").ok()??.dyn_into().ok()
+}
+
+fn listbox(select: &Element) -> Option<Element> {
+    select.query_selector(".listbox").ok()?
+}
+
+fn popup_host(select: &Element) -> Option<Element> {
+    select.query_selector(".select-popup").ok()?
+}
+
+fn clear_button(select: &Element) -> Option<Element> {
+    select.query_selector(".clear-button").ok()?
+}
+
+fn options(select: &Element) -> Vec<Element> {
+    let mut options = Vec::new();
+    if let Ok(list) = select.query_selector_all(".listbox .option") {
+        for i in 0..list.length() {
+            if let Some(option) = list.get(i).and_then(|node| node.maybe_into_element()) {
+                options.push(option);
+            }
+        }
+    }
+    options
+}
+
+fn current_option(select: &Element) -> Option<Element> {
+    select.query_selector(".option.current").ok()?
+}
+
+fn is_open(select: &Element) -> bool {
+    select.class_list().contains("open")
+}
+
+fn is_disabled(select: &Element) -> bool {
+    select.class_list().contains("disabled")
+}
+
+fn is_multiple(select: &Element) -> bool {
+    select.class_list().contains("multiple")
+}
+
+fn is_selected(option: &Element) -> bool {
+    option.class_list().contains("selected")
+}
+
+fn option_label(option: &Element) -> String {
+    option.get_attribute("data-label").unwrap_or_else(|| {
+        option
+            .query_selector(".option-label")
+            .ok()
+            .flatten()
+            .and_then(|label| label.text_content())
+            .unwrap_or_default()
+            .trim()
+            .to_string()
+    })
+}
+
+fn option_value(option: &Element) -> String {
+    option
+        .get_attribute("data-value")
+        .unwrap_or_else(|| option_label(option))
+}
+
+fn set_option_selected(option: &Element, selected: bool) {
+    option.class_list().toggle_with_force("selected", selected).ok();
+    option.set_attribute("aria-selected", bool_to_str(selected)).ok();
+}
+
+/// Makes `current` the highlighted option, moving focus to it.
+fn set_current_option(select: &Element, current: Option<&Element>) {
+    for option in options(select) {
+        option.class_list().remove_1("current").ok();
+        option.set_attribute("tabindex", "-1").ok();
+    }
+
+    if let Some(option) = current {
+        option.class_list().add_1("current").ok();
+        option.set_attribute("tabindex", "0").ok();
+        if let Some(html) = option.maybe_as_html() {
+            html.focus().ok();
+        }
+
+        let options = ScrollIntoViewOptions::new();
+        options.set_block(ScrollLogicalPosition::Nearest);
+        option.scroll_into_view_with_scroll_into_view_options(&options);
+    }
+}
+
+/// Updates the value input, the display label, and the clear button to match
+/// the currently selected options. Must be called whenever the selection changes.
+pub fn selection_changed(select: &Element) -> Option<()> {
+    let selected: Vec<Element> = options(select).into_iter().filter(is_selected_ref).collect();
+    let values: Vec<String> = selected.iter().map(option_value).collect();
+
+    if let Some(input) = value_input(select) {
+        input.set_value(&values.join(" "));
+    }
+
+    let display_label = if is_multiple(select) {
+        // Web Awesome localizes this term; only the English variant is provided here.
+        match selected.len() {
+            0 => String::new(),
+            1 => "1 option selected".to_string(),
+            n => format!("{n} options selected"),
+        }
+    } else {
+        selected.first().map(option_label).unwrap_or_default()
+    };
+    display_input(select)?.set_value(&display_label);
+
+    // The clear button only shows when there is something to clear.
+    if let Some(clear) = clear_button(select) {
+        if (values.is_empty() && display_label.is_empty()) || is_disabled(select) {
+            clear.set_attribute("hidden", "").ok();
+        } else {
+            clear.remove_attribute("hidden").ok();
+        }
+    }
+
+    Some(())
+}
+
+fn is_selected_ref(option: &Element) -> bool {
+    is_selected(option)
+}
+
+fn dispatch_form_events(select: &Element) {
+    for name in ["input", "change"] {
+        let init = EventInit::new();
+        init.set_bubbles(true);
+        if let Ok(event) = Event::new_with_event_init_dict(name, &init) {
+            select.dispatch_event(&event).ok();
+        }
+    }
+}
+
+/// Opens or closes the listbox, animating it unless reduced motion is requested
+/// (the `show`/`hide` animations are disabled by CSS in that case).
+pub async fn set_select_open(select: Element, open: bool) -> Option<()> {
+    let listbox = listbox(&select)?;
+    if open == is_open(&select) {
+        return None;
+    }
+
+    if open {
+        if is_disabled(&select) {
+            return None;
+        }
+
+        select.class_list().add_1("open").ok();
+        display_input(&select)?.set_attribute("aria-expanded", "true").ok();
+
+        // Unhide the listbox before activating the popup so the positioning
+        // logic measures the real dimensions.
+        listbox.remove_attribute("hidden").ok();
+        if let Some(host) = popup_host(&select) {
+            popup::set_popup_active(&host, true);
+        }
+
+        // Highlight the selected option, or the first one
+        let options = options(&select);
+        let current = options.iter().find(|option| is_selected(option)).or(options.first());
+        set_current_option(&select, current);
+
+        animate_with_class(&listbox, "show").await.ok();
+    } else {
+        // Remove `.open` before the animation so the expand icon rotates back
+        // while the listbox collapses.
+        select.class_list().remove_1("open").ok();
+        display_input(&select)?.set_attribute("aria-expanded", "false").ok();
+        set_current_option(&select, None);
+
+        animate_with_class(&listbox, "hide").await.ok();
+
+        // A quick re-open may have started while the hide animation was running.
+        if !is_open(&select) {
+            listbox.set_attribute("hidden", "").ok();
+            if let Some(host) = popup_host(&select) {
+                popup::set_popup_active(&host, false);
+            }
+        }
+    }
+
+    Some(())
+}
+
+fn toggle_select(select: &Element, open: bool) {
+    let select = select.clone();
+    spawn_local(async move {
+        set_select_open(select, open).await;
+    });
+}
+
+/// Closes every open select that does not contain `target`.
+fn close_open_selects_outside(target: Option<&Element>) {
+    let Ok(selects) = dom::existing::document().query_selector_all(".select.open") else {
+        return;
+    };
+    for i in 0..selects.length() {
+        let Some(select) = selects.get(i).and_then(|node| node.maybe_into_element()) else {
+            continue;
+        };
+        let contains_target = target.is_some_and(|target| select.contains(Some(target.as_ref())));
+        if !contains_target {
+            toggle_select(&select, false);
+        }
+    }
+}
+
+fn select_option(select: &Element, option: &Element) {
+    if is_multiple(select) {
+        set_option_selected(option, !is_selected(option));
+    } else {
+        for other in options(select) {
+            set_option_selected(&other, other.is_same_node(Some(option)));
+        }
+    }
+
+    selection_changed(select);
+    dispatch_form_events(select);
+
+    if !is_multiple(select) {
+        toggle_select(select, false);
+        if let Some(display) = display_input(select) {
+            display.focus().ok();
+        }
+    }
+}
+
+//
+// Event handlers
+//
+
+/// Toggles the listbox when the combobox is pressed and closes open selects
+/// when pressing outside of them.
+fn handle_select_mousedown(event: &Event) -> Option<()> {
+    let target = event.target().and_then(|target| target.maybe_into_element());
+
+    if let Some(target) = &target
+        && target.closest(".clear-button").ok()?.is_none()
+        && let Some(combobox) = target.closest(".select .combobox").ok()?
+        && let Some(select) = combobox.closest(".select").ok()?
+        && !is_disabled(&select)
+    {
+        // Prevent the press from stealing focus from the display input
+        event.prevent_default();
+        display_input(&select)?.focus().ok();
+        toggle_select(&select, !is_open(&select));
+    }
+
+    close_open_selects_outside(target.as_ref());
+    Some(())
+}
+
+fn handle_option_click(event: &Event) -> Option<()> {
+    let target = event.target()?.maybe_into_element()?;
+    let option = target.closest(".listbox .option").ok()??;
+    let select = option.closest(".select").ok()??;
+
+    if !option.class_list().contains("disabled") {
+        select_option(&select, &option);
+    }
+    Some(())
+}
+
+fn handle_clear_click(event: &Event) -> Option<()> {
+    let target = event.target()?.maybe_into_element()?;
+    let clear = target.closest(".select .clear-button").ok()??;
+    let select = clear.closest(".select").ok()??;
+
+    if is_disabled(&select) {
+        return None;
+    }
+
+    for option in options(&select) {
+        set_option_selected(&option, false);
+    }
+    selection_changed(&select);
+    dispatch_form_events(&select);
+    display_input(&select)?.focus().ok();
+
+    Some(())
+}
+
+fn handle_label_click(event: &Event) -> Option<()> {
+    let target = event.target()?.maybe_into_element()?;
+    let label = target.closest(".select > .label").ok()??;
+    let select = label.closest(".select").ok()??;
+
+    display_input(&select)?.focus().ok();
+    Some(())
+}
+
+fn typeahead_buffer(select: &Element) -> String {
+    let last = select
+        .get_attribute("data-typeahead-time")
+        .and_then(|value| value.parse::<f64>().ok())
+        .unwrap_or(0.0);
+
+    if js_sys::Date::now() - last > TYPEAHEAD_TIMEOUT_MILLIS {
+        String::new()
+    } else {
+        select.get_attribute("data-typeahead").unwrap_or_default()
+    }
+}
+
+fn handle_select_keydown(event: &Event) -> Option<()> {
+    let keyboard: &KeyboardEvent = event.dyn_ref()?;
+    let target = event.target()?.maybe_into_element()?;
+    let select = target.closest(".select").ok()??;
+
+    if is_disabled(&select) {
+        return None;
+    }
+
+    let key = keyboard.key();
+    let open = is_open(&select);
+    let options = options(&select);
+    let current = current_option(&select);
+
+    // Close when pressing escape
+    if key == "Escape" {
+        if open {
+            event.prevent_default();
+            event.stop_propagation();
+            toggle_select(&select, false);
+            display_input(&select)?.focus().ok();
+        }
+        return Some(());
+    }
+
+    // Handle enter and space. When pressing space, we allow for type to select behaviors
+    // so if there's anything in the buffer we don't close it.
+    if key == "Enter" || (key == " " && typeahead_buffer(&select).is_empty()) {
+        event.prevent_default();
+        event.stop_propagation();
+
+        if !open {
+            toggle_select(&select, true);
+            return Some(());
+        }
+
+        if let Some(current) = &current
+            && !current.class_list().contains("disabled")
+        {
+            select_option(&select, current);
+        }
+        return Some(());
+    }
+
+    // Navigate options
+    if matches!(key.as_str(), "ArrowUp" | "ArrowDown" | "Home" | "End") {
+        event.prevent_default();
+
+        if !open {
+            // Opening highlights the selected option (or the first one) by itself
+            toggle_select(&select, true);
+            return Some(());
+        }
+        if options.is_empty() {
+            return Some(());
+        }
+
+        let current_index = current
+            .as_ref()
+            .and_then(|current| options.iter().position(|option| option.is_same_node(Some(current))));
+        let last = options.len() - 1;
+        let new_index = match key.as_str() {
+            "ArrowDown" => current_index.map_or(0, |index| if index >= last { 0 } else { index + 1 }),
+            "ArrowUp" => current_index.map_or(last, |index| if index == 0 { last } else { index - 1 }),
+            "Home" => 0,
+            _ => last,
+        };
+        set_current_option(&select, options.get(new_index));
+        return Some(());
+    }
+
+    // All other "printable" keys trigger type to select
+    if key.chars().count() == 1 || key == "Backspace" {
+        // Don't block important key combos like CMD+R
+        if keyboard.meta_key() || keyboard.ctrl_key() || keyboard.alt_key() {
+            return Some(());
+        }
+
+        // Open, unless the key that triggered is backspace
+        if !open {
+            if key == "Backspace" {
+                return Some(());
+            }
+            toggle_select(&select, true);
+        }
+
+        event.prevent_default();
+        event.stop_propagation();
+
+        let mut buffer = typeahead_buffer(&select);
+        if key == "Backspace" {
+            buffer.pop();
+        } else {
+            buffer.push_str(&key.to_lowercase());
+        }
+        select.set_attribute("data-typeahead", &buffer).ok();
+        select
+            .set_attribute("data-typeahead-time", &js_sys::Date::now().to_string())
+            .ok();
+
+        for option in &options {
+            if option_label(option).to_lowercase().starts_with(&buffer) {
+                set_current_option(&select, Some(option));
+                break;
+            }
+        }
+    }
+
+    Some(())
+}
+
+/// Closes open selects when focus moves out of them.
+fn handle_select_focusin(event: &Event) -> Option<()> {
+    let target = event.target()?.maybe_into_element()?;
+    close_open_selects_outside(Some(&target));
+    Some(())
+}
+
+/// Synchronizes every `.select` on the page with its markup state:
+/// resets a stale open listbox and applies the initial selection to the
+/// display and value inputs. Run it after every render.
+pub fn init_selects() {
+    let Ok(selects) = dom::existing::document().query_selector_all(".select") else {
+        return;
+    };
+    for i in 0..selects.length() {
+        let Some(select) = selects.get(i).and_then(|node| node.maybe_into_element()) else {
+            continue;
+        };
+
+        select.class_list().remove_1("open").ok();
+        if let Some(listbox) = listbox(&select) {
+            listbox.class_list().remove_2("show", "hide").ok();
+            listbox.set_attribute("hidden", "").ok();
+        }
+        if let Some(host) = popup_host(&select) {
+            popup::set_popup_active(&host, false);
+        }
+        selection_changed(&select);
+    }
+}
+
+/// Installs the document-level listeners that drive all selects on the page.
+pub fn listen_selects() {
+    let document = dom::existing::document();
+
+    document.add_steady_event_listener("mousedown", |event| {
+        handle_select_mousedown(&event);
+    });
+    document.add_steady_event_listener("click", |event| {
+        handle_option_click(&event)
+            .or_else(|| handle_clear_click(&event))
+            .or_else(|| handle_label_click(&event));
+    });
+    document.add_steady_event_listener("keydown", |event| {
+        handle_select_keydown(&event);
+    });
+    document.add_steady_event_listener("focusin", |event| {
+        handle_select_focusin(&event);
+    });
+}

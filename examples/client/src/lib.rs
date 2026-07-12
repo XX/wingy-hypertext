@@ -13,6 +13,8 @@ use wingy_hypertext::link::LinkSetters;
 use wingy_hypertext::link::Target::*;
 use wingy_hypertext::variant::Variant::*;
 use wingy_hypertext_web::components::callout::listen_close_callout;
+use wingy_hypertext_web::components::popup::{init_popups, listen_popups};
+use wingy_hypertext_web::components::select::{init_selects, listen_selects};
 use wingy_hypertext_web::{
     init_code_examples, init_page_element, init_scroll_to_anchor, listen_click_actions, listen_code_examples,
     register_copy_action,
@@ -29,6 +31,8 @@ pub fn init() {
     listen_code_examples();
     listen_click_actions();
     listen_close_callout();
+    listen_selects();
+    listen_popups();
 }
 
 /// Re-initialization run after every htmx settle.
@@ -36,6 +40,8 @@ pub fn init() {
 pub fn reinit() {
     init_page_element();
     init_scroll_to_anchor();
+    init_selects();
+    init_popups();
 }
 
 #[wasm_bindgen]
@@ -54,6 +60,8 @@ fn main_section(route_path: &str) -> impl Renderable {
             "callout" => (components::callout::overview()),
             "copy-button" => (components::copy_button::overview()),
             "input" => (components::input::overview()),
+            "popup" => (components::popup::overview()),
+            "select" => (components::select::overview()),
             _ => {},
         }
     }
@@ -135,6 +143,26 @@ pub fn render_root(url_path: &str) -> String {
                             hx-push-url="true"
                         >
                             <span>"Input"</span>
+                        </a>
+                        <a
+                            class=FLANK
+                            href="/popup"
+                            hx-get="/popup"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Popup"</span>
+                        </a>
+                        <a
+                            class=FLANK
+                            href="/select"
+                            hx-get="/select"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Select"</span>
                         </a>
                     </nav>
                     <nav class=(PAGE_MENU_NAV, " ", BORDER_END)>
