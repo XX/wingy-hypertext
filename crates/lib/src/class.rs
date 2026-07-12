@@ -94,6 +94,7 @@ pub const SPLIT: &str = "wa-split";
 pub const STACK: &str = "wa-stack";
 pub const START: &str = "start";
 pub const SWITCH: &str = "switch";
+pub const SWITCH_TOGGLE: &str = "switch-toggle";
 pub const TEXT_CENTER: &str = "wa-text-center";
 pub const TEXT_FIELD: &str = "text-field";
 pub const THUMB: &str = "thumb";

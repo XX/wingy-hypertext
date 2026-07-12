@@ -8,7 +8,7 @@
     line-height: var(--wa-form-control-value-line-height);
 }
 
-.switch label {
+.switch-toggle {
     position: relative;
     display: flex;
     align-items: center;
@@ -19,7 +19,7 @@
 }
 
 /* The track that houses the switch's thumb */
-.switch .track {
+.switch-toggle .track {
     flex: 0 0 auto;
     position: relative;
     display: flex;
@@ -37,7 +37,7 @@
     transition-timing-function: var(--wa-transition-easing);
 }
 
-.switch .track .thumb {
+.switch-toggle .track .thumb {
     aspect-ratio: 1 / 1;
     width: var(--thumb-size);
     height: var(--thumb-size);
@@ -47,12 +47,12 @@
     transition: inherit;
 }
 
-.switch .track .thumb:dir(rtl) {
+.switch-toggle .track .thumb:dir(rtl) {
     translate: calc((var(--width) - var(--height)) / 2);
 }
 
 /* The native checkbox is visually hidden but keeps native toggling and form submission */
-.switch .control {
+.switch-toggle .control {
     position: absolute;
     opacity: 0;
     padding: 0;
@@ -61,33 +61,33 @@
 }
 
 /* Focus */
-.switch .control:focus-visible:not(:disabled) ~ .track .thumb {
+.switch-toggle .control:focus-visible:not(:disabled) ~ .track .thumb {
     outline: var(--wa-focus-ring);
     outline-offset: var(--wa-focus-ring-offset);
 }
 
 /* Checked */
-.switch .control:checked ~ .track {
+.switch-toggle .control:checked ~ .track {
     background-color: var(--wa-form-control-activated-color);
     border-color: var(--wa-form-control-activated-color);
 }
 
-.switch .control:checked ~ .track .thumb {
+.switch-toggle .control:checked ~ .track .thumb {
     background-color: var(--wa-color-surface-default);
     translate: calc((var(--width) - var(--height)) / 2);
 }
 
-.switch .control:checked ~ .track .thumb:dir(rtl) {
+.switch-toggle .control:checked ~ .track .thumb:dir(rtl) {
     translate: calc((var(--width) - var(--height)) / -2);
 }
 
 /* Disabled */
-.switch label:has(> .control:disabled) {
+.switch-toggle:has(> .control:disabled) {
     opacity: 0.5;
     cursor: not-allowed;
 }
 
-.switch .label {
+.switch-toggle .label {
     display: inline-block;
     line-height: var(--height);
     margin-inline-start: 0.5em;
@@ -95,7 +95,7 @@
     -webkit-user-select: none;
 }
 
-.switch.required .label::after {
+.switch-toggle .control:required ~ .label::after {
     content: var(--wa-form-control-required-content, '*');
     color: var(--wa-form-control-required-content-color, var(--wa-color-danger-on-quiet));
     margin-inline-start: var(--wa-form-control-required-content-offset, 0.125em);
@@ -111,8 +111,8 @@
 }
 
 @media (forced-colors: active) {
-    .switch .control:checked:enabled ~ .track:hover .thumb,
-    .switch .control:checked ~ .track .thumb {
+    .switch-toggle .control:checked:enabled ~ .track:hover .thumb,
+    .switch-toggle .control:checked ~ .track .thumb {
         background-color: ButtonText;
     }
 }

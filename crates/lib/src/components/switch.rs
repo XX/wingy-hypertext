@@ -6,7 +6,7 @@ use hypertext::{Buffer, Renderable, rsx};
 use wingy_hypertext_macros::{Props, const_str};
 
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
-use crate::class::{CONTROL, DISABLED, HINT, LABEL, REQUIRED, SWITCH, THUMB, TRACK};
+use crate::class::{CONTROL, DISABLED, HINT, LABEL, REQUIRED, SWITCH, SWITCH_TOGGLE, THUMB, TRACK};
 
 /// A toggle control: a native checkbox with `role="switch"` wrapped in a label,
 /// followed by an optional hint. Toggling is fully native (the checked state is
@@ -89,6 +89,7 @@ impl<R: Renderable> Renderable for Switch<R> {
 /// with the thumb, and the label content. Used standalone inside a bare
 /// [`Switch`] to compose the body manually.
 #[derive(Default, AsRef, AsMut, Props)]
+#[const_str(CLASS = SWITCH_TOGGLE)]
 #[props(builder)]
 pub struct Toggle<R: Renderable = ()> {
     pub checked: bool,
@@ -114,7 +115,7 @@ pub struct Toggle<R: Renderable = ()> {
 impl<R: Renderable> Renderable for Toggle<R> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
-        let class_line = self.class_line_with([]);
+        let class_line = self.class_line_with([Self::CLASS]);
         let style_line = self.style_line_with([]);
 
         let checked = self.checked.then_some(true);
