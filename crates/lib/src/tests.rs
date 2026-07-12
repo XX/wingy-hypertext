@@ -2,6 +2,7 @@ pub mod badge;
 pub mod button;
 pub mod callout;
 pub mod code_example;
+pub mod divider;
 pub mod input;
 pub mod page;
 pub mod popup;

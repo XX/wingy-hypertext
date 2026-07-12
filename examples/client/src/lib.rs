@@ -22,6 +22,7 @@ use wingy_hypertext_web::{
 
 pub mod components;
 pub mod fontawesome;
+pub mod layouts;
 
 /// One-time wiring: register actions and listeners.
 #[wasm_bindgen]
@@ -59,6 +60,7 @@ fn main_section(route_path: &str) -> impl Renderable {
             "button" => (components::button::overview()),
             "callout" => (components::callout::overview()),
             "copy-button" => (components::copy_button::overview()),
+            "divider" => (layouts::divider::overview()),
             "input" => (components::input::overview()),
             "popup" => (components::popup::overview()),
             "select" => (components::select::overview()),
@@ -170,6 +172,16 @@ pub fn render_root(url_path: &str) -> String {
                     </nav>
                     <nav class=PAGE_MENU_NAV>
                         <a class=FLANK href="#"><span>"Code Example"</span></a>
+                        <a
+                            class=FLANK
+                            href="/divider"
+                            hx-get="/divider"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Divider"</span>
+                        </a>
                         <a class=FLANK href="#"><span>"Page"</span></a>
                     </nav>
                 </PageMenu>
