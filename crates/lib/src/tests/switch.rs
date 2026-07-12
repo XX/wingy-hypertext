@@ -108,12 +108,12 @@ fn additional_attributes() {
 
 #[test]
 fn toggle() {
-    let label_markup = format!(
+    let toggle_markup = format!(
         r#"<label><input class="control" type="checkbox" role="switch" name="releases" checked="true">{TRACK_MARKUP}<span class="label">Email me about new releases</span></label>"#
     );
 
-    let label = rsx! { <Toggle name="releases" checked=true>"Email me about new releases"</Toggle> };
-    assert_eq!(label.render().as_inner(), &label_markup);
+    let toggle = rsx! { <Toggle name="releases" checked=true>"Email me about new releases"</Toggle> };
+    assert_eq!(toggle.render().as_inner(), &toggle_markup);
 }
 
 #[test]

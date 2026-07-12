@@ -18,7 +18,9 @@ pub fn overview() -> impl Renderable {
                 <Switch>"Enable notifications"</Switch>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
-                <code class="language-html">r#"<Switch>"Enable notifications"</Switch>"#</code>
+                <code class="language-html">r#"
+                    <Switch>"Enable notifications"</Switch>
+                "#</code>
             </CodeExampleSource>
             <CodeExampleButton>"Code"</CodeExampleButton>
         </CodeExample>
@@ -36,7 +38,9 @@ pub fn overview() -> impl Renderable {
                 <Switch>"Subscribe to the newsletter"</Switch>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
-                <code class="language-html">r#"<Switch>"Subscribe to the newsletter"</Switch>"#</code>
+                <code class="language-html">r#"
+                    <Switch>"Subscribe to the newsletter"</Switch>
+                "#</code>
             </CodeExampleSource>
             <CodeExampleButton>"Code"</CodeExampleButton>
         </CodeExample>
@@ -50,33 +54,14 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Switch hint="You can change this at any time in settings.">"Email me about new releases"</Switch>
+                <Switch hint="You can change this at any time in settings.">
+                    "Email me about new releases"
+                </Switch>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
                     <Switch hint="You can change this at any time in settings.">
                         "Email me about new releases"
-                    </Switch>
-                "#</code>
-            </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
-        </CodeExample>
-        <CodeExample>
-            <CodeExamplePreview resize=true>
-                <Switch bare=true>
-                    <Toggle>
-                        "Email me about new releases"
-                    </Toggle>
-                    <small class=HINT>"You can change this "<strong>"at any time"</strong>" in settings."</small>
-                </Switch>
-            </CodeExamplePreview>
-            <CodeExampleSource copy_button=true>
-                <code class="language-html">r#"
-                    <Switch bare=true>
-                        <Toggle>
-                            "Email me about new releases"
-                        </Toggle>
-                        <small class=HINT>"You can change this "<strong>"at any time"</strong>" in settings."</small>
                     </Switch>
                 "#</code>
             </CodeExampleSource>
@@ -92,7 +77,9 @@ pub fn overview() -> impl Renderable {
                 <Switch checked=true>"Remember this device"</Switch>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
-                <code class="language-html">r#"<Switch checked=true>"Remember this device"</Switch>"#</code>
+                <code class="language-html">r#"
+                    <Switch checked=true>"Remember this device"</Switch>
+                "#</code>
             </CodeExampleSource>
             <CodeExampleButton>"Code"</CodeExampleButton>
         </CodeExample>
@@ -106,7 +93,9 @@ pub fn overview() -> impl Renderable {
                 <Switch disabled=true>"Sync over cellular"</Switch>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
-                <code class="language-html">r#"<Switch disabled=true>"Sync over cellular"</Switch>"#</code>
+                <code class="language-html">r#"
+                    <Switch disabled=true>"Sync over cellular"</Switch>
+                "#</code>
             </CodeExampleSource>
             <CodeExampleButton>"Code"</CodeExampleButton>
         </CodeExample>
@@ -154,6 +143,36 @@ pub fn overview() -> impl Renderable {
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
                     <Switch style="--width: 80px; --height: 40px; --thumb-size: 36px;">"Really big"</Switch>
+                "#</code>
+            </CodeExampleSource>
+            <CodeExampleButton>"Code"</CodeExampleButton>
+        </CodeExample>
+
+        <Head level=H3 id="bare-body" anchor=true>
+            "Bare Body"
+        </Head>
+        <p>"Use the "<code>bare</code>
+            " attribute to take full control of the switch's body: children are rendered as is, without the "
+            <code>"Toggle"</code>
+            " component container, so you can lay out the markup manually — including the hint."
+        </p>
+        <CodeExample>
+            <CodeExamplePreview resize=true>
+                <Switch bare=true>
+                    <Toggle>
+                        "Email me about new releases"
+                    </Toggle>
+                    <small class=HINT>"You can change this "<strong>"at any time"</strong>" in settings."</small>
+                </Switch>
+            </CodeExamplePreview>
+            <CodeExampleSource copy_button=true>
+                <code class="language-html">r#"
+                    <Switch bare=true>
+                        <Toggle>
+                            "Email me about new releases"
+                        </Toggle>
+                        <small class=HINT>"You can change this "<strong>"at any time"</strong>" in settings."</small>
+                    </Switch>
                 "#</code>
             </CodeExampleSource>
             <CodeExampleButton>"Code"</CodeExampleButton>
