@@ -34,6 +34,7 @@ pub fn init() {
     listen_close_callout();
     listen_selects();
     listen_popups();
+    components::popup::listen_popup_overview();
 }
 
 /// Re-initialization run after every htmx settle.
@@ -43,6 +44,7 @@ pub fn reinit() {
     init_scroll_to_anchor();
     init_selects();
     init_popups();
+    components::popup::init_popup_overview();
 }
 
 #[wasm_bindgen]

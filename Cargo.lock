@@ -230,6 +230,8 @@ version = "0.1.0"
 dependencies = [
  "hypertext",
  "wasm-bindgen",
+ "wasm-dom",
+ "web-sys",
  "wingy-hypertext",
  "wingy-hypertext-web",
 ]
