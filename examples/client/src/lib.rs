@@ -64,6 +64,7 @@ fn main_section(route_path: &str) -> impl Renderable {
             "input" => (components::input::overview()),
             "popup" => (components::popup::overview()),
             "select" => (components::select::overview()),
+            "switch" => (components::switch::overview()),
             _ => {},
         }
     }
@@ -165,6 +166,16 @@ pub fn render_root(url_path: &str) -> String {
                             hx-push-url="true"
                         >
                             <span>"Select"</span>
+                        </a>
+                        <a
+                            class=FLANK
+                            href="/switch"
+                            hx-get="/switch"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Switch"</span>
                         </a>
                     </nav>
                     <nav class=(PAGE_MENU_NAV, " ", BORDER_END)>

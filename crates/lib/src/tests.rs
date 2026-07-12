@@ -7,3 +7,4 @@ pub mod input;
 pub mod page;
 pub mod popup;
 pub mod select;
+pub mod switch;
