@@ -4,6 +4,7 @@
 //! lives entirely in the DOM (classes and attributes), matching the markup
 //! produced by `wingy_hypertext::components::select`.
 
+use hypertext::RenderableExt;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::spawn_local;
 use wasm_dom as dom;
@@ -12,6 +13,7 @@ use wasm_dom::existing::access::{CastToElement, CastToHtmlElement};
 use web_sys::{
     Element, Event, EventInit, HtmlInputElement, KeyboardEvent, ScrollIntoViewOptions, ScrollLogicalPosition,
 };
+use wingy_hypertext::components::tag::Tag;
 
 use crate::components::popup;
 use crate::utils::animate::animate_with_class;
@@ -116,11 +118,76 @@ fn set_current_option(select: &Element, current: Option<&Element>) {
     }
 }
 
-/// Updates the value input, the display label, and the clear button to match
-/// the currently selected options. Must be called whenever the selection changes.
+/// Creates a tag element by rendering the library's `Tag` component, so the
+/// dynamically created tags always match the server-rendered markup. The
+/// `data-value` attribute is set on top, like `wa-select` does with `wa-tag`.
+fn create_tag(select: &Element, label: &str, value: Option<&str>) -> Option<Element> {
+    let markup = Tag::builder()
+        .pill(select.class_list().contains("pill"))
+        .with_remove(value.is_some())
+        .children(label)
+        .render();
+
+    let holder = dom::existing::document().create_element("div").ok()?;
+    holder.set_inner_html(markup.as_inner());
+    let tag = holder.first_element_child()?;
+
+    if let Some(value) = value {
+        tag.set_attribute("data-value", value).ok()?;
+    }
+
+    Some(tag)
+}
+
+/// Renders the selected options of a `multiple` select as removable tags,
+/// or "+n" after the `data-max-options-visible` limit (3 by default, 0 removes it).
+fn rebuild_tags(select: &Element, selected: &[Element]) -> Option<()> {
+    let tags = select.query_selector(".combobox .tags").ok()??;
+    tags.set_inner_html("");
+
+    let max = select
+        .get_attribute("data-max-options-visible")
+        .and_then(|value| value.parse::<usize>().ok())
+        .filter(|&max| max > 0)
+        .unwrap_or(if select.has_attribute("data-max-options-visible") {
+            usize::MAX
+        } else {
+            3
+        });
+    let visible = max.min(selected.len());
+
+    for option in &selected[..visible] {
+        if let Some(tag) = create_tag(select, &option_label(option), Some(&option_value(option))) {
+            tags.append_child(&tag).ok();
+        }
+    }
+
+    if selected.len() > visible
+        && let Some(more) = create_tag(select, &format!("+{}", selected.len() - visible), None)
+    {
+        tags.append_child(&more).ok();
+    }
+
+    Some(())
+}
+
+/// Updates the value input, the display label, the tags, and the clear button
+/// to match the currently selected options. Must be called whenever the
+/// selection changes.
 pub fn selection_changed(select: &Element) -> Option<()> {
     let selected: Vec<Element> = options(select).into_iter().filter(is_selected_ref).collect();
     let values: Vec<String> = selected.iter().map(option_value).collect();
+
+    if is_multiple(select) {
+        rebuild_tags(select, &selected);
+
+        // The tags may change the combobox height, so keep the open listbox anchored
+        if is_open(select)
+            && let Some(host) = popup_host(select)
+        {
+            popup::reposition(&host);
+        }
+    }
 
     if let Some(input) = value_input(select) {
         input.set_value(&values.join(" "));
@@ -268,6 +335,7 @@ fn handle_select_mousedown(event: &Event) -> Option<()> {
 
     if let Some(target) = &target
         && target.closest(".clear-button").ok()?.is_none()
+        && target.closest(".tag-remove").ok()?.is_none()
         && let Some(combobox) = target.closest(".select .combobox").ok()?
         && let Some(select) = combobox.closest(".select").ok()?
         && !is_disabled(&select)
@@ -321,6 +389,30 @@ fn handle_clear_click(event: &Event) -> Option<()> {
     Some(())
 }
 
+/// Deselects the option represented by a tag when the tag's remove button is
+/// activated (the `handleTagRemove` part of `wa-select`).
+fn handle_tag_remove_click(event: &Event) -> Option<()> {
+    let target = event.target()?.maybe_into_element()?;
+    let remove_button = target.closest(".tag-remove").ok()??;
+    let tag = remove_button.closest(".select .tags .tag").ok()??;
+    let select = tag.closest(".select").ok()??;
+
+    if is_disabled(&select) {
+        return None;
+    }
+
+    let value = tag.get_attribute("data-value")?;
+    for option in options(&select) {
+        if option_value(&option) == value {
+            set_option_selected(&option, false);
+        }
+    }
+    selection_changed(&select);
+    dispatch_form_events(&select);
+
+    Some(())
+}
+
 fn handle_label_click(event: &Event) -> Option<()> {
     let target = event.target()?.maybe_into_element()?;
     let label = target.closest(".select > .label").ok()??;
@@ -348,8 +440,8 @@ fn handle_select_keydown(event: &Event) -> Option<()> {
     let target = event.target()?.maybe_into_element()?;
     let select = target.closest(".select").ok()??;
 
-    // Ignore presses when the target is the clear button
-    if target.closest(".clear-button").ok()?.is_some() {
+    // Ignore presses when the target is the clear button or a tag's remove button
+    if target.closest(".clear-button").ok()?.is_some() || target.closest(".tag-remove").ok()?.is_some() {
         return None;
     }
 
@@ -500,6 +592,7 @@ pub fn listen_selects() {
     document.add_steady_event_listener("click", |event| {
         handle_option_click(&event)
             .or_else(|| handle_clear_click(&event))
+            .or_else(|| handle_tag_remove_click(&event))
             .or_else(|| handle_label_click(&event));
     });
     document.add_steady_event_listener("keydown", |event| {

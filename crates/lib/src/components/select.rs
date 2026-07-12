@@ -12,7 +12,7 @@ use crate::appearance::Appearance;
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::{
     CHECK, CLEAR_BUTTON, COMBOBOX, DISABLED, DISPLAY_INPUT, EXPAND_ICON, HINT, LABEL, LISTBOX, MULTIPLE, OPTION,
-    OPTION_LABEL, PILL, POPUP, POPUP_BODY, REQUIRED, SELECT, SELECT_POPUP, SELECTED, VALUE_INPUT,
+    OPTION_LABEL, PILL, POPUP, POPUP_BODY, REQUIRED, SELECT, SELECT_POPUP, SELECTED, TAGS, VALUE_INPUT,
 };
 
 /// The preferred placement of the select's menu. The actual placement may
@@ -46,6 +46,11 @@ pub struct Select<R: Renderable = ()> {
     pub required: bool,
 
     pub multiple: bool,
+
+    /// The maximum number of selected options to show as tags with `multiple`.
+    /// After the maximum, "+n" is shown to indicate the number of additional
+    /// items that are selected. Set to 0 to remove the limit. Defaults to 3.
+    pub max_options_visible: Option<i32>,
 
     /// Adds a clear button that resets the selection when the select is not empty.
     pub with_clear: bool,
@@ -87,7 +92,12 @@ impl<R: Renderable> Renderable for Select<R> {
         let required = self.required.then_some(true);
 
         rsx! {
-            <div id=[id] class=[&class_line] style=[&style_line]>
+            <div
+                id=[id]
+                class=[&class_line]
+                style=[&style_line]
+                data-max-options-visible=[self.max_options_visible]
+            >
                 @if let Some(label) = &self.label {
                     <label class=LABEL>(label)</label>
                 }
@@ -114,6 +124,11 @@ impl<R: Renderable> Renderable for Select<R> {
                             aria-haspopup="listbox"
                             aria-expanded="false"
                         />
+                        @if self.multiple {
+                            // Selected options are rendered here as removable
+                            // tags by the client-side logic
+                            <div class=TAGS></div>
+                        }
                         <input
                             class=VALUE_INPUT
                             type="text"

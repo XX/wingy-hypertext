@@ -87,7 +87,7 @@ fn shorthand_label_and_hint() {
 
 #[test]
 fn states() {
-    let combobox_markup = r#"<div class="combobox"><input class="display-input" type="text" disabled="true" autocomplete="off" spellcheck="false" autocapitalize="off" readonly role="combobox" aria-haspopup="listbox" aria-expanded="false"><input class="value-input" type="text" disabled="true" required="true" tabindex="-1" aria-hidden="true"><span class="expand-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M201.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 338.7 54.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/></svg></span></div>"#;
+    let combobox_markup = r#"<div class="combobox"><input class="display-input" type="text" disabled="true" autocomplete="off" spellcheck="false" autocapitalize="off" readonly role="combobox" aria-haspopup="listbox" aria-expanded="false"><div class="tags"></div><input class="value-input" type="text" disabled="true" required="true" tabindex="-1" aria-hidden="true"><span class="expand-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M201.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 338.7 54.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/></svg></span></div>"#;
     let select_markup = format!(
         r#"<div class="select required multiple disabled outlined">{}</div>"#,
         select_popup(combobox_markup, "true", "")
@@ -99,6 +99,16 @@ fn states() {
         .required(true)
         .multiple(true);
     assert_eq!(select.render().as_inner(), select_markup.as_str());
+}
+
+#[test]
+fn max_options_visible() {
+    let select = Select::builder().multiple(true).max_options_visible(5);
+    let markup = select.render();
+    let markup = markup.as_inner();
+
+    assert!(markup.contains(r#"data-max-options-visible="5""#));
+    assert!(markup.contains(r#"<div class="tags"></div>"#));
 }
 
 #[test]

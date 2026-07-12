@@ -307,7 +307,10 @@ pub fn overview() -> impl Renderable {
             "Multiple"
         </Head>
         <p>"To allow multiple options to be selected, use the "<code>multiple</code>
-            " attribute. Clicking an option toggles its selection and the listbox stays open."
+            " attribute. Clicking an option toggles its selection and the listbox stays open; "
+            "the selected options are shown as removable tags. After "
+            <code>max_options_visible</code>" tags (3 by default, 0 removes the limit), "
+            <code>"+n"</code>" indicates the number of additional selected items."
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>

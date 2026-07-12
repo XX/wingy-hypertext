@@ -15,6 +15,7 @@ use wingy_hypertext::variant::Variant::*;
 use wingy_hypertext_web::components::callout::listen_close_callout;
 use wingy_hypertext_web::components::popup::{init_popups, listen_popups};
 use wingy_hypertext_web::components::select::{init_selects, listen_selects};
+use wingy_hypertext_web::components::tag::listen_remove_tags;
 use wingy_hypertext_web::{
     init_code_examples, init_page_element, init_scroll_to_anchor, listen_click_actions, listen_code_examples,
     register_copy_action,
@@ -34,7 +35,9 @@ pub fn init() {
     listen_close_callout();
     listen_selects();
     listen_popups();
+    listen_remove_tags();
     components::popup::listen_popup_overview();
+    components::tag::listen_tag_removable_demo();
 }
 
 /// Re-initialization run after every htmx settle.
@@ -67,6 +70,7 @@ fn main_section(route_path: &str) -> impl Renderable {
             "popup" => (components::popup::overview()),
             "select" => (components::select::overview()),
             "switch" => (components::switch::overview()),
+            "tag" => (components::tag::overview()),
             _ => {},
         }
     }
@@ -178,6 +182,16 @@ pub fn render_root(url_path: &str) -> String {
                             hx-push-url="true"
                         >
                             <span>"Switch"</span>
+                        </a>
+                        <a
+                            class=FLANK
+                            href="/tag"
+                            hx-get="/tag"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Tag"</span>
                         </a>
                     </nav>
                     <nav class=(PAGE_MENU_NAV, " ", BORDER_END)>

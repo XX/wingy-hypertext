@@ -867,9 +867,11 @@ name = "wingy-hypertext-web"
 version = "0.1.0"
 dependencies = [
  "futures",
+ "hypertext",
  "js-sys",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "wasm-dom",
  "web-sys",
+ "wingy-hypertext",
 ]

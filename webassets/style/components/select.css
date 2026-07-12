@@ -128,6 +128,58 @@
   -webkit-user-select: none;
 }
 
+/* Tags of the selected options with `multiple` */
+.select {
+  --tag-max-size: 10ch;
+}
+
+.select .tags {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25em;
+}
+
+.select .tags .tag {
+  cursor: pointer;
+}
+
+.select.disabled .tags,
+.select.disabled .tags .tag {
+  cursor: not-allowed;
+}
+
+/* Add ellipses to the tags of a multi select */
+.select .tags .tag .tag-content {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: var(--tag-max-size);
+}
+
+/* Manage spacing when tags are present */
+.select.multiple {
+  --_padding-with-tags: calc(var(--wa-form-control-height) * 0.1 - var(--wa-form-control-border-width));
+}
+
+.select.multiple .combobox:has(.tags .tag) {
+  padding-block: var(--_padding-with-tags);
+  padding-inline-start: var(--_padding-with-tags);
+}
+
+/* Visually hide the display input when tags are shown; its value stays
+ * exposed to assistive technology */
+.select.multiple .combobox:has(.tags .tag) .display-input {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
 .select .value-input {
   position: absolute;
   z-index: -1;
