@@ -2,7 +2,7 @@
 //! (offset, flip with best-fit fallback, shift, size syncing, auto-size,
 //! arrow) plus repositioning on scroll and resize. The configuration is read
 //! from `data-*` attributes on the `.popup` host element rendered by
-//! `wingy_hypertext::layouts::popup`, and the positioned container is the
+//! `wingy_hypertext::helpers::popup`, and the positioned container is the
 //! `.popup-body` child (`position: fixed`, so all math is in viewport
 //! coordinates).
 

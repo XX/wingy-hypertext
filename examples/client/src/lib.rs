@@ -15,7 +15,7 @@ use wingy_hypertext::variant::Variant::*;
 use wingy_hypertext_web::components::callout::listen_close_callout;
 use wingy_hypertext_web::components::select::{init_selects, listen_selects};
 use wingy_hypertext_web::components::tag::listen_remove_tags;
-use wingy_hypertext_web::layouts::popup::{init_popups, listen_popups};
+use wingy_hypertext_web::helpers::popup::{init_popups, listen_popups};
 use wingy_hypertext_web::{
     init_code_examples, init_page_element, init_scroll_to_anchor, listen_click_actions, listen_code_examples,
     register_copy_action,
@@ -23,6 +23,7 @@ use wingy_hypertext_web::{
 
 pub mod components;
 pub mod fontawesome;
+pub mod helpers;
 pub mod layouts;
 
 /// One-time wiring: register actions and listeners.
@@ -36,7 +37,7 @@ pub fn init() {
     listen_selects();
     listen_popups();
     listen_remove_tags();
-    layouts::popup::listen_popup_overview();
+    helpers::popup::listen_popup_overview();
     components::tag::listen_tag_removable_demo();
 }
 
@@ -47,7 +48,7 @@ pub fn reinit() {
     init_scroll_to_anchor();
     init_selects();
     init_popups();
-    layouts::popup::init_popup_overview();
+    helpers::popup::init_popup_overview();
 }
 
 #[wasm_bindgen]
@@ -67,7 +68,7 @@ fn main_section(route_path: &str) -> impl Renderable {
             "copy-button" => (components::copy_button::overview()),
             "divider" => (layouts::divider::overview()),
             "input" => (components::input::overview()),
-            "popup" => (layouts::popup::overview()),
+            "popup" => (helpers::popup::overview()),
             "select" => (components::select::overview()),
             "switch" => (components::switch::overview()),
             "tag" => (components::tag::overview()),
@@ -187,7 +188,7 @@ pub fn render_root(url_path: &str) -> String {
                     <nav class=(PAGE_MENU_NAV, " ", BORDER_END)>
                         <div class=FLANK><span class=HEADING_M>"Layouts"</span></div>
                     </nav>
-                    <nav class=PAGE_MENU_NAV>
+                    <nav class=(PAGE_MENU_NAV, " ", BORDER_END)>
                         <a class=FLANK href="#"><span>"Code Example"</span></a>
                         <a
                             class=FLANK
@@ -200,6 +201,11 @@ pub fn render_root(url_path: &str) -> String {
                             <span>"Divider"</span>
                         </a>
                         <a class=FLANK href="#"><span>"Page"</span></a>
+                    </nav>
+                    <nav class=(PAGE_MENU_NAV, " ", BORDER_END)>
+                        <div class=FLANK><span class=HEADING_M>"Helpers"</span></div>
+                    </nav>
+                    <nav class=PAGE_MENU_NAV>
                         <a
                             class=FLANK
                             href="/popup"

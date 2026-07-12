@@ -93,3 +93,23 @@
 
   Обновлены все ссылки: импорты в тестах (crate::layouts::popup), в web-логике Select (crate::layouts::popup), в галерее (страница Popup, lib.rs), а также упоминания путей в doc-комментариях библиотечного и
   web-модуля и в комментарии исходника примера. Класс-константы (POPUP, POPUP_BODY, POPUP_HOVER_BRIDGE) и сами CSS-классы не менялись — на разметку и поведение перенос не влияет.
+
+---
+
+Нужно было перенести Popup не в layouts, а перенести в новый раздел helpers.
+
+---
+
+● Понял — WA относит Popup к категории Helpers. Создаю новый раздел helpers и переношу туда. Сначала посмотрю корневые модули:
+● Готово — Popup перенесён из layouts в новый раздел helpers (как в категоризации WA, где Popup — Helpers). Все проверки прошли: fmt, clippy (-D warnings), 61 тест, WASM-клиент собран, helpers/popup.css
+  копируется в target/web.
+
+  Что сделано (файлы перемещены через git mv):
+
+  - Библиотека: новый модуль crates/lib/src/helpers.rs + crates/lib/src/helpers/popup.rs; публичный путь — wingy_hypertext::helpers::popup::{Popup, Placement, …}; pub mod helpers; добавлен в корень крейта.
+  - Web-крейт: crates/web/src/helpers/popup.rs, путь wingy_hypertext_web::helpers::popup::{set_popup_active, reposition, init_popups, listen_popups}.
+  - CSS: webassets/style/helpers/popup.css; в index.css появилась отдельная группа импортов helpers (после layouts).
+  - Галерея: страница — examples/client/src/helpers/popup.rs; маршрут ведёт на helpers::popup::overview(); в меню добавлена новая секция Helpers (после Layouts) с пунктом Popup, из Layouts пункт убран.
+
+  Все ссылки обновлены: тесты (crate::helpers::popup), web-логика Select, обвязка интерактивного примера в init()/reinit(), doc-комментарии. Из layouts.rs всех трёх крейтов объявления popup удалены; разметка,
+  классы и поведение не менялись.

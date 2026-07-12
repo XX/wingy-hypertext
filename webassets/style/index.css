@@ -13,7 +13,8 @@
 @import url("layouts/code_example.css");
 @import url("layouts/divider.css");
 @import url("layouts/page.css");
-@import url("layouts/popup.css");
+
+@import url("helpers/popup.css");
 
 @import url("utils/icon.css");
 
