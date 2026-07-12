@@ -23,6 +23,11 @@ pub struct Switch<R: Renderable = ()> {
 
     pub required: bool,
 
+    /// Render `children` as the body markup as is, instead of treating them as
+    /// the label text. Compose the body from a [`Toggle`] (which carries
+    /// the control state props in this mode) and any custom hint markup.
+    pub bare: bool,
+
     /// The name of the switch, submitted as a name/value pair with form data.
     #[prop(into)]
     pub name: Option<Cow<'static, str>>,
@@ -39,7 +44,7 @@ pub struct Switch<R: Renderable = ()> {
     #[as_mut]
     pub attrs: CommonAttrs,
 
-    /// The switch's label.
+    /// The switch's label, or the whole body markup when `bare` is set.
     #[prop(convert)]
     pub children: Option<R>,
 }
@@ -54,32 +59,85 @@ impl<R: Renderable> Renderable for Switch<R> {
         ]);
         let style_line = self.style_line_with([]);
 
+        let toggle = (!self.bare).then(|| Toggle {
+            checked: self.checked,
+            disabled: self.disabled,
+            required: self.required,
+            name: self.name.clone(),
+            value: self.value.clone(),
+            attrs: CommonAttrs::default(),
+            children: self.children.as_ref(),
+        });
+
+        rsx! {
+            <div id=[id] class=[&class_line] style=[&style_line]>
+                @if self.bare {
+                    (self.children)
+                } @else {
+                    (toggle)
+                }
+                @if let Some(hint) = &self.hint {
+                    <small class=HINT>(hint)</small>
+                }
+            </div>
+        }
+        .render_to(buffer);
+    }
+}
+
+/// The label block of a [`Switch`]: the native checkbox control, the track
+/// with the thumb, and the label content. Used standalone inside a bare
+/// [`Switch`] to compose the body manually.
+#[derive(Default, AsRef, AsMut, Props)]
+#[props(builder)]
+pub struct Toggle<R: Renderable = ()> {
+    pub checked: bool,
+
+    pub disabled: bool,
+
+    pub required: bool,
+
+    #[prop(into)]
+    pub name: Option<Cow<'static, str>>,
+
+    #[prop(into)]
+    pub value: Option<Cow<'static, str>>,
+
+    #[as_ref]
+    #[as_mut]
+    pub attrs: CommonAttrs,
+
+    #[prop(convert)]
+    pub children: Option<R>,
+}
+
+impl<R: Renderable> Renderable for Toggle<R> {
+    fn render_to(&self, buffer: &mut Buffer) {
+        let id = self.id();
+        let class_line = self.class_line_with([]);
+        let style_line = self.style_line_with([]);
+
         let checked = self.checked.then_some(true);
         let disabled = self.disabled.then_some(true);
         let required = self.required.then_some(true);
 
         rsx! {
-            <div id=[id] class=[&class_line] style=[&style_line]>
-                <label>
-                    <input
-                        class=CONTROL
-                        type="checkbox"
-                        role="switch"
-                        name=[&self.name]
-                        value=[&self.value]
-                        checked=[checked]
-                        disabled=[disabled]
-                        required=[required]
-                    />
-                    <span class=TRACK>
-                        <span class=THUMB></span>
-                    </span>
-                    <span class=LABEL>(self.children)</span>
-                </label>
-                @if let Some(hint) = &self.hint {
-                    <small class=HINT>(hint)</small>
-                }
-            </div>
+            <label id=[id] class=[&class_line] style=[&style_line]>
+                <input
+                    class=CONTROL
+                    type="checkbox"
+                    role="switch"
+                    name=[&self.name]
+                    value=[&self.value]
+                    checked=[checked]
+                    disabled=[disabled]
+                    required=[required]
+                />
+                <span class=TRACK>
+                    <span class=THUMB></span>
+                </span>
+                <span class=LABEL>(self.children)</span>
+            </label>
         }
         .render_to(buffer);
     }

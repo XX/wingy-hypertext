@@ -1,10 +1,10 @@
 use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Renderable, rsx};
 use wingy_hypertext::attributes::CommonAttributeSetters;
-use wingy_hypertext::class::{SIZE_EXTRA_LARGE, SIZE_EXTRA_SMALL, SIZE_LARGE, SIZE_MEDIUM, SIZE_SMALL, STACK};
+use wingy_hypertext::class::{HINT, SIZE_EXTRA_LARGE, SIZE_EXTRA_SMALL, SIZE_LARGE, SIZE_MEDIUM, SIZE_SMALL, STACK};
 use wingy_hypertext::components::head::Head;
 use wingy_hypertext::components::head::HeadLevel::*;
-use wingy_hypertext::components::switch::Switch;
+use wingy_hypertext::components::switch::{Switch, Toggle};
 use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
 
 pub fn overview() -> impl Renderable {
@@ -44,7 +44,10 @@ pub fn overview() -> impl Renderable {
         <Head level=H3 id="hint" anchor=true>
             "Hint"
         </Head>
-        <p>"Add descriptive hint to a switch with the "<code>"hint"</code>" attribute."</p>
+        <p>"Add descriptive hint to a switch with the "<code>"hint"</code>
+            " attribute. For hints that contain HTML, use the "<code>"bare"</code>
+            " attribute and compose the body from a "<code>"Toggle"</code>" and custom hint markup."
+        </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
                 <Switch hint="You can change this at any time in settings.">"Email me about new releases"</Switch>
@@ -53,6 +56,27 @@ pub fn overview() -> impl Renderable {
                 <code class="language-html">r#"
                     <Switch hint="You can change this at any time in settings.">
                         "Email me about new releases"
+                    </Switch>
+                "#</code>
+            </CodeExampleSource>
+            <CodeExampleButton>"Code"</CodeExampleButton>
+        </CodeExample>
+        <CodeExample>
+            <CodeExamplePreview resize=true>
+                <Switch bare=true>
+                    <Toggle>
+                        "Email me about new releases"
+                    </Toggle>
+                    <small class=HINT>"You can change this "<strong>"at any time"</strong>" in settings."</small>
+                </Switch>
+            </CodeExamplePreview>
+            <CodeExampleSource copy_button=true>
+                <code class="language-html">r#"
+                    <Switch bare=true>
+                        <Toggle>
+                            "Email me about new releases"
+                        </Toggle>
+                        <small class=HINT>"You can change this "<strong>"at any time"</strong>" in settings."</small>
                     </Switch>
                 "#</code>
             </CodeExampleSource>

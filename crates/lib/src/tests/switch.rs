@@ -1,7 +1,9 @@
+use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{RenderableExt, rsx};
 
 use crate::attributes::CommonAttributeSetters;
-use crate::components::switch::Switch;
+use crate::class::HINT;
+use crate::components::switch::{Switch, Toggle};
 
 const TRACK_MARKUP: &str = r#"<span class="track"><span class="thumb"></span></span>"#;
 
@@ -101,5 +103,45 @@ fn additional_attributes() {
     assert_eq!(switch.render().as_inner(), &switch_markup);
 
     let switch = rsx! { <Switch id="the-switch" class="test" style="--width: 80px"/> };
+    assert_eq!(switch.render().as_inner(), &switch_markup);
+}
+
+#[test]
+fn toggle() {
+    let label_markup = format!(
+        r#"<label><input class="control" type="checkbox" role="switch" name="releases" checked="true">{TRACK_MARKUP}<span class="label">Email me about new releases</span></label>"#
+    );
+
+    let label = rsx! { <Toggle name="releases" checked=true>"Email me about new releases"</Toggle> };
+    assert_eq!(label.render().as_inner(), &label_markup);
+}
+
+#[test]
+fn bare() {
+    let switch_markup = format!(
+        r#"<div class="switch"><label><input class="control" type="checkbox" role="switch">{TRACK_MARKUP}<span class="label">Email me about new releases</span></label><small class="hint">You can change this <strong>at any time</strong> in settings.</small></div>"#
+    );
+
+    let switch = rsx! {
+        <Switch bare=true>
+            <Toggle>
+                "Email me about new releases"
+            </Toggle>
+            <small class=HINT>"You can change this "<strong>"at any time"</strong>" in settings."</small>
+        </Switch>
+    };
+    assert_eq!(switch.render().as_inner(), &switch_markup);
+
+    let switch_markup = format!(
+        r#"<div class="switch"><label><input class="control" type="checkbox" role="switch" name="releases" checked="true">{TRACK_MARKUP}<span class="label">Email me about new releases</span></label></div>"#
+    );
+
+    let switch = rsx! {
+        <Switch bare=true>
+            <Toggle name="releases" checked=true>
+                "Email me about new releases"
+            </Toggle>
+        </Switch>
+    };
     assert_eq!(switch.render().as_inner(), &switch_markup);
 }
