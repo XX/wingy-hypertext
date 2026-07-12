@@ -13,9 +13,9 @@ use wingy_hypertext::link::LinkSetters;
 use wingy_hypertext::link::Target::*;
 use wingy_hypertext::variant::Variant::*;
 use wingy_hypertext_web::components::callout::listen_close_callout;
-use wingy_hypertext_web::components::popup::{init_popups, listen_popups};
 use wingy_hypertext_web::components::select::{init_selects, listen_selects};
 use wingy_hypertext_web::components::tag::listen_remove_tags;
+use wingy_hypertext_web::layouts::popup::{init_popups, listen_popups};
 use wingy_hypertext_web::{
     init_code_examples, init_page_element, init_scroll_to_anchor, listen_click_actions, listen_code_examples,
     register_copy_action,
@@ -36,7 +36,7 @@ pub fn init() {
     listen_selects();
     listen_popups();
     listen_remove_tags();
-    components::popup::listen_popup_overview();
+    layouts::popup::listen_popup_overview();
     components::tag::listen_tag_removable_demo();
 }
 
@@ -47,7 +47,7 @@ pub fn reinit() {
     init_scroll_to_anchor();
     init_selects();
     init_popups();
-    components::popup::init_popup_overview();
+    layouts::popup::init_popup_overview();
 }
 
 #[wasm_bindgen]
@@ -67,7 +67,7 @@ fn main_section(route_path: &str) -> impl Renderable {
             "copy-button" => (components::copy_button::overview()),
             "divider" => (layouts::divider::overview()),
             "input" => (components::input::overview()),
-            "popup" => (components::popup::overview()),
+            "popup" => (layouts::popup::overview()),
             "select" => (components::select::overview()),
             "switch" => (components::switch::overview()),
             "tag" => (components::tag::overview()),
@@ -155,16 +155,6 @@ pub fn render_root(url_path: &str) -> String {
                         </a>
                         <a
                             class=FLANK
-                            href="/popup"
-                            hx-get="/popup"
-                            hx-target=".main-content"
-                            hx-swap="innerHTML"
-                            hx-push-url="true"
-                        >
-                            <span>"Popup"</span>
-                        </a>
-                        <a
-                            class=FLANK
                             href="/select"
                             hx-get="/select"
                             hx-target=".main-content"
@@ -210,6 +200,16 @@ pub fn render_root(url_path: &str) -> String {
                             <span>"Divider"</span>
                         </a>
                         <a class=FLANK href="#"><span>"Page"</span></a>
+                        <a
+                            class=FLANK
+                            href="/popup"
+                            hx-get="/popup"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Popup"</span>
+                        </a>
                     </nav>
                 </PageMenu>
                 <main class="main-content">

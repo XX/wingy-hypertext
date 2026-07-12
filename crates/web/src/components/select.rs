@@ -15,7 +15,7 @@ use web_sys::{
 };
 use wingy_hypertext::components::tag::Tag;
 
-use crate::components::popup;
+use crate::layouts::popup;
 use crate::utils::animate::animate_with_class;
 use crate::utils::convert::bool_to_str;
 

@@ -11,13 +11,13 @@ use wingy_hypertext::components::head::Head;
 use wingy_hypertext::components::head::HeadLevel::*;
 use wingy_hypertext::components::input::Input;
 use wingy_hypertext::components::input::InputType::Number;
-use wingy_hypertext::components::popup::Placement::*;
-use wingy_hypertext::components::popup::{AutoSize, Popup, SyncSize};
 use wingy_hypertext::components::select::{Select, SelectOption};
 use wingy_hypertext::components::switch::Switch;
 use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
 use wingy_hypertext::layouts::divider::Divider;
-use wingy_hypertext_web::components::popup::set_popup_active;
+use wingy_hypertext::layouts::popup::Placement::*;
+use wingy_hypertext::layouts::popup::{AutoSize, Popup, SyncSize};
+use wingy_hypertext_web::layouts::popup::set_popup_active;
 
 const ANCHOR_STYLE: &str = "display: inline-block; width: 150px; height: 150px; border: dashed 2px var(--wa-color-neutral-fill-loud); margin: 50px;";
 const BOX_STYLE: &str = "width: 100px; height: 50px; background: var(--wa-color-brand-fill-loud); border-radius: var(--wa-border-radius-m);";
@@ -92,7 +92,7 @@ pub fn overview() -> impl Renderable {
                     </div>
 
                     // The controls are wired to the popup with a delegated listener,
-                    // see `listen_popup_overview` in examples/client/src/components/popup.rs
+                    // see `listen_popup_overview` in examples/client/src/layouts/popup.rs
                 "#</code>
             </CodeExampleSource>
             <CodeExampleButton>"Code"</CodeExampleButton>

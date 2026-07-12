@@ -63,7 +63,7 @@ pub enum ArrowPlacement {
 /// element to another and keeps them positioned together as the page scrolls
 /// or resizes. The positioning logic (a floating-ui subset: offset, flip,
 /// shift, sync, auto-size, arrow) is implemented in `wingy-hypertext-web`
-/// (`components::popup`) and must be wired up on the client with
+/// (`layouts::popup`) and must be wired up on the client with
 /// `init_popups`/`listen_popups`; the configuration is carried by `data-*`
 /// attributes on the host element.
 ///

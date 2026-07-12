@@ -71,3 +71,25 @@
   Отличие от WA-демо: там переключатель Arrow пересоздаёт узел стрелки через re-render Lit; у нас стрелка отрендерена статически и переключается атрибутом hidden — визуально поведение одинаковое. В
   example-client для этого добавлены зависимости wasm-dom/web-sys (демо-логика живёт в галерее, а не в библиотеке).
 
+---
+
+Перенеси компонент Popup в layouts.
+
+---
+
+● Перенос затрагивает библиотеку, web-крейт (для симметрии структуры), CSS и галерею. Посмотрю текущие module-файлы:
+● Переношу файлы через git mv и правлю все ссылки:
+● Осталось перенести пункт меню Popup из секции Components в Layouts. Смотрю секцию Layouts:
+● Компонент Popup перенесён из components в layouts во всех четырёх местах, где он живёт. Все проверки прошли: fmt, clippy (-D warnings), 61 тест, WASM-клиент собран.
+
+  Что перенесено (через git mv, история файлов сохранена):
+
+  - Библиотека: crates/lib/src/components/popup.rs → crates/lib/src/layouts/popup.rs; публичный путь теперь wingy_hypertext::layouts::popup::{Popup, Placement, AutoSize, SyncSize, ArrowPlacement}.
+  - Web-крейт (для симметрии структуры): crates/web/src/components/popup.rs → crates/web/src/layouts/popup.rs; путь wingy_hypertext_web::layouts::popup::{set_popup_active, reposition, init_popups, 
+  listen_popups}.
+  - CSS: webassets/style/components/popup.css → webassets/style/layouts/popup.css, импорт в index.css перенесён в группу layouts.
+  - Галерея: страница examples/client/src/components/popup.rs → examples/client/src/layouts/popup.rs; маршрут "popup" теперь ведёт на layouts::popup::overview(), а пункт меню «Popup» перемещён из секции
+  Components в секцию Layouts (после Page). Обвязка интерактивного примера (listen_popup_overview/init_popup_overview) переехала вместе со страницей.
+
+  Обновлены все ссылки: импорты в тестах (crate::layouts::popup), в web-логике Select (crate::layouts::popup), в галерее (страница Popup, lib.rs), а также упоминания путей в doc-комментариях библиотечного и
+  web-модуля и в комментарии исходника примера. Класс-константы (POPUP, POPUP_BODY, POPUP_HOVER_BRIDGE) и сами CSS-классы не менялись — на разметку и поведение перенос не влияет.

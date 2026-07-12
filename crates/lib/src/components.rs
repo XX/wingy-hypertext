@@ -4,7 +4,6 @@ pub mod callout;
 pub mod copy_button;
 pub mod head;
 pub mod input;
-pub mod popup;
 pub mod select;
 pub mod switch;
 pub mod tag;
