@@ -15,6 +15,7 @@ use wingy_hypertext::variant::Variant::*;
 use wingy_hypertext_web::components::callout::listen_close_callout;
 use wingy_hypertext_web::components::select::{init_selects, listen_selects};
 use wingy_hypertext_web::components::tag::listen_remove_tags;
+use wingy_hypertext_web::helpers::animation::init_animations;
 use wingy_hypertext_web::helpers::popup::{init_popups, listen_popups};
 use wingy_hypertext_web::{
     init_code_examples, init_page_element, init_scroll_to_anchor, listen_click_actions, listen_code_examples,
@@ -37,6 +38,7 @@ pub fn init() {
     listen_selects();
     listen_popups();
     listen_remove_tags();
+    helpers::animation::listen_animation_overview();
     helpers::popup::listen_popup_overview();
     components::tag::listen_tag_removable_demo();
 }
@@ -48,6 +50,8 @@ pub fn reinit() {
     init_scroll_to_anchor();
     init_selects();
     init_popups();
+    init_animations();
+    helpers::animation::init_animation_overview();
     helpers::popup::init_popup_overview();
 }
 
@@ -62,6 +66,7 @@ fn main_section(route_path: &str) -> impl Renderable {
 
     rsx! {
         @match path {
+            "animation" => (helpers::animation::overview()),
             "badge" => (components::badge::overview()),
             "button" => (components::button::overview()),
             "callout" => (components::callout::overview()),
@@ -206,6 +211,16 @@ pub fn render_root(url_path: &str) -> String {
                         <div class=FLANK><span class=HEADING_M>"Helpers"</span></div>
                     </nav>
                     <nav class=PAGE_MENU_NAV>
+                        <a
+                            class=FLANK
+                            href="/animation"
+                            hx-get="/animation"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Animation"</span>
+                        </a>
                         <a
                             class=FLANK
                             href="/popup"

@@ -9,6 +9,7 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 hypertext = { workspace = true }
+js-sys = { workspace = true }
 wingy-hypertext = { workspace = true }
 wingy-hypertext-web = { workspace = true }
 wasm-bindgen = { workspace = true }
@@ -23,6 +24,8 @@ features = [
     "Event",
     "EventTarget",
     "HtmlInputElement",
+    "IntersectionObserver",
+    "IntersectionObserverEntry",
     "Node",
     "Window",
 ]

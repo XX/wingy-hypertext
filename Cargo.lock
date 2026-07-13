@@ -229,6 +229,7 @@ name = "example-client"
 version = "0.1.0"
 dependencies = [
  "hypertext",
+ "js-sys",
  "wasm-bindgen",
  "wasm-dom",
  "web-sys",

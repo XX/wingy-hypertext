@@ -1,5 +1,6 @@
 pub const ACTIVE: &str = "active";
 pub const ANCHOR_HEAD: &str = "anchor-head";
+pub const ANIMATION: &str = "animation";
 pub const ARROW: &str = "arrow";
 pub const BADGE: &str = "badge";
 pub const BORDER_END: &str = "border-end";

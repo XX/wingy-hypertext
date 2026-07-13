@@ -14,6 +14,7 @@
 @import url("layouts/divider.css");
 @import url("layouts/page.css");
 
+@import url("helpers/animation.css");
 @import url("helpers/popup.css");
 
 @import url("utils/icon.css");
