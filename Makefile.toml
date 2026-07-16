@@ -15,9 +15,9 @@ ADDITIONAL = "--release"
 
 # NOTE: `web_sys_unstable_apis` cfg enables the Web Animations bindings in web-sys used by `wingy-hypertext-web`.
 [tasks.choose-profile-web.env]
-RUSTFLAGS = "-Copt-level=s --cfg=web_sys_unstable_apis"
-MODE = "release"
-ADDITIONAL = "--release"
+RUSTFLAGS = "-Copt-level=z --cfg=web_sys_unstable_apis"
+MODE = "wasm-release"
+ADDITIONAL = "--profile=wasm-release"
 
     [tasks.choose-profile-web.env.debug]
     RUSTFLAGS = "--cfg=web_sys_unstable_apis"
@@ -45,6 +45,8 @@ args = [
     "--target",
     "web",
     "--no-typescript",
+    "--remove-name-section",
+    "--remove-producers-section",
     "--out-dir",
     "${TARGET_DIR}/web/dist",
     "--out-name",
@@ -53,8 +55,21 @@ args = [
 ]
 dependencies = ["copy-static-files"]
 
+# Shrinks the deployed wasm with binaryen's `wasm-opt`; skipped for debug builds.
+[tasks.optimize-client]
+condition = { env = { "MODE" = "wasm-release" } }
+command = "wasm-opt"
+args = [
+    "-Oz",
+    "--strip-debug",
+    "-o",
+    "${TARGET_DIR}/web/dist/client_bg.wasm",
+    "${TARGET_DIR}/web/dist/client_bg.wasm",
+]
+dependencies = ["deploy-client"]
+
 [tasks.client]
-dependencies = ["build-client", "deploy-client"]
+dependencies = ["build-client", "deploy-client", "optimize-client"]
 
 
 [tasks.run-server]

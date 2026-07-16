@@ -26,7 +26,7 @@ The build is orchestrated by [`cargo-make`](https://github.com/sagiegurari/cargo
 - `cargo make client` — build + wasm-bindgen the client and copy static files only (no server).
 - Add `-p debug` to any task for an unoptimized debug build, e.g. `cargo make run -p debug` (release/`opt-level=s` is the default).
 
-Tooling required for the example build: the `wasm32-unknown-unknown` target, `wasm-bindgen-cli`, `watchexec` (for `watch`), and `cargo-make`.
+Tooling required for the example build: the `wasm32-unknown-unknown` target, `wasm-bindgen-cli`, `wasm-opt` (binaryen; release builds only), `watchexec` (for `watch`), and `cargo-make`.
 
 ### Lint & test (matches CI in `.github/workflows/lint-test.yml`)
 

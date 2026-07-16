@@ -12,6 +12,13 @@ license = "MIT OR Apache-2.0"
 [profile.release]
 lto = true
 
+# Size-optimized profile for the WASM example client (see Makefile.toml).
+[profile.wasm-release]
+inherits = "release"
+codegen-units = 1
+panic = "abort"
+strip = "debuginfo"
+
 [workspace.dependencies]
 derive_more = { version = "2.1", features = ["as_ref"] }
 env_logger = "0.11"
