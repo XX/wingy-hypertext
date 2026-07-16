@@ -31,13 +31,31 @@ toolchain = "stable"
 args = ["build", "-p", "example-client", "--target", "wasm32-unknown-unknown", "--profile", "${PROFILE}"]
 dependencies = ["choose-profile-web"]
 
-[tasks.copy-static-files]
+[tasks.clean-static]
 script_runner = "@duckscript"
 script = '''
-rm -r ${TARGET_DIR}/web
+keep = set ${TARGET_DIR}/web/dist
+entries = glob_array ${TARGET_DIR}/web/*
+for entry in ${entries}
+    if not equals ${entry} ${keep}
+        rm -r ${entry}
+    end
+end
+'''
+
+[tasks.clean-dist]
+script_runner = "@duckscript"
+script = '''
+rm -r ${TARGET_DIR}/web/dist
+'''
+
+[tasks.copy-static]
+script_runner = "@duckscript"
+script = '''
 glob_cp webassets/**/* ${TARGET_DIR}/web/
 glob_cp examples/client/webassets/**/* ${TARGET_DIR}/web/
 '''
+dependencies = ["clean-static"]
 
 [tasks.deploy-client]
 command = "wasm-bindgen"
@@ -53,7 +71,7 @@ args = [
     "client",
     "${TARGET_DIR}/wasm32-unknown-unknown/${PROFILE_BUILD_DIR}/example_client.wasm",
 ]
-dependencies = ["copy-static-files"]
+dependencies = ["clean-dist"]
 
 # Shrinks the deployed wasm with binaryen's `wasm-opt`; skipped for debug builds.
 [tasks.optimize-client]
@@ -66,10 +84,16 @@ args = [
     "${TARGET_DIR}/web/dist/client_bg.wasm",
     "${TARGET_DIR}/web/dist/client_bg.wasm",
 ]
-dependencies = ["deploy-client"]
+
 
 [tasks.client]
-dependencies = ["build-client", "deploy-client", "optimize-client"]
+condition = { files_modified = { input = [
+        "${TARGET_DIR}/wasm32-unknown-unknown/${PROFILE_BUILD_DIR}/example_client.wasm",
+    ], output = [
+        "${TARGET_DIR}/web/dist/client_bg.wasm",
+    ] } }
+run_task = { name = ["deploy-client", "optimize-client"] }
+dependencies = ["build-client", "copy-static"]
 
 
 [tasks.run-server]
@@ -79,14 +103,12 @@ args = ["run", "-p", "example-server", "--profile", "${PROFILE}"]
 dependencies = ["choose-profile"]
 
 [tasks.run]
-run_task = [
-    { name = ["run-server"] },
-]
+run_task = "run-server"
 dependencies = ["client"]
 
 [tasks.watch]
 command = "watchexec"
-args = ["-r", "-w", "examples/client", "cargo", "make", "client"]
+args = ["-r", "-w", "examples/client", "-w", "webassets", "cargo", "make", "-p", "debug", "client"]
 
 
 [tasks.fmt-check]
@@ -100,9 +122,7 @@ command = "cargo"
 args = ["clippy", "--all-targets", "--", "-D", "warnings"]
 
 [tasks.lint]
-run_task = [
-    { name = ["clippy"] },
-]
+run_task = "clippy"
 dependencies = ["fmt-check"]
 
 [tasks.lint-test]
