@@ -57,13 +57,13 @@ impl<R: Renderable> Default for Tag<R> {
 impl<R: Renderable> Renderable for Tag<R> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
-        let class_line = self.class_line_with([
+        let class_line = self.class_line_with(&[
             Self::CLASS,
             if self.pill { PILL } else { "" },
             self.variant.into_str(),
             self.appearance.into_str(),
         ]);
-        let style_line = self.style_line_with([]);
+        let style_line = self.style_line_with(&[]);
 
         rsx! {
             <span id=[id] class=[&class_line] style=[&style_line]>

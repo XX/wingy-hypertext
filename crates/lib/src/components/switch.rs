@@ -52,12 +52,12 @@ pub struct Switch<R: Renderable = ()> {
 impl<R: Renderable> Renderable for Switch<R> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
-        let class_line = self.class_line_with([
+        let class_line = self.class_line_with(&[
             Self::CLASS,
             if self.required { REQUIRED } else { "" },
             if self.disabled { DISABLED } else { "" },
         ]);
-        let style_line = self.style_line_with([]);
+        let style_line = self.style_line_with(&[]);
 
         let toggle = (!self.bare).then(|| Toggle {
             checked: self.checked,
@@ -115,8 +115,8 @@ pub struct Toggle<R: Renderable = ()> {
 impl<R: Renderable> Renderable for Toggle<R> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
-        let class_line = self.class_line_with([Self::CLASS]);
-        let style_line = self.style_line_with([]);
+        let class_line = self.class_line_with(&[Self::CLASS]);
+        let style_line = self.style_line_with(&[]);
 
         let checked = self.checked.then_some(true);
         let disabled = self.disabled.then_some(true);

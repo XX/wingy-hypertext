@@ -1,8 +1,6 @@
 use std::borrow::Cow;
 use std::ops::Deref;
 
-use itertools::Itertools;
-
 pub trait CommonAttributeSetters {
     fn id(mut self, id: impl Into<Cow<'static, str>>) -> Self
     where
@@ -64,22 +62,12 @@ pub trait CommonAttributeGetters {
         self.get_id().into_not_empty()
     }
 
-    fn class_line_with<'a>(&'a self, first_classes: impl IntoIterator<Item = &'a str>) -> Option<String> {
-        first_classes
-            .into_iter()
-            .chain(self.get_classes().iter().map(Deref::deref))
-            .filter(|class| !class.is_empty())
-            .join(" ")
-            .into_not_empty()
+    fn class_line_with(&self, first_classes: &[&str]) -> Option<String> {
+        join_not_empty(first_classes, self.get_classes(), " ")
     }
 
-    fn style_line_with<'a>(&'a self, first_styles: impl IntoIterator<Item = &'a str>) -> Option<String> {
-        first_styles
-            .into_iter()
-            .chain(self.get_styles().iter().map(Deref::deref))
-            .filter(|style| !style.is_empty())
-            .join("; ")
-            .into_not_empty()
+    fn style_line_with(&self, first_styles: &[&str]) -> Option<String> {
+        join_not_empty(first_styles, self.get_styles(), "; ")
     }
 
     fn common_attrs_ref(&self) -> &CommonAttrs;
@@ -140,6 +128,20 @@ impl<T: AsRef<CommonAttrs>> CommonAttributeGetters for T {
     fn common_attrs_ref(&self) -> &CommonAttrs {
         self.as_ref()
     }
+}
+
+fn join_not_empty(first: &[&str], rest: &[Cow<'static, str>], separator: &str) -> Option<String> {
+    let mut line = String::new();
+    for part in first.iter().copied().chain(rest.iter().map(Deref::deref)) {
+        if part.is_empty() {
+            continue;
+        }
+        if !line.is_empty() {
+            line.push_str(separator);
+        }
+        line.push_str(part);
+    }
+    line.into_not_empty()
 }
 
 pub trait IntoNotEmpty: Sized {

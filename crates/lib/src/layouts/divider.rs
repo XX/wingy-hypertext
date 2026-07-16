@@ -25,7 +25,7 @@ pub struct Divider {
 impl Renderable for Divider {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
-        let class_line = self.class_line_with([
+        let class_line = self.class_line_with(&[
             Self::CLASS,
             if self.orientation == Orientation::Vertical {
                 VERTICAL
@@ -33,7 +33,7 @@ impl Renderable for Divider {
                 ""
             },
         ]);
-        let style_line = self.style_line_with([]);
+        let style_line = self.style_line_with(&[]);
 
         rsx! {
             <div

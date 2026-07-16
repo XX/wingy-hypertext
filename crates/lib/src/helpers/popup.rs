@@ -138,8 +138,8 @@ pub struct Popup<A: Renderable = (), R: Renderable = ()> {
 impl<A: Renderable, R: Renderable> Renderable for Popup<A, R> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
-        let class_line = self.class_line_with([Self::CLASS, if self.active { ACTIVE } else { "" }]);
-        let style_line = self.style_line_with([]);
+        let class_line = self.class_line_with(&[Self::CLASS, if self.active { ACTIVE } else { "" }]);
+        let style_line = self.style_line_with(&[]);
 
         let flip = self.flip.then_some("");
         let shift = self.shift.then_some("");

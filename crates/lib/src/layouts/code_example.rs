@@ -30,8 +30,8 @@ impl<R: Renderable> Renderable for CodeExample<R> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
         let classes = [Self::CLASS, if self.open { OPEN } else { "" }];
-        let class_line = self.class_line_with(classes);
-        let style_line = self.style_line_with([]);
+        let class_line = self.class_line_with(&classes);
+        let style_line = self.style_line_with(&[]);
 
         rsx! {
             <div id=[id] class=[&class_line] style=[&style_line]>
@@ -59,8 +59,8 @@ pub struct CodeExamplePreview<R: Renderable = ()> {
 impl<R: Renderable> Renderable for CodeExamplePreview<R> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
-        let class_line = self.class_line_with([Self::CLASS]);
-        let style_line = self.style_line_with([]);
+        let class_line = self.class_line_with(&[Self::CLASS]);
+        let style_line = self.style_line_with(&[]);
 
         rsx! {
             <div id=[id] class=[&class_line] style=[&style_line]>
@@ -105,8 +105,8 @@ pub struct CodeExampleSource<R: Renderable = ()> {
 impl<R: Renderable> Renderable for CodeExampleSource<R> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
-        let class_line = self.class_line_with([Self::CLASS, if self.is_not_animated { NO_ANIMATION } else { "" }]);
-        let style_line = self.style_line_with([]);
+        let class_line = self.class_line_with(&[Self::CLASS, if self.is_not_animated { NO_ANIMATION } else { "" }]);
+        let style_line = self.style_line_with(&[]);
 
         rsx! {
             @let code_block_id = self
@@ -142,8 +142,8 @@ pub struct CodeExampleButton<R: Renderable = ()> {
 impl<R: Renderable> Renderable for CodeExampleButton<R> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
-        let class_line = self.class_line_with([Self::CLASS]);
-        let style_line = self.style_line_with([]);
+        let class_line = self.class_line_with(&[Self::CLASS]);
+        let style_line = self.style_line_with(&[]);
 
         rsx! {
             <div id=[id] class=[&class_line] style=[&style_line]>

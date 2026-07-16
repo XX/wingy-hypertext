@@ -106,8 +106,8 @@ pub struct Animation<R: Renderable = ()> {
 impl<R: Renderable> Renderable for Animation<R> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
-        let class_line = self.class_line_with([Self::CLASS]);
-        let style_line = self.style_line_with([]);
+        let class_line = self.class_line_with(&[Self::CLASS]);
+        let style_line = self.style_line_with(&[]);
 
         let play = self.play.then_some("");
 

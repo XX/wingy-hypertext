@@ -78,7 +78,7 @@ pub struct Select<R: Renderable = ()> {
 impl<R: Renderable> Renderable for Select<R> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
-        let class_line = self.class_line_with([
+        let class_line = self.class_line_with(&[
             Self::CLASS,
             if self.pill { PILL } else { "" },
             if self.required { REQUIRED } else { "" },
@@ -86,7 +86,7 @@ impl<R: Renderable> Renderable for Select<R> {
             if self.disabled { DISABLED } else { "" },
             self.appearance.into_str(),
         ]);
-        let style_line = self.style_line_with([]);
+        let style_line = self.style_line_with(&[]);
 
         let disabled = self.disabled.then_some(true);
         let required = self.required.then_some(true);
@@ -207,12 +207,12 @@ pub struct SelectOption<R: Renderable = ()> {
 impl<R: Renderable> Renderable for SelectOption<R> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
-        let class_line = self.class_line_with([
+        let class_line = self.class_line_with(&[
             Self::CLASS,
             if self.selected { SELECTED } else { "" },
             if self.disabled { DISABLED } else { "" },
         ]);
-        let style_line = self.style_line_with([]);
+        let style_line = self.style_line_with(&[]);
 
         rsx! {
             <div

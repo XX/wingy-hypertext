@@ -7,6 +7,5 @@ license.workspace = true
 [dependencies]
 derive_more = { workspace = true }
 hypertext = { workspace = true }
-itertools = { workspace = true }
 strum = { workspace = true }
 wingy-hypertext-macros = { workspace = true }
