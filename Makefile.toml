@@ -6,29 +6,29 @@ additional_profiles = ["debug"]
 TARGET_DIR = "target"
 
 [tasks.choose-profile.env]
-MODE = "release"
-ADDITIONAL = "--release"
+PROFILE = "release"
+PROFILE_BUILD_DIR = "${PROFILE}"
 
     [tasks.choose-profile.env.debug]
-    MODE = "debug"
-    ADDITIONAL = "--profile=dev"
+    PROFILE = "dev"
+    PROFILE_BUILD_DIR = "debug"
 
 # NOTE: `web_sys_unstable_apis` cfg enables the Web Animations bindings in web-sys used by `wingy-hypertext-web`.
 [tasks.choose-profile-web.env]
 RUSTFLAGS = "-Copt-level=z --cfg=web_sys_unstable_apis"
-MODE = "wasm-release"
-ADDITIONAL = "--profile=wasm-release"
+PROFILE = "wasm-release"
+PROFILE_BUILD_DIR = "${PROFILE}"
 
     [tasks.choose-profile-web.env.debug]
     RUSTFLAGS = "--cfg=web_sys_unstable_apis"
-    MODE = "debug"
-    ADDITIONAL = "--profile=dev"
+    PROFILE = "dev"
+    PROFILE_BUILD_DIR = "debug"
 
 
 [tasks.build-client]
 command = "cargo"
 toolchain = "stable"
-args = ["build", "-p", "example-client", "--target", "wasm32-unknown-unknown", "${ADDITIONAL}"]
+args = ["build", "-p", "example-client", "--target", "wasm32-unknown-unknown", "--profile", "${PROFILE}"]
 dependencies = ["choose-profile-web"]
 
 [tasks.copy-static-files]
@@ -51,13 +51,13 @@ args = [
     "${TARGET_DIR}/web/dist",
     "--out-name",
     "client",
-    "target/wasm32-unknown-unknown/${MODE}/example_client.wasm",
+    "${TARGET_DIR}/wasm32-unknown-unknown/${PROFILE_BUILD_DIR}/example_client.wasm",
 ]
 dependencies = ["copy-static-files"]
 
 # Shrinks the deployed wasm with binaryen's `wasm-opt`; skipped for debug builds.
 [tasks.optimize-client]
-condition = { env = { "MODE" = "wasm-release" } }
+condition = { env = { "PROFILE" = "wasm-release" } }
 command = "wasm-opt"
 args = [
     "-Oz",
@@ -75,7 +75,7 @@ dependencies = ["build-client", "deploy-client", "optimize-client"]
 [tasks.run-server]
 command = "cargo"
 toolchain = "stable"
-args = ["run", "-p", "example-server", "${ADDITIONAL}"]
+args = ["run", "-p", "example-server", "--profile", "${PROFILE}"]
 dependencies = ["choose-profile"]
 
 [tasks.run]
