@@ -4,11 +4,10 @@ use derive_more::{AsMut, AsRef};
 use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable, rsx};
 use strum::{AsRefStr, IntoStaticStr};
-use wingy_hypertext_macros::{Props, const_str};
+use wingy_hypertext_macros::{DynRenderable, Props, const_str};
 
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::ANIMATION;
-use crate::renderable;
 
 /// The direction of playback as well as the behavior when reaching the end of
 /// an iteration, mirroring the CSS `animation-direction` values.
@@ -46,7 +45,7 @@ pub enum Fill {
 /// `Animation`s. The animation does not start until `play` is set; the
 /// attribute is automatically removed when the animation finishes or gets
 /// canceled.
-#[derive(Default, AsRef, AsMut, Props)]
+#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
 #[const_str(CLASS = ANIMATION)]
 #[props(builder)]
 pub struct Animation<R: Renderable = ()> {
@@ -102,13 +101,6 @@ pub struct Animation<R: Renderable = ()> {
     /// only the first element child is animated.
     #[prop(convert)]
     pub children: Option<R>,
-}
-
-impl<R: Renderable> Renderable for Animation<R> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let children = renderable::as_dyn(&self.children);
-        self.render_to(buffer, children)
-    }
 }
 
 impl<R: Renderable> Animation<R> {

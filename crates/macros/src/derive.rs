@@ -260,6 +260,55 @@ pub fn props(input: DeriveInput) -> syn::Result<TokenStream> {
     Ok(output)
 }
 
+pub fn dyn_renderable(input: DeriveInput) -> syn::Result<TokenStream> {
+    let Data::Struct(data_struct) = &input.data else {
+        return Err(syn::Error::new(
+            input.span(),
+            "#[derive(DynRenderable)] may only be used on structs",
+        ));
+    };
+
+    let struct_name = &input.ident;
+    let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
+
+    let method = if let Some(attr) = input.attrs.iter().find(|attr| attr.path().is_ident("render_to")) {
+        attr.parse_args::<Ident>()?
+    } else {
+        format_ident!("render_to")
+    };
+
+    let erased: Vec<&Ident> = data_struct
+        .fields
+        .iter()
+        .filter_map(|field| {
+            if field.attrs.iter().any(|attr| attr.path().is_ident("skip_render")) {
+                return None;
+            }
+
+            let name = field.ident.as_ref()?;
+            let (is_optional, inner_ty) = extract_option_type(&field.ty);
+            let inner_ident = type_as_ident(inner_ty)?;
+
+            (is_optional
+                && input
+                    .generics
+                    .type_params()
+                    .any(|type_param| type_param.ident == *inner_ident))
+            .then_some(name)
+        })
+        .collect();
+
+    Ok(quote! {
+        #[automatically_derived]
+        impl #impl_generics ::hypertext::Renderable for #struct_name #ty_generics #where_clause {
+            fn render_to(&self, buffer: &mut ::hypertext::Buffer) {
+                #(let #erased = self.#erased.as_ref().map(|renderable| renderable as &dyn ::hypertext::Renderable);)*
+                self.#method(buffer #(, #erased)*)
+            }
+        }
+    })
+}
+
 fn extract_option_type(ty: &Type) -> (bool, &Type) {
     if let Type::Path(type_path) = ty
         && let Some(segment) = type_path.path.segments.last()

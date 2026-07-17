@@ -1,13 +1,12 @@
 use derive_more::{AsMut, AsRef};
 use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable, rsx};
-use wingy_hypertext_macros::{Props, const_str};
+use wingy_hypertext_macros::{DynRenderable, Props, const_str};
 
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::{PAGE, PAGE_BODY, PAGE_MENU};
-use crate::renderable;
 
-#[derive(Default, AsRef, AsMut, Props)]
+#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
 #[const_str(CLASS = PAGE)]
 #[props(builder)]
 pub struct Page<R: Renderable = ()> {
@@ -17,13 +16,6 @@ pub struct Page<R: Renderable = ()> {
 
     #[prop(convert)]
     pub children: Option<R>,
-}
-
-impl<R: Renderable> Renderable for Page<R> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let children = renderable::as_dyn(&self.children);
-        self.render_to(buffer, children)
-    }
 }
 
 impl<R: Renderable> Page<R> {
@@ -41,7 +33,7 @@ impl<R: Renderable> Page<R> {
     }
 }
 
-#[derive(Default, AsRef, AsMut, Props)]
+#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
 #[const_str(CLASS = PAGE_BODY)]
 #[props(builder)]
 pub struct PageBody<R: Renderable = ()> {
@@ -51,13 +43,6 @@ pub struct PageBody<R: Renderable = ()> {
 
     #[prop(convert)]
     pub children: Option<R>,
-}
-
-impl<R: Renderable> Renderable for PageBody<R> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let children = renderable::as_dyn(&self.children);
-        self.render_to(buffer, children)
-    }
 }
 
 impl<R: Renderable> PageBody<R> {
@@ -75,7 +60,7 @@ impl<R: Renderable> PageBody<R> {
     }
 }
 
-#[derive(Default, AsRef, AsMut, Props)]
+#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
 #[const_str(CLASS = PAGE_MENU)]
 #[props(builder)]
 pub struct PageMenu<R: Renderable = ()> {
@@ -85,13 +70,6 @@ pub struct PageMenu<R: Renderable = ()> {
 
     #[prop(convert)]
     pub children: Option<R>,
-}
-
-impl<R: Renderable> Renderable for PageMenu<R> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let children = renderable::as_dyn(&self.children);
-        self.render_to(buffer, children)
-    }
 }
 
 impl<R: Renderable> PageMenu<R> {

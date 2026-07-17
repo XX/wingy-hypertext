@@ -3,12 +3,11 @@ use hypertext::prelude::{
     AriaAttributes, GlobalAttributes, SvgGlobalAttributes, hypertext_elements, hypertext_svg_elements,
 };
 use hypertext::{Buffer, Renderable, rsx};
-use wingy_hypertext_macros::{Props, const_str};
+use wingy_hypertext_macros::{DynRenderable, Props, const_str};
 
 use crate::appearance::Appearance;
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::{PILL, TAG, TAG_CONTENT, TAG_REMOVE};
-use crate::renderable;
 use crate::variant::Variant;
 
 /// A compact visual marker mirroring Web Awesome's `wa-tag`: use it for status
@@ -17,7 +16,7 @@ use crate::variant::Variant;
 /// (the tag does not remove itself — handle the event to decide). The event is
 /// dispatched by `wingy-hypertext-web` (`components::tag`), wired up on the
 /// client with `listen_remove_tags`.
-#[derive(AsRef, AsMut, Props)]
+#[derive(AsRef, AsMut, Props, DynRenderable)]
 #[const_str(CLASS = TAG)]
 #[props(builder)]
 pub struct Tag<R: Renderable = ()> {
@@ -52,13 +51,6 @@ impl<R: Renderable> Default for Tag<R> {
             attrs: CommonAttrs::default(),
             children: None,
         }
-    }
-}
-
-impl<R: Renderable> Renderable for Tag<R> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let children = renderable::as_dyn(&self.children);
-        self.render_to(buffer, children)
     }
 }
 

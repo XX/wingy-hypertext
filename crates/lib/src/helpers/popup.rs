@@ -4,11 +4,10 @@ use derive_more::{AsMut, AsRef};
 use hypertext::prelude::{AriaAttributes, GlobalAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable, rsx};
 use strum::{AsRefStr, IntoStaticStr};
-use wingy_hypertext_macros::{Props, const_str};
+use wingy_hypertext_macros::{DynRenderable, Props, const_str};
 
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::{ACTIVE, ARROW, POPUP, POPUP_BODY, POPUP_HOVER_BRIDGE};
-use crate::renderable;
 
 /// The preferred placement of the popup relative to its anchor. The actual
 /// placement may vary to keep the popup inside of the viewport when `flip` is on.
@@ -71,7 +70,7 @@ pub enum ArrowPlacement {
 /// Like `wa-popup`, this is a low-level building block for popovers,
 /// dropdowns, and tooltips — it provides positioning only, no styles and no
 /// accessible experience by itself.
-#[derive(Default, AsRef, AsMut, Props)]
+#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
 #[const_str(CLASS = POPUP)]
 #[props(builder)]
 pub struct Popup<A: Renderable = (), R: Renderable = ()> {
@@ -134,14 +133,6 @@ pub struct Popup<A: Renderable = (), R: Renderable = ()> {
 
     #[prop(convert)]
     pub children: Option<R>,
-}
-
-impl<A: Renderable, R: Renderable> Renderable for Popup<A, R> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let anchor = renderable::as_dyn(&self.anchor);
-        let children = renderable::as_dyn(&self.children);
-        self.render_to(buffer, anchor, children)
-    }
 }
 
 impl<A: Renderable, R: Renderable> Popup<A, R> {

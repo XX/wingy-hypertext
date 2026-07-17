@@ -1,7 +1,7 @@
 use derive_more::{AsMut, AsRef};
 use hypertext::prelude::{GlobalAttributes, SvgGlobalAttributes, hypertext_elements, hypertext_svg_elements};
 use hypertext::{Buffer, Renderable, rsx};
-use wingy_hypertext_macros::{Props, const_str};
+use wingy_hypertext_macros::{DynRenderable, Props, const_str};
 
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::{
@@ -9,7 +9,6 @@ use crate::class::{
     HEADING_M, HEADING_S, HEADING_XL, HEADING_XS, ICON, ICON_SHRINK, VISUALLY_HIDDEN,
 };
 use crate::link::{Link, LinkSetters};
-use crate::renderable;
 
 #[derive(Default, AsRef, AsMut, Props)]
 #[props(builder)]
@@ -106,7 +105,7 @@ impl HeadLevel {
     }
 }
 
-#[derive(Default, AsRef, AsMut, Props)]
+#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
 #[const_str(CLASS = HEAD)]
 #[props(builder)]
 pub struct Head<R: Renderable = ()> {
@@ -121,13 +120,6 @@ pub struct Head<R: Renderable = ()> {
 
     #[prop(convert)]
     pub children: Option<R>,
-}
-
-impl<R: Renderable> Renderable for Head<R> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let children = renderable::as_dyn(&self.children);
-        self.render_to(buffer, children)
-    }
 }
 
 impl<R: Renderable> Head<R> {

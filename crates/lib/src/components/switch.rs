@@ -3,18 +3,17 @@ use std::borrow::Cow;
 use derive_more::{AsMut, AsRef};
 use hypertext::prelude::{AriaAttributes, GlobalAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable, rsx};
-use wingy_hypertext_macros::{Props, const_str};
+use wingy_hypertext_macros::{DynRenderable, Props, const_str};
 
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::{CONTROL, DISABLED, HINT, LABEL, REQUIRED, SWITCH, SWITCH_TOGGLE, THUMB, TRACK};
-use crate::renderable;
 
 /// A toggle control: a native checkbox with `role="switch"` wrapped in a label,
 /// followed by an optional hint. Toggling is fully native (the checked state is
 /// styled with `:checked`), so no client-side behavior is needed. The switch's
 /// look is adjusted with the `--width`, `--height` and `--thumb-size` custom
 /// properties.
-#[derive(Default, AsRef, AsMut, Props)]
+#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
 #[const_str(CLASS = SWITCH)]
 #[props(builder)]
 pub struct Switch<R: Renderable = ()> {
@@ -48,13 +47,6 @@ pub struct Switch<R: Renderable = ()> {
     /// The switch's label, or the whole body markup when `bare` is set.
     #[prop(convert)]
     pub children: Option<R>,
-}
-
-impl<R: Renderable> Renderable for Switch<R> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let children = renderable::as_dyn(&self.children);
-        self.render_to(buffer, children)
-    }
 }
 
 impl<R: Renderable> Switch<R> {
@@ -96,7 +88,7 @@ impl<R: Renderable> Switch<R> {
 /// The label block of a [`Switch`]: the native checkbox control, the track
 /// with the thumb, and the label content. Used standalone inside a bare
 /// [`Switch`] to compose the body manually.
-#[derive(Default, AsRef, AsMut, Props)]
+#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
 #[const_str(CLASS = SWITCH_TOGGLE)]
 #[props(builder)]
 pub struct Toggle<R: Renderable = ()> {
@@ -118,13 +110,6 @@ pub struct Toggle<R: Renderable = ()> {
 
     #[prop(convert)]
     pub children: Option<R>,
-}
-
-impl<R: Renderable> Renderable for Toggle<R> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let children = renderable::as_dyn(&self.children);
-        self.render_to(buffer, children)
-    }
 }
 
 impl<R: Renderable> Toggle<R> {

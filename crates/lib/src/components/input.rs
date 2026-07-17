@@ -4,12 +4,11 @@ use derive_more::{AsMut, AsRef};
 use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable, rsx};
 use strum::{AsRefStr, IntoStaticStr};
-use wingy_hypertext_macros::{Props, const_str};
+use wingy_hypertext_macros::{DynRenderable, Props, const_str};
 
 use crate::appearance::Appearance;
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::{CONTROL, HINT, INPUT, LABEL, PILL, REQUIRED, TEXT_FIELD};
-use crate::renderable;
 
 /// The type of data the input collects. Mirrors a subset of the native `<input>` `type` attribute.
 #[derive(Copy, Clone, Debug, Default, IntoStaticStr, AsRefStr, PartialEq, Eq)]
@@ -41,7 +40,7 @@ impl InputType {
     pub const TIME: &str = Self::Time.into_str();
 }
 
-#[derive(Default, AsRef, AsMut, Props)]
+#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
 #[const_str(CLASS = INPUT)]
 #[props(builder)]
 pub struct Input<R: Renderable = ()> {
@@ -80,13 +79,6 @@ pub struct Input<R: Renderable = ()> {
 
     #[prop(convert)]
     pub children: Option<R>,
-}
-
-impl<R: Renderable> Renderable for Input<R> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let children = renderable::as_dyn(&self.children);
-        self.render_to(buffer, children)
-    }
 }
 
 impl<R: Renderable> Input<R> {

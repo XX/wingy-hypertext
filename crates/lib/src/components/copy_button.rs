@@ -3,16 +3,15 @@ use std::borrow::Cow;
 use derive_more::{AsMut, AsRef};
 use hypertext::prelude::{GlobalAttributes, SvgGlobalAttributes, hypertext_elements, hypertext_svg_elements};
 use hypertext::{Buffer, Renderable, rsx};
-use wingy_hypertext_macros::{Props, const_str};
+use wingy_hypertext_macros::{DynRenderable, Props, const_str};
 
 use crate::action::ActionSetters;
 use crate::appearance::Appearance::Plain;
 use crate::attributes::{CommonAttributeSetters, CommonAttrs};
 use crate::class::{COPY_BUTTON, COPY_BUTTON_COPY, COPY_BUTTON_ERROR, COPY_BUTTON_SUCCESS, ICON};
 use crate::components::button::Button;
-use crate::renderable;
 
-#[derive(Default, AsRef, AsMut, Props)]
+#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
 #[const_str(CLASS = COPY_BUTTON)]
 #[props(builder)]
 pub struct CopyButton<R: Renderable = ()> {
@@ -27,13 +26,6 @@ pub struct CopyButton<R: Renderable = ()> {
 
     #[prop(convert)]
     pub children: Option<R>,
-}
-
-impl<R: Renderable> Renderable for CopyButton<R> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let children = renderable::as_dyn(&self.children);
-        self.render_to(buffer, children)
-    }
 }
 
 impl<R: Renderable> CopyButton<R> {

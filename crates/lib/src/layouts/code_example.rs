@@ -3,7 +3,7 @@ use std::borrow::Cow;
 use derive_more::{AsMut, AsRef};
 use hypertext::prelude::{GlobalAttributes, SvgGlobalAttributes, hypertext_elements, hypertext_svg_elements};
 use hypertext::{Buffer, Renderable, rsx};
-use wingy_hypertext_macros::{Props, const_str};
+use wingy_hypertext_macros::{DynRenderable, Props, const_str};
 
 use crate::attributes::{CommonAttributeGetters, CommonAttributeSetters, CommonAttrs};
 use crate::class::{
@@ -11,9 +11,8 @@ use crate::class::{
     CODE_EXAMPLE_TOGGLE, DARK, ICON, NO_ANIMATION, OPEN,
 };
 use crate::components::copy_button::CopyButton;
-use crate::renderable;
 
-#[derive(Default, AsRef, AsMut, Props)]
+#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
 #[const_str(CLASS = CODE_EXAMPLE)]
 #[props(builder)]
 pub struct CodeExample<R: Renderable = ()> {
@@ -25,13 +24,6 @@ pub struct CodeExample<R: Renderable = ()> {
 
     #[prop(convert)]
     pub children: Option<R>,
-}
-
-impl<R: Renderable> Renderable for CodeExample<R> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let children = renderable::as_dyn(&self.children);
-        self.render_to(buffer, children)
-    }
 }
 
 impl<R: Renderable> CodeExample<R> {
@@ -50,7 +42,7 @@ impl<R: Renderable> CodeExample<R> {
     }
 }
 
-#[derive(Default, AsRef, AsMut, Props)]
+#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
 #[const_str(CLASS = CODE_EXAMPLE_PREVIEW)]
 #[props(builder)]
 pub struct CodeExamplePreview<R: Renderable = ()> {
@@ -62,13 +54,6 @@ pub struct CodeExamplePreview<R: Renderable = ()> {
 
     #[prop(convert)]
     pub children: Option<R>,
-}
-
-impl<R: Renderable> Renderable for CodeExamplePreview<R> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let children = renderable::as_dyn(&self.children);
-        self.render_to(buffer, children)
-    }
 }
 
 impl<R: Renderable> CodeExamplePreview<R> {
@@ -98,7 +83,7 @@ impl<R: Renderable> CodeExamplePreview<R> {
     }
 }
 
-#[derive(Default, AsRef, AsMut, Props)]
+#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
 #[const_str(CLASS = CODE_EXAMPLE_SOURCE)]
 #[props(builder)]
 pub struct CodeExampleSource<R: Renderable = ()> {
@@ -115,13 +100,6 @@ pub struct CodeExampleSource<R: Renderable = ()> {
 
     #[prop(convert)]
     pub children: Option<R>,
-}
-
-impl<R: Renderable> Renderable for CodeExampleSource<R> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let children = renderable::as_dyn(&self.children);
-        self.render_to(buffer, children)
-    }
 }
 
 impl<R: Renderable> CodeExampleSource<R> {
@@ -149,7 +127,7 @@ impl<R: Renderable> CodeExampleSource<R> {
     }
 }
 
-#[derive(Default, AsRef, AsMut, Props)]
+#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
 #[const_str(CLASS = CODE_EXAMPLE_BUTTONS)]
 #[props(builder)]
 pub struct CodeExampleButton<R: Renderable = ()> {
@@ -159,13 +137,6 @@ pub struct CodeExampleButton<R: Renderable = ()> {
 
     #[prop(convert)]
     pub children: Option<R>,
-}
-
-impl<R: Renderable> Renderable for CodeExampleButton<R> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let children = renderable::as_dyn(&self.children);
-        self.render_to(buffer, children)
-    }
 }
 
 impl<R: Renderable> CodeExampleButton<R> {

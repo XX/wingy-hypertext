@@ -11,7 +11,6 @@ pub mod htmx;
 pub mod layouts;
 pub mod link;
 pub mod orientation;
-pub mod renderable;
 #[cfg(test)]
 pub mod tests;
 pub mod variant;

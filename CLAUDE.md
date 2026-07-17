@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Workspace layout
 
 - `crates/lib` (`wingy-hypertext`) — the component library. This is the product.
-- `crates/macros` (`wingy-hypertext-macros`) — proc-macros (`#[derive(Props)]`, `#[const_str(...)]`, `htmx_rsx!`) used by the library.
+- `crates/macros` (`wingy-hypertext-macros`) — proc-macros (`#[derive(Props)]`, `#[derive(DynRenderable)]`, `#[const_str(...)]`, `htmx_rsx!`) used by the library.
 - `crates/web` (`wingy-hypertext-web`) — Rust/WASM port of the gallery's client-side scripts (web-sys/js-sys); modules mirror `webassets/js` one-to-one. Consumed by `example-client`.
 - `examples/client` (`example-client`) — `cdylib`/`rlib` compiled to `wasm32-unknown-unknown`; renders the gallery pages.
 - `examples/server` (`example-server`) — serves `target/web` over `127.0.0.1:9080`.
@@ -47,7 +47,7 @@ Every component/layout is a struct that follows the same recipe (see `crates/lib
 3. Is annotated `#[props(builder)]` to get `builder()`/`build()`.
 4. Embeds shared sub-structs as fields tagged `#[as_ref] #[as_mut]`: `CommonAttrs` (id/classes/styles), `Link` (href/target/...), `Action` (data-action/data-args). These `AsRef`/`AsMut` impls are what make the blanket trait impls (below) apply to the component.
 5. Has an `Option<R: Renderable>` `children` field tagged `#[prop(convert)]`.
-6. Implements `Renderable::render_to` as a thin wrapper that erases the children via `crate::renderable::as_dyn` and delegates to an inherent `fn render_to(&self, buffer, children: Option<&dyn Renderable>)`, which holds the actual render body (building the class line with `self.class_line_with(&[Self::CLASS, ...])` and emitting via `rsx! { ... }`). The body must render the passed `children` argument and never touch `self.children`, so LLVM can merge the per-child-type instantiations into one copy — critical for WASM binary size.
+6. Derives `DynRenderable`, which generates the `Renderable` impl as a thin wrapper delegating to an inherent `fn render_to(&self, buffer, children: Option<&dyn Renderable>)` holding the actual render body (building the class line with `self.class_line_with(&[Self::CLASS, ...])` and emitting via `rsx! { ... }`). Every field typed `Option<P>` with `P` a type param is erased to `Option<&dyn Renderable>` and passed after the buffer in declaration order (e.g. `Callout` gets `icon` and `children`); fields marked `#[skip_render]` are excluded, and without erased fields the call is delegated as is. The delegate name is overridable with `#[render_to(name)]` on the struct. The body must render the passed arguments and never touch the erased fields through `self`, so LLVM can merge the per-child-type instantiations into one copy — critical for WASM binary size.
 
 ### Trait-based fluent setters
 

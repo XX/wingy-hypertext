@@ -6,7 +6,7 @@ use hypertext::prelude::{
 };
 use hypertext::{Buffer, Renderable, rsx};
 use strum::{AsRefStr, IntoStaticStr};
-use wingy_hypertext_macros::{Props, const_str};
+use wingy_hypertext_macros::{DynRenderable, Props, const_str};
 
 use crate::appearance::Appearance;
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
@@ -14,7 +14,6 @@ use crate::class::{
     CHECK, CLEAR_BUTTON, COMBOBOX, DISABLED, DISPLAY_INPUT, EXPAND_ICON, HINT, LABEL, LISTBOX, MULTIPLE, OPTION,
     OPTION_LABEL, PILL, POPUP, POPUP_BODY, REQUIRED, SELECT, SELECT_POPUP, SELECTED, TAGS, VALUE_INPUT,
 };
-use crate::renderable;
 
 /// The preferred placement of the select's menu. The actual placement may
 /// flip to keep the listbox in the viewport.
@@ -31,7 +30,7 @@ pub enum SelectPlacement {
 /// behavior (opening, selection, keyboard navigation) is implemented in
 /// `wingy-hypertext-web` (`components::select`) and must be wired up on the
 /// client with `init_selects`/`listen_selects`.
-#[derive(Default, AsRef, AsMut, Props)]
+#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
 #[const_str(CLASS = SELECT)]
 #[props(builder)]
 pub struct Select<R: Renderable = ()> {
@@ -74,13 +73,6 @@ pub struct Select<R: Renderable = ()> {
 
     #[prop(convert)]
     pub children: Option<R>,
-}
-
-impl<R: Renderable> Renderable for Select<R> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let children = renderable::as_dyn(&self.children);
-        self.render_to(buffer, children)
-    }
 }
 
 impl<R: Renderable> Select<R> {
@@ -188,7 +180,7 @@ impl<R: Renderable> Select<R> {
 
 /// A single choice within a [`Select`], mirroring Web Awesome's `wa-option`.
 /// Named `SelectOption` to avoid clashing with `std::option::Option`.
-#[derive(Default, AsRef, AsMut, Props)]
+#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
 #[const_str(CLASS = OPTION)]
 #[props(builder)]
 pub struct SelectOption<R: Renderable = ()> {
@@ -210,13 +202,6 @@ pub struct SelectOption<R: Renderable = ()> {
 
     #[prop(convert)]
     pub children: Option<R>,
-}
-
-impl<R: Renderable> Renderable for SelectOption<R> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let children = renderable::as_dyn(&self.children);
-        self.render_to(buffer, children)
-    }
 }
 
 impl<R: Renderable> SelectOption<R> {

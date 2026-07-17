@@ -1,15 +1,14 @@
 use derive_more::{AsMut, AsRef};
 use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable, rsx};
-use wingy_hypertext_macros::{Props, const_str};
+use wingy_hypertext_macros::{DynRenderable, Props, const_str};
 
 use crate::appearance::Appearance;
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::{CALLOUT, CALLOUT_ICON, CALLOUT_MESSAGE};
-use crate::renderable;
 use crate::variant::Variant;
 
-#[derive(AsRef, AsMut, Props)]
+#[derive(AsRef, AsMut, Props, DynRenderable)]
 #[const_str(CLASS = CALLOUT)]
 #[props(builder)]
 pub struct Callout<I: Renderable = (), R: Renderable = ()> {
@@ -44,14 +43,6 @@ impl<I: Renderable, R: Renderable> Default for Callout<I, R> {
             icon: None,
             children: None,
         }
-    }
-}
-
-impl<I: Renderable, R: Renderable> Renderable for Callout<I, R> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let icon = renderable::as_dyn(&self.icon);
-        let children = renderable::as_dyn(&self.children);
-        self.render_to(buffer, icon, children)
     }
 }
 
