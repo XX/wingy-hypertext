@@ -9,6 +9,7 @@ use wingy_hypertext_macros::{Props, const_str};
 use crate::appearance::Appearance;
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::{CONTROL, HINT, INPUT, LABEL, PILL, REQUIRED, TEXT_FIELD};
+use crate::renderable;
 
 /// The type of data the input collects. Mirrors a subset of the native `<input>` `type` attribute.
 #[derive(Copy, Clone, Debug, Default, IntoStaticStr, AsRefStr, PartialEq, Eq)]
@@ -81,6 +82,13 @@ pub struct Input<R: Renderable = ()> {
     pub children: Option<R>,
 }
 
+impl<R: Renderable> Renderable for Input<R> {
+    fn render_to(&self, buffer: &mut Buffer) {
+        let children = renderable::as_dyn(&self.children);
+        self.render_to(buffer, children)
+    }
+}
+
 impl<R: Renderable> Input<R> {
     fn has_text_field_props(&self) -> bool {
         self.input_type != InputType::default()
@@ -91,10 +99,8 @@ impl<R: Renderable> Input<R> {
             || self.value.is_some()
             || self.placeholder.is_some()
     }
-}
 
-impl<R: Renderable> Renderable for Input<R> {
-    fn render_to(&self, buffer: &mut Buffer) {
+    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
         let id = self.id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
@@ -104,7 +110,7 @@ impl<R: Renderable> Renderable for Input<R> {
         ]);
         let style_line = self.style_line_with(&[]);
 
-        let text_field = (self.children.is_none() || self.has_text_field_props()).then(|| TextField {
+        let text_field = (children.is_none() || self.has_text_field_props()).then(|| TextField {
             input_type: self.input_type,
             disabled: self.disabled,
             readonly: self.readonly,
@@ -121,7 +127,7 @@ impl<R: Renderable> Renderable for Input<R> {
                     <label class=LABEL>(label)</label>
                 }
                 (text_field)
-                (self.children)
+                (children)
                 @if let Some(hint) = &self.hint {
                     <small class=HINT>(hint)</small>
                 }

@@ -8,6 +8,7 @@ use wingy_hypertext_macros::{Props, const_str};
 
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::ANIMATION;
+use crate::renderable;
 
 /// The direction of playback as well as the behavior when reaching the end of
 /// an iteration, mirroring the CSS `animation-direction` values.
@@ -105,6 +106,13 @@ pub struct Animation<R: Renderable = ()> {
 
 impl<R: Renderable> Renderable for Animation<R> {
     fn render_to(&self, buffer: &mut Buffer) {
+        let children = renderable::as_dyn(&self.children);
+        self.render_to(buffer, children)
+    }
+}
+
+impl<R: Renderable> Animation<R> {
+    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
         let id = self.id();
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
@@ -129,7 +137,7 @@ impl<R: Renderable> Renderable for Animation<R> {
                 data-keyframes=[&self.keyframes]
                 data-playback-rate=[self.playback_rate]
             >
-                (self.children)
+                (children)
             </div>
         }
         .render_to(buffer);

@@ -9,6 +9,7 @@ use crate::class::{
     HEADING_M, HEADING_S, HEADING_XL, HEADING_XS, ICON, ICON_SHRINK, VISUALLY_HIDDEN,
 };
 use crate::link::{Link, LinkSetters};
+use crate::renderable;
 
 #[derive(Default, AsRef, AsMut, Props)]
 #[props(builder)]
@@ -124,6 +125,13 @@ pub struct Head<R: Renderable = ()> {
 
 impl<R: Renderable> Renderable for Head<R> {
     fn render_to(&self, buffer: &mut Buffer) {
+        let children = renderable::as_dyn(&self.children);
+        self.render_to(buffer, children)
+    }
+}
+
+impl<R: Renderable> Head<R> {
+    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
         let id = self.id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
@@ -134,7 +142,7 @@ impl<R: Renderable> Renderable for Head<R> {
 
         rsx! {
             <div id=[id] class=[&class_line] style=[&style_line]>
-                (self.children)
+                (children)
                 @if self.anchor {
                     @let href = format!("#{}", id.map(|id| id.as_ref()).unwrap_or_default());
 

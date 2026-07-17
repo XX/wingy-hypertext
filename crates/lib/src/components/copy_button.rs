@@ -10,6 +10,7 @@ use crate::appearance::Appearance::Plain;
 use crate::attributes::{CommonAttributeSetters, CommonAttrs};
 use crate::class::{COPY_BUTTON, COPY_BUTTON_COPY, COPY_BUTTON_ERROR, COPY_BUTTON_SUCCESS, ICON};
 use crate::components::button::Button;
+use crate::renderable;
 
 #[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = COPY_BUTTON)]
@@ -30,8 +31,15 @@ pub struct CopyButton<R: Renderable = ()> {
 
 impl<R: Renderable> Renderable for CopyButton<R> {
     fn render_to(&self, buffer: &mut Buffer) {
+        let children = renderable::as_dyn(&self.children);
+        self.render_to(buffer, children)
+    }
+}
+
+impl<R: Renderable> CopyButton<R> {
+    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
         let content = rsx! {
-            @if let Some(children) = &self.children {
+            @if let Some(children) = children {
                 (children)
             }
             @else {

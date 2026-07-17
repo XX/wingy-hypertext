@@ -11,6 +11,7 @@ use crate::class::{
     CODE_EXAMPLE_TOGGLE, DARK, ICON, NO_ANIMATION, OPEN,
 };
 use crate::components::copy_button::CopyButton;
+use crate::renderable;
 
 #[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = CODE_EXAMPLE)]
@@ -28,6 +29,13 @@ pub struct CodeExample<R: Renderable = ()> {
 
 impl<R: Renderable> Renderable for CodeExample<R> {
     fn render_to(&self, buffer: &mut Buffer) {
+        let children = renderable::as_dyn(&self.children);
+        self.render_to(buffer, children)
+    }
+}
+
+impl<R: Renderable> CodeExample<R> {
+    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
         let id = self.id();
         let classes = [Self::CLASS, if self.open { OPEN } else { "" }];
         let class_line = self.class_line_with(&classes);
@@ -35,7 +43,7 @@ impl<R: Renderable> Renderable for CodeExample<R> {
 
         rsx! {
             <div id=[id] class=[&class_line] style=[&style_line]>
-                (self.children)
+                (children)
             </div>
         }
         .render_to(buffer);
@@ -58,13 +66,20 @@ pub struct CodeExamplePreview<R: Renderable = ()> {
 
 impl<R: Renderable> Renderable for CodeExamplePreview<R> {
     fn render_to(&self, buffer: &mut Buffer) {
+        let children = renderable::as_dyn(&self.children);
+        self.render_to(buffer, children)
+    }
+}
+
+impl<R: Renderable> CodeExamplePreview<R> {
+    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
         let id = self.id();
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
 
         rsx! {
             <div id=[id] class=[&class_line] style=[&style_line]>
-                (self.children)
+                (children)
                 @if self.resize {
                     <div class=CODE_EXAMPLE_RESIZER>
                         <span class=ICON>
@@ -104,6 +119,13 @@ pub struct CodeExampleSource<R: Renderable = ()> {
 
 impl<R: Renderable> Renderable for CodeExampleSource<R> {
     fn render_to(&self, buffer: &mut Buffer) {
+        let children = renderable::as_dyn(&self.children);
+        self.render_to(buffer, children)
+    }
+}
+
+impl<R: Renderable> CodeExampleSource<R> {
+    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
         let id = self.id();
         let class_line = self.class_line_with(&[Self::CLASS, if self.is_not_animated { NO_ANIMATION } else { "" }]);
         let style_line = self.style_line_with(&[]);
@@ -116,7 +138,7 @@ impl<R: Renderable> Renderable for CodeExampleSource<R> {
 
             <div id=[id] class=[&class_line] style=[&style_line]>
                 <pre id=[code_block_id.as_ref()]>
-                    (self.children)
+                    (children)
                     @if self.copy_button {
                         <CopyButton class=DARK from=(code_block_id.unwrap_or_default()) />
                     }
@@ -141,6 +163,13 @@ pub struct CodeExampleButton<R: Renderable = ()> {
 
 impl<R: Renderable> Renderable for CodeExampleButton<R> {
     fn render_to(&self, buffer: &mut Buffer) {
+        let children = renderable::as_dyn(&self.children);
+        self.render_to(buffer, children)
+    }
+}
+
+impl<R: Renderable> CodeExampleButton<R> {
+    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
         let id = self.id();
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
@@ -148,7 +177,7 @@ impl<R: Renderable> Renderable for CodeExampleButton<R> {
         rsx! {
             <div id=[id] class=[&class_line] style=[&style_line]>
                 <button class=CODE_EXAMPLE_TOGGLE type="button">
-                    (self.children)
+                    (children)
                     " "
                     <span class=ICON>
                         // chevron-down

@@ -6,6 +6,7 @@ use wingy_hypertext_macros::{Props, const_str};
 use crate::appearance::Appearance;
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::{CALLOUT, CALLOUT_ICON, CALLOUT_MESSAGE};
+use crate::renderable;
 use crate::variant::Variant;
 
 #[derive(AsRef, AsMut, Props)]
@@ -48,20 +49,28 @@ impl<I: Renderable, R: Renderable> Default for Callout<I, R> {
 
 impl<I: Renderable, R: Renderable> Renderable for Callout<I, R> {
     fn render_to(&self, buffer: &mut Buffer) {
+        let icon = renderable::as_dyn(&self.icon);
+        let children = renderable::as_dyn(&self.children);
+        self.render_to(buffer, icon, children)
+    }
+}
+
+impl<I: Renderable, R: Renderable> Callout<I, R> {
+    fn render_to(&self, buffer: &mut Buffer, icon: Option<&dyn Renderable>, children: Option<&dyn Renderable>) {
         let id = self.id();
         let class_line = self.class_line_with(&[Self::CLASS, self.variant.into_str(), self.appearance.into_str()]);
         let style_line = self.style_line_with(&[]);
 
         rsx! {
             <div id=[id] class=[&class_line] style=[&style_line]>
-                @if let Some(icon) = &self.icon {
+                @if let Some(icon) = icon {
                     <div class=CALLOUT_ICON>(icon)</div>
                 }
                 @if self.bare {
-                    (self.children)
+                    (children)
                 } @else {
                     <div class=CALLOUT_MESSAGE>
-                        (self.children)
+                        (children)
                     </div>
                 }
             </div>

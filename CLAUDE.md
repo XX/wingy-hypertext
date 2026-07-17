@@ -47,7 +47,7 @@ Every component/layout is a struct that follows the same recipe (see `crates/lib
 3. Is annotated `#[props(builder)]` to get `builder()`/`build()`.
 4. Embeds shared sub-structs as fields tagged `#[as_ref] #[as_mut]`: `CommonAttrs` (id/classes/styles), `Link` (href/target/...), `Action` (data-action/data-args). These `AsRef`/`AsMut` impls are what make the blanket trait impls (below) apply to the component.
 5. Has an `Option<R: Renderable>` `children` field tagged `#[prop(convert)]`.
-6. Manually implements `Renderable::render_to`, building the class line with `self.class_line_with([Self::CLASS, ...])` and emitting via `rsx! { ... }`.
+6. Implements `Renderable::render_to` as a thin wrapper that erases the children via `crate::renderable::as_dyn` and delegates to an inherent `fn render_to(&self, buffer, children: Option<&dyn Renderable>)`, which holds the actual render body (building the class line with `self.class_line_with(&[Self::CLASS, ...])` and emitting via `rsx! { ... }`). The body must render the passed `children` argument and never touch `self.children`, so LLVM can merge the per-child-type instantiations into one copy — critical for WASM binary size.
 
 ### Trait-based fluent setters
 

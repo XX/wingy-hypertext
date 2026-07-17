@@ -14,6 +14,7 @@ use crate::class::{
     CHECK, CLEAR_BUTTON, COMBOBOX, DISABLED, DISPLAY_INPUT, EXPAND_ICON, HINT, LABEL, LISTBOX, MULTIPLE, OPTION,
     OPTION_LABEL, PILL, POPUP, POPUP_BODY, REQUIRED, SELECT, SELECT_POPUP, SELECTED, TAGS, VALUE_INPUT,
 };
+use crate::renderable;
 
 /// The preferred placement of the select's menu. The actual placement may
 /// flip to keep the listbox in the viewport.
@@ -77,6 +78,13 @@ pub struct Select<R: Renderable = ()> {
 
 impl<R: Renderable> Renderable for Select<R> {
     fn render_to(&self, buffer: &mut Buffer) {
+        let children = renderable::as_dyn(&self.children);
+        self.render_to(buffer, children)
+    }
+}
+
+impl<R: Renderable> Select<R> {
+    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
         let id = self.id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
@@ -165,7 +173,7 @@ impl<R: Renderable> Renderable for Select<R> {
                             aria-multiselectable=(if self.multiple { "true" } else { "false" })
                             hidden
                         >
-                            (self.children)
+                            (children)
                         </div>
                     </div>
                 </div>
@@ -206,6 +214,13 @@ pub struct SelectOption<R: Renderable = ()> {
 
 impl<R: Renderable> Renderable for SelectOption<R> {
     fn render_to(&self, buffer: &mut Buffer) {
+        let children = renderable::as_dyn(&self.children);
+        self.render_to(buffer, children)
+    }
+}
+
+impl<R: Renderable> SelectOption<R> {
+    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
         let id = self.id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
@@ -234,7 +249,7 @@ impl<R: Renderable> Renderable for SelectOption<R> {
                         <path fill="currentColor" d="M434.8 70.1c14.3 10.4 17.5 30.4 7.1 44.7l-256 352c-5.5 7.6-14 12.3-23.4 13.1s-18.5-2.7-25.1-9.3l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l101.5 101.5 234-321.7c10.4-14.3 30.4-17.5 44.7-7.1z"/>
                     </svg>
                 </span>
-                <span class=OPTION_LABEL>(self.children)</span>
+                <span class=OPTION_LABEL>(children)</span>
             </div>
         }
         .render_to(buffer);

@@ -9,6 +9,7 @@ use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::{BUTTON, PILL};
 use crate::htmx::Htmx;
 use crate::link::Link;
+use crate::renderable;
 use crate::variant::Variant;
 
 #[derive(Default, AsRef, AsMut, Props)]
@@ -49,6 +50,13 @@ pub struct Button<R: Renderable = ()> {
 
 impl<R: Renderable> Renderable for Button<R> {
     fn render_to(&self, buffer: &mut Buffer) {
+        let children = renderable::as_dyn(&self.children);
+        self.render_to(buffer, children)
+    }
+}
+
+impl<R: Renderable> Button<R> {
+    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
         let id = self.id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
@@ -72,7 +80,7 @@ impl<R: Renderable> Renderable for Button<R> {
                     data-args=[&self.action_data.args]
                     htmx=[self.htmx]
                 >
-                    (self.children)
+                    (children)
                 </a>
             }
             .render_to(buffer);
@@ -88,7 +96,7 @@ impl<R: Renderable> Renderable for Button<R> {
                     data-args=[&self.action_data.args]
                     htmx=[self.htmx]
                 >
-                    (self.children)
+                    (children)
                 </button>
             }
             .render_to(buffer);

@@ -8,6 +8,7 @@ use wingy_hypertext_macros::{Props, const_str};
 use crate::appearance::Appearance;
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::{PILL, TAG, TAG_CONTENT, TAG_REMOVE};
+use crate::renderable;
 use crate::variant::Variant;
 
 /// A compact visual marker mirroring Web Awesome's `wa-tag`: use it for status
@@ -56,6 +57,13 @@ impl<R: Renderable> Default for Tag<R> {
 
 impl<R: Renderable> Renderable for Tag<R> {
     fn render_to(&self, buffer: &mut Buffer) {
+        let children = renderable::as_dyn(&self.children);
+        self.render_to(buffer, children)
+    }
+}
+
+impl<R: Renderable> Tag<R> {
+    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
         let id = self.id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
@@ -67,7 +75,7 @@ impl<R: Renderable> Renderable for Tag<R> {
 
         rsx! {
             <span id=[id] class=[&class_line] style=[&style_line]>
-                <span class=TAG_CONTENT>(self.children)</span>
+                <span class=TAG_CONTENT>(children)</span>
                 @if self.with_remove {
                     <button class=TAG_REMOVE type="button" tabindex="-1" aria-label="Remove">
                         // Xmark icon

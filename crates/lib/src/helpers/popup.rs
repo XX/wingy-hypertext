@@ -8,6 +8,7 @@ use wingy_hypertext_macros::{Props, const_str};
 
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::{ACTIVE, ARROW, POPUP, POPUP_BODY, POPUP_HOVER_BRIDGE};
+use crate::renderable;
 
 /// The preferred placement of the popup relative to its anchor. The actual
 /// placement may vary to keep the popup inside of the viewport when `flip` is on.
@@ -137,6 +138,14 @@ pub struct Popup<A: Renderable = (), R: Renderable = ()> {
 
 impl<A: Renderable, R: Renderable> Renderable for Popup<A, R> {
     fn render_to(&self, buffer: &mut Buffer) {
+        let anchor = renderable::as_dyn(&self.anchor);
+        let children = renderable::as_dyn(&self.children);
+        self.render_to(buffer, anchor, children)
+    }
+}
+
+impl<A: Renderable, R: Renderable> Popup<A, R> {
+    fn render_to(&self, buffer: &mut Buffer, anchor: Option<&dyn Renderable>, children: Option<&dyn Renderable>) {
         let id = self.id();
         let class_line = self.class_line_with(&[Self::CLASS, if self.active { ACTIVE } else { "" }]);
         let style_line = self.style_line_with(&[]);
@@ -163,12 +172,12 @@ impl<A: Renderable, R: Renderable> Renderable for Popup<A, R> {
                 data-arrow-placement=[self.arrow_placement.map(|placement| placement.into_str())]
                 data-arrow-padding=[self.arrow_padding]
             >
-                (self.anchor)
+                (anchor)
                 @if self.hover_bridge {
                     <span class=POPUP_HOVER_BRIDGE></span>
                 }
                 <div class=POPUP_BODY>
-                    (self.children)
+                    (children)
                     @if self.arrow {
                         <div class=ARROW role="presentation"></div>
                     }

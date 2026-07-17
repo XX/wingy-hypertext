@@ -7,6 +7,7 @@ use wingy_hypertext_macros::{Props, const_str};
 
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::{CONTROL, DISABLED, HINT, LABEL, REQUIRED, SWITCH, SWITCH_TOGGLE, THUMB, TRACK};
+use crate::renderable;
 
 /// A toggle control: a native checkbox with `role="switch"` wrapped in a label,
 /// followed by an optional hint. Toggling is fully native (the checked state is
@@ -51,6 +52,13 @@ pub struct Switch<R: Renderable = ()> {
 
 impl<R: Renderable> Renderable for Switch<R> {
     fn render_to(&self, buffer: &mut Buffer) {
+        let children = renderable::as_dyn(&self.children);
+        self.render_to(buffer, children)
+    }
+}
+
+impl<R: Renderable> Switch<R> {
+    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
         let id = self.id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
@@ -66,13 +74,13 @@ impl<R: Renderable> Renderable for Switch<R> {
             name: self.name.clone(),
             value: self.value.clone(),
             attrs: CommonAttrs::default(),
-            children: self.children.as_ref(),
+            children,
         });
 
         rsx! {
             <div id=[id] class=[&class_line] style=[&style_line]>
                 @if self.bare {
-                    (self.children)
+                    (children)
                 } @else {
                     (toggle)
                 }
@@ -114,6 +122,13 @@ pub struct Toggle<R: Renderable = ()> {
 
 impl<R: Renderable> Renderable for Toggle<R> {
     fn render_to(&self, buffer: &mut Buffer) {
+        let children = renderable::as_dyn(&self.children);
+        self.render_to(buffer, children)
+    }
+}
+
+impl<R: Renderable> Toggle<R> {
+    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
         let id = self.id();
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
@@ -137,7 +152,7 @@ impl<R: Renderable> Renderable for Toggle<R> {
                 <span class=TRACK>
                     <span class=THUMB></span>
                 </span>
-                <span class=LABEL>(self.children)</span>
+                <span class=LABEL>(children)</span>
             </label>
         }
         .render_to(buffer);

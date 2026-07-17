@@ -6,6 +6,7 @@ use wingy_hypertext_macros::{Props, const_str};
 use crate::appearance::Appearance;
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::{BADGE, PILL};
+use crate::renderable;
 use crate::variant::Variant;
 
 #[derive(Default, AsRef, AsMut, Props)]
@@ -30,6 +31,13 @@ pub struct Badge<R: Renderable = ()> {
 
 impl<R: Renderable> Renderable for Badge<R> {
     fn render_to(&self, buffer: &mut Buffer) {
+        let children = renderable::as_dyn(&self.children);
+        self.render_to(buffer, children)
+    }
+}
+
+impl<R: Renderable> Badge<R> {
+    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
         let id = self.id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
@@ -41,7 +49,7 @@ impl<R: Renderable> Renderable for Badge<R> {
 
         rsx! {
             <div id=[id] class=[&class_line] style=[&style_line]>
-                (self.children)
+                (children)
             </div>
         }
         .render_to(buffer);
