@@ -130,6 +130,8 @@ impl<T: AsRef<CommonAttrs>> CommonAttributeGetters for T {
     }
 }
 
+// Non-generic on purpose: a single compiled copy serves every component type, instead of one
+// instantiation per component type and argument array length in the final binary.
 fn join_not_empty(first: &[&str], rest: &[Cow<'static, str>], separator: &str) -> Option<String> {
     let mut line = String::new();
     for part in first.iter().copied().chain(rest.iter().map(Deref::deref)) {
