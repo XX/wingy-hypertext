@@ -1,5 +1,6 @@
 use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Renderable, rsx};
+use iconic::fontawesome;
 use wingy_hypertext::appearance::Appearance::*;
 use wingy_hypertext::attributes::CommonAttributeSetters;
 use wingy_hypertext::class::{
@@ -12,20 +13,18 @@ use wingy_hypertext::components::head::HeadLevel::*;
 use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
 use wingy_hypertext::variant::Variant::*;
 
-use crate::fontawesome;
-
 pub fn overview() -> impl Renderable {
     rsx! {
         <Head level=H1>"Callout"</Head>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Callout icon=(fontawesome::icon("circle-info"))>
+                <Callout icon=(fontawesome::solid::CircleInfo)>
                     "This is a standard callout. You can customize its content and even the icon."
                 </Callout>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Callout icon=(fontawesome::icon("circle-info"))>
+                    <Callout icon=(fontawesome::solid::CircleInfo)>
                         "This is a standard callout. You can customize its content and even the icon."
                     </Callout>
                 "#</code>
@@ -44,23 +43,23 @@ pub fn overview() -> impl Renderable {
         <CodeExample>
             <CodeExamplePreview resize=true>
                 <div class=STACK>
-                    <Callout variant=Brand icon=(fontawesome::icon("circle-info"))>
+                    <Callout variant=Brand icon=(fontawesome::solid::CircleInfo)>
                         <strong>"A new theme is available"</strong><br/>
                         "Try it from Settings whenever you're ready."
                     </Callout>
-                    <Callout variant=Success icon=(fontawesome::icon("circle-check"))>
+                    <Callout variant=Success icon=(fontawesome::solid::CircleCheck)>
                         <strong>"Your changes have been saved"</strong><br/>
                         "You can safely close this tab now."
                     </Callout>
-                    <Callout variant=Neutral icon=(fontawesome::icon("gear"))>
+                    <Callout variant=Neutral icon=(fontawesome::solid::Gear)>
                         <strong>"Your settings have been updated"</strong><br/>
                         "Changes take effect on your next login."
                     </Callout>
-                    <Callout variant=Warning icon=(fontawesome::icon("triangle-exclamation"))>
+                    <Callout variant=Warning icon=(fontawesome::solid::TriangleExclamation)>
                         <strong>"Your session is about to expire"</strong><br/>
                         "Save your work to avoid losing it."
                     </Callout>
-                    <Callout variant=Danger icon=(fontawesome::icon("circle-exclamation"))>
+                    <Callout variant=Danger icon=(fontawesome::solid::CircleExclamation)>
                         <strong>"This action can't be undone"</strong><br/>
                         "Deleting a project removes it for everyone on the team."
                     </Callout>
@@ -68,23 +67,23 @@ pub fn overview() -> impl Renderable {
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Callout variant=Brand icon=(fontawesome::icon("circle-info"))>
+                    <Callout variant=Brand icon=(fontawesome::solid::CircleInfo)>
                         <strong>"A new theme is available"</strong><br/>
                         "Try it from Settings whenever you're ready."
                     </Callout>
-                    <Callout variant=Success icon=(fontawesome::icon("circle-check"))>
+                    <Callout variant=Success icon=(fontawesome::solid::CircleCheck)>
                         <strong>"Your changes have been saved"</strong><br/>
                         "You can safely close this tab now."
                     </Callout>
-                    <Callout variant=Neutral icon=(fontawesome::icon("gear"))>
+                    <Callout variant=Neutral icon=(fontawesome::solid::Gear)>
                         <strong>"Your settings have been updated"</strong><br/>
                         "Changes take effect on your next login."
                     </Callout>
-                    <Callout variant=Warning icon=(fontawesome::icon("triangle-exclamation"))>
+                    <Callout variant=Warning icon=(fontawesome::solid::TriangleExclamation)>
                         <strong>"Your session is about to expire"</strong><br/>
                         "Save your work to avoid losing it."
                     </Callout>
-                    <Callout variant=Danger icon=(fontawesome::icon("circle-exclamation"))>
+                    <Callout variant=Danger icon=(fontawesome::solid::CircleExclamation)>
                         <strong>"This action can't be undone"</strong><br/>
                         "Deleting a project removes it for everyone on the team."
                     </Callout>
@@ -103,38 +102,38 @@ pub fn overview() -> impl Renderable {
         <CodeExample>
             <CodeExamplePreview resize=true>
                 <div class=STACK>
-                    <Callout variant=Brand appearance=Accent icon=(fontawesome::icon("circle-info"))>
+                    <Callout variant=Brand appearance=Accent icon=(fontawesome::solid::CircleInfo)>
                         "This "<strong>"accent"</strong>" callout draws the most attention."
                     </Callout>
-                    <Callout variant=Brand appearance=FilledOutlined icon=(fontawesome::icon("circle-info"))>
+                    <Callout variant=Brand appearance=FilledOutlined icon=(fontawesome::solid::CircleInfo)>
                         "This callout is both "<strong>"filled"</strong>" and "<strong>"outlined"</strong>"."
                     </Callout>
-                    <Callout variant=Brand appearance=Filled icon=(fontawesome::icon("circle-info"))>
+                    <Callout variant=Brand appearance=Filled icon=(fontawesome::solid::CircleInfo)>
                         "This callout is only "<strong>"filled"</strong>"."
                     </Callout>
-                    <Callout variant=Brand appearance=Outlined icon=(fontawesome::icon("circle-info"))>
+                    <Callout variant=Brand appearance=Outlined icon=(fontawesome::solid::CircleInfo)>
                         "Here's an "<strong>"outlined"</strong>" callout."
                     </Callout>
-                    <Callout variant=Brand appearance=Plain icon=(fontawesome::icon("circle-info"))>
+                    <Callout variant=Brand appearance=Plain icon=(fontawesome::solid::CircleInfo)>
                         "No fill or border on this "<strong>"plain"</strong>" callout."
                     </Callout>
                 </div>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Callout variant=Brand appearance=Accent icon=(fontawesome::icon("circle-info"))>
+                    <Callout variant=Brand appearance=Accent icon=(fontawesome::solid::CircleInfo)>
                         "This "<strong>"accent"</strong>" callout draws the most attention."
                     </Callout>
-                    <Callout variant=Brand appearance=FilledOutlined icon=(fontawesome::icon("circle-info"))>
+                    <Callout variant=Brand appearance=FilledOutlined icon=(fontawesome::solid::CircleInfo)>
                         "This callout is both "<strong>"filled"</strong>" and "<strong>"outlined"</strong>"."
                     </Callout>
-                    <Callout variant=Brand appearance=Filled icon=(fontawesome::icon("circle-info"))>
+                    <Callout variant=Brand appearance=Filled icon=(fontawesome::solid::CircleInfo)>
                         "This callout is only "<strong>"filled"</strong>"."
                     </Callout>
-                    <Callout variant=Brand appearance=Outlined icon=(fontawesome::icon("circle-info"))>
+                    <Callout variant=Brand appearance=Outlined icon=(fontawesome::solid::CircleInfo)>
                         "Here's an "<strong>"outlined"</strong>" callout."
                     </Callout>
-                    <Callout variant=Brand appearance=Plain icon=(fontawesome::icon("circle-info"))>
+                    <Callout variant=Brand appearance=Plain icon=(fontawesome::solid::CircleInfo)>
                         "No fill or border on this "<strong>"plain"</strong>" callout."
                     </Callout>
                 "#</code>
@@ -153,38 +152,38 @@ pub fn overview() -> impl Renderable {
         <CodeExample>
             <CodeExamplePreview resize=true>
                 <div class=STACK>
-                    <Callout class=SIZE_EXTRA_SMALL icon=(fontawesome::icon("circle-info"))>
+                    <Callout class=SIZE_EXTRA_SMALL icon=(fontawesome::solid::CircleInfo)>
                         "Extra-small callout for minimal emphasis."
                     </Callout>
-                    <Callout class=SIZE_SMALL icon=(fontawesome::icon("circle-info"))>
+                    <Callout class=SIZE_SMALL icon=(fontawesome::solid::CircleInfo)>
                         "Small callout for a bit of emphasis."
                     </Callout>
-                    <Callout class=SIZE_MEDIUM icon=(fontawesome::icon("circle-info"))>
+                    <Callout class=SIZE_MEDIUM icon=(fontawesome::solid::CircleInfo)>
                         "Medium callout, the default size."
                     </Callout>
-                    <Callout class=SIZE_LARGE icon=(fontawesome::icon("circle-info"))>
+                    <Callout class=SIZE_LARGE icon=(fontawesome::solid::CircleInfo)>
                         "Large callout for more emphasis."
                     </Callout>
-                    <Callout class=SIZE_EXTRA_LARGE icon=(fontawesome::icon("circle-info"))>
+                    <Callout class=SIZE_EXTRA_LARGE icon=(fontawesome::solid::CircleInfo)>
                         "Extra-large callout for maximum emphasis."
                     </Callout>
                 </div>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Callout class=SIZE_EXTRA_SMALL icon=(fontawesome::icon("circle-info"))>
+                    <Callout class=SIZE_EXTRA_SMALL icon=(fontawesome::solid::CircleInfo)>
                         "Extra-small callout for minimal emphasis."
                     </Callout>
-                    <Callout class=SIZE_SMALL icon=(fontawesome::icon("circle-info"))>
+                    <Callout class=SIZE_SMALL icon=(fontawesome::solid::CircleInfo)>
                         "Small callout for a bit of emphasis."
                     </Callout>
-                    <Callout class=SIZE_MEDIUM icon=(fontawesome::icon("circle-info"))>
+                    <Callout class=SIZE_MEDIUM icon=(fontawesome::solid::CircleInfo)>
                         "Medium callout, the default size."
                     </Callout>
-                    <Callout class=SIZE_LARGE icon=(fontawesome::icon("circle-info"))>
+                    <Callout class=SIZE_LARGE icon=(fontawesome::solid::CircleInfo)>
                         "Large callout for more emphasis."
                     </Callout>
-                    <Callout class=SIZE_EXTRA_LARGE icon=(fontawesome::icon("circle-info"))>
+                    <Callout class=SIZE_EXTRA_LARGE icon=(fontawesome::solid::CircleInfo)>
                         "Extra-large callout for maximum emphasis."
                     </Callout>
                 "#</code>
@@ -218,7 +217,7 @@ pub fn overview() -> impl Renderable {
             <CodeExamplePreview resize=true>
                 <Callout variant=Success bare=true>
                     <div class=CALLOUT_ICON>
-                        (fontawesome::icon("circle-check"))
+                        (fontawesome::solid::CircleCheck)
                     </div>
                     <div class=CALLOUT_MESSAGE>
                         <strong>"All checks have passed"</strong><br/>
@@ -230,7 +229,7 @@ pub fn overview() -> impl Renderable {
                 <code class="language-html">r#"
                     <Callout variant=Success bare=true>
                         <div class=CALLOUT_ICON>
-                            (fontawesome::icon("circle-check"))
+                            (fontawesome::solid::CircleCheck)
                         </div>
                         <div class=CALLOUT_MESSAGE>
                             <strong>"All checks have passed"</strong><br/>
@@ -264,7 +263,7 @@ pub fn overview() -> impl Renderable {
         <CodeExample>
             <CodeExamplePreview resize=true>
                 <div class=STACK>
-                    <Callout variant=Success icon=(fontawesome::icon("circle-check"))>
+                    <Callout variant=Success icon=(fontawesome::solid::CircleCheck)>
                         <div class="wa-flank:end wa-align-items-start">
                             <div>
                                 <strong>"All checks have passed"</strong><br/>
@@ -273,13 +272,13 @@ pub fn overview() -> impl Renderable {
                             <div>
                                 <Button class="close" class=SIZE_SMALL appearance=Plain variant=Success pill=true>
                                     <span class=ICON>
-                                        (fontawesome::icon("xmark"))
+                                        (fontawesome::solid::Xmark)
                                     </span>
                                 </Button>
                             </div>
                         </div>
                     </Callout>
-                    <Callout variant=Danger appearance=Accent icon=(fontawesome::icon("circle-exclamation"))>
+                    <Callout variant=Danger appearance=Accent icon=(fontawesome::solid::CircleExclamation)>
                         <div class="wa-flank:end wa-align-items-start">
                             <div>
                                 <strong>"This action can't be undone"</strong><br/>
@@ -288,7 +287,7 @@ pub fn overview() -> impl Renderable {
                             <div>
                                 <Button class="close" class=SIZE_SMALL appearance=Plain variant=Danger pill=true>
                                     <span class=ICON>
-                                        (fontawesome::icon("xmark"))
+                                        (fontawesome::solid::Xmark)
                                     </span>
                                 </Button>
                             </div>
@@ -298,7 +297,7 @@ pub fn overview() -> impl Renderable {
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Callout variant=Success icon=(fontawesome::icon("circle-check"))>
+                    <Callout variant=Success icon=(fontawesome::solid::CircleCheck)>
                         <div class="wa-flank:end wa-align-items-start">
                             <div>
                                 <strong>"All checks have passed"</strong><br/>
@@ -307,14 +306,14 @@ pub fn overview() -> impl Renderable {
                             <div>
                                 <Button class="close" class=SIZE_SMALL appearance=Plain variant=Success pill=true>
                                     <span class=ICON>
-                                        (fontawesome::icon("xmark"))
+                                        (fontawesome::solid::Xmark)
                                     </span>
                                 </Button>
                             </div>
                         </div>
                     </Callout>
                     
-                    <Callout variant=Danger appearance=Accent icon=(fontawesome::icon("circle-exclamation"))>
+                    <Callout variant=Danger appearance=Accent icon=(fontawesome::solid::CircleExclamation)>
                         <div class="wa-flank:end wa-align-items-start">
                             <div>
                                 <strong>"This action can't be undone"</strong><br/>
@@ -323,7 +322,7 @@ pub fn overview() -> impl Renderable {
                             <div>
                                 <Button class="close" class=SIZE_SMALL appearance=Plain variant=Danger pill=true>
                                     <span class=ICON>
-                                        (fontawesome::icon("xmark"))
+                                        (fontawesome::solid::Xmark)
                                     </span>
                                 </Button>
                             </div>

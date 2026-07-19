@@ -1,5 +1,6 @@
 use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Renderable, rsx};
+use iconic::fontawesome;
 use wingy_hypertext::appearance::Appearance::*;
 use wingy_hypertext::attributes::CommonAttributeSetters;
 use wingy_hypertext::class::{
@@ -10,8 +11,6 @@ use wingy_hypertext::components::head::Head;
 use wingy_hypertext::components::head::HeadLevel::*;
 use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
 use wingy_hypertext::variant::Variant::*;
-
-use crate::fontawesome;
 
 pub fn overview() -> impl Renderable {
     rsx! {
@@ -221,70 +220,70 @@ pub fn overview() -> impl Renderable {
                 <div class=(CLUSTER, " ", GAP_2XS) style="margin-block-end: 1rem;">
                     <Badge variant=Brand>
                         <span class=(START, " ", ICON)>
-                            (fontawesome::icon("check"))
+                            (fontawesome::solid::Check)
                         </span>
                         "Start"
                     </Badge>
                     <Badge variant=Brand>
                         "End"
                         <span class=(END, " ", ICON)>
-                            (fontawesome::icon("bookmark-solid"))
+                            (fontawesome::solid::Bookmark)
                         </span>
                     </Badge>
                     <Badge variant=Brand>
                         <span class=(START, " ", ICON)>
-                            (fontawesome::icon("check"))
+                            (fontawesome::solid::Check)
                         </span>
                         "Both"
                         <span class=(END, " ", ICON)>
-                            (fontawesome::icon("bookmark-solid"))
+                            (fontawesome::solid::Bookmark)
                         </span>
                     </Badge>
                 </div>
                 <div class=(CLUSTER, " ", GAP_2XS)>
                     <Badge variant=Brand appearance=Outlined class=SIZE_EXTRA_SMALL>
                         <span class=(START, " ", ICON)>
-                            (fontawesome::icon("check"))
+                            (fontawesome::solid::Check)
                         </span>
                         "Both"
                         <span class=(END, " ", ICON)>
-                            (fontawesome::icon("bookmark-solid"))
+                            (fontawesome::solid::Bookmark)
                         </span>
                     </Badge>
                     <Badge variant=Brand appearance=Outlined class=SIZE_SMALL>
                         <span class=(START, " ", ICON)>
-                            (fontawesome::icon("check"))
+                            (fontawesome::solid::Check)
                         </span>
                         "Both"
                         <span class=(END, " ", ICON)>
-                            (fontawesome::icon("bookmark-solid"))
+                            (fontawesome::solid::Bookmark)
                         </span>
                     </Badge>
                     <Badge variant=Brand appearance=Outlined class=SIZE_MEDIUM>
                         <span class=(START, " ", ICON)>
-                            (fontawesome::icon("check"))
+                            (fontawesome::solid::Check)
                         </span>
                         "Both"
                         <span class=(END, " ", ICON)>
-                            (fontawesome::icon("bookmark-solid"))
+                            (fontawesome::solid::Bookmark)
                         </span>
                     </Badge>
                     <Badge variant=Brand appearance=Outlined class=SIZE_LARGE>
                         <span class=(START, " ", ICON)>
-                            (fontawesome::icon("check"))
+                            (fontawesome::solid::Check)
                         </span>
                         "Both"
                         <span class=(END, " ", ICON)>
-                            (fontawesome::icon("bookmark-solid"))
+                            (fontawesome::solid::Bookmark)
                         </span>
                     </Badge>
                     <Badge variant=Brand appearance=Outlined class=SIZE_EXTRA_LARGE>
                         <span class=(START, " ", ICON)>
-                            (fontawesome::icon("check"))
+                            (fontawesome::solid::Check)
                         </span>
                         "Both"
                         <span class=(END, " ", ICON)>
-                            (fontawesome::icon("bookmark-solid"))
+                            (fontawesome::solid::Bookmark)
                         </span>
                     </Badge>
                 </div>

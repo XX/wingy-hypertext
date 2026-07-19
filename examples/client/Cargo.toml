@@ -9,6 +9,7 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 hypertext = { workspace = true }
+iconic = { workspace = true }
 js-sys = { workspace = true }
 wingy-hypertext = { workspace = true }
 wingy-hypertext-web = { workspace = true }

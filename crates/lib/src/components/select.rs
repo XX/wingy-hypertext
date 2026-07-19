@@ -1,10 +1,9 @@
 use std::borrow::Cow;
 
 use derive_more::{AsMut, AsRef};
-use hypertext::prelude::{
-    AriaAttributes, GlobalAttributes, SvgGlobalAttributes, hypertext_elements, hypertext_svg_elements,
-};
+use hypertext::prelude::{AriaAttributes, GlobalAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable, rsx};
+use iconic::{fontawesome, fontawesome_ext};
 use strum::{AsRefStr, IntoStaticStr};
 use wingy_hypertext_macros::{DynRenderable, Props, const_str};
 
@@ -140,21 +139,11 @@ impl<R: Renderable> Select<R> {
                         />
                         @if self.with_clear {
                             <button class=CLEAR_BUTTON type="button" tabindex="-1" aria-label="Clear entry" hidden>
-                                // Circle-xmark regular icon
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                    // !Font Awesome Free v7.3.0 by @fontawesome - https://fontawesome.com
-                                    // License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.
-                                    <path fill="currentColor"  d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464a256 256 0 1 0 0-512 256 256 0 1 0 0 512zM167 167c-9.4 9.4-9.4 24.6 0 33.9l55 55-55 55c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l55-55 55 55c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-55-55 55-55c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-55 55-55-55c-9.4-9.4-24.6-9.4-33.9 0z"/>
-                                </svg>
+                                (fontawesome::regular::CircleXmark)
                             </button>
                         }
                         <span class=EXPAND_ICON aria-hidden="true">
-                            // Chevron-down icon
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                                // !Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com
-                                // License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.
-                                <path fill="currentColor" d="M201.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 338.7 54.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/>
-                            </svg>
+                            (fontawesome_ext::regular::ChevronDown)
                         </span>
                     </div>
                     <div class=POPUP_BODY>
@@ -227,12 +216,7 @@ impl<R: Renderable> SelectOption<R> {
                 data-label=[&self.label]
             >
                 <span class=CHECK aria-hidden="true">
-                    // Check icon
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                        // !Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com
-                        // License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.
-                        <path fill="currentColor" d="M434.8 70.1c14.3 10.4 17.5 30.4 7.1 44.7l-256 352c-5.5 7.6-14 12.3-23.4 13.1s-18.5-2.7-25.1-9.3l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l101.5 101.5 234-321.7c10.4-14.3 30.4-17.5 44.7-7.1z"/>
-                    </svg>
+                    (fontawesome::solid::Check)
                 </span>
                 <span class=OPTION_LABEL>(children)</span>
             </div>

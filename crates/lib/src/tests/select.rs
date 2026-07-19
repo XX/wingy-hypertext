@@ -1,10 +1,9 @@
 use hypertext::{RenderableExt, rsx};
+use iconic::{fontawesome, fontawesome_ext};
 
 use crate::appearance::Appearance::*;
 use crate::attributes::CommonAttributeSetters;
 use crate::components::select::{Select, SelectOption};
-
-const CHECK_ICON: &str = r#"<span class="check" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M434.8 70.1c14.3 10.4 17.5 30.4 7.1 44.7l-256 352c-5.5 7.6-14 12.3-23.4 13.1s-18.5-2.7-25.1-9.3l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l101.5 101.5 234-321.7c10.4-14.3 30.4-17.5 44.7-7.1z"/></svg></span>"#;
 
 fn combobox(placeholder: Option<&str>, name: Option<&str>) -> String {
     let placeholder = placeholder
@@ -12,7 +11,8 @@ fn combobox(placeholder: Option<&str>, name: Option<&str>) -> String {
         .unwrap_or_default();
     let name = name.map(|name| format!(r#" name="{name}""#)).unwrap_or_default();
     format!(
-        r#"<div class="combobox"><input class="display-input" type="text"{placeholder} autocomplete="off" spellcheck="false" autocapitalize="off" readonly role="combobox" aria-haspopup="listbox" aria-expanded="false"><input class="value-input" type="text"{name} tabindex="-1" aria-hidden="true"><span class="expand-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M201.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 338.7 54.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/></svg></span></div>"#
+        r#"<div class="combobox"><input class="display-input" type="text"{placeholder} autocomplete="off" spellcheck="false" autocapitalize="off" readonly role="combobox" aria-haspopup="listbox" aria-expanded="false"><input class="value-input" type="text"{name} tabindex="-1" aria-hidden="true"><span class="expand-icon" aria-hidden="true">{}</span></div>"#,
+        fontawesome_ext::regular::ChevronDown.render().into_inner(),
     )
 }
 
@@ -24,7 +24,8 @@ fn select_popup(combobox: &str, multiselectable: &str, options: &str) -> String 
 
 fn option_markup(value: &str, classes: &str, extra: &str, label: &str) -> String {
     format!(
-        r#"<div class="option{classes}" role="option" tabindex="-1"{extra} data-value="{value}">{CHECK_ICON}<span class="option-label">{label}</span></div>"#
+        r#"<div class="option{classes}" role="option" tabindex="-1"{extra} data-value="{value}"><span class="check" aria-hidden="true">{}</span><span class="option-label">{label}</span></div>"#,
+        fontawesome::solid::Check.render().into_inner(),
     )
 }
 
@@ -32,7 +33,7 @@ fn option_markup(value: &str, classes: &str, extra: &str, label: &str) -> String
 fn default() {
     let select_markup = format!(
         r#"<div class="select accent">{}</div>"#,
-        select_popup(&combobox(None, None), "false", "")
+        select_popup(&combobox(None, None), "false", ""),
     );
 
     let select = Select::builder();
@@ -87,10 +88,13 @@ fn shorthand_label_and_hint() {
 
 #[test]
 fn states() {
-    let combobox_markup = r#"<div class="combobox"><input class="display-input" type="text" disabled="true" autocomplete="off" spellcheck="false" autocapitalize="off" readonly role="combobox" aria-haspopup="listbox" aria-expanded="false"><div class="tags"></div><input class="value-input" type="text" disabled="true" required="true" tabindex="-1" aria-hidden="true"><span class="expand-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M201.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 338.7 54.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/></svg></span></div>"#;
+    let combobox_markup = format!(
+        r#"<div class="combobox"><input class="display-input" type="text" disabled="true" autocomplete="off" spellcheck="false" autocapitalize="off" readonly role="combobox" aria-haspopup="listbox" aria-expanded="false"><div class="tags"></div><input class="value-input" type="text" disabled="true" required="true" tabindex="-1" aria-hidden="true"><span class="expand-icon" aria-hidden="true">{}</span></div>"#,
+        fontawesome_ext::regular::ChevronDown.render().into_inner(),
+    );
     let select_markup = format!(
         r#"<div class="select required multiple disabled outlined">{}</div>"#,
-        select_popup(combobox_markup, "true", "")
+        select_popup(&combobox_markup, "true", "")
     );
 
     let select = Select::builder()

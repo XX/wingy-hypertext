@@ -1,5 +1,6 @@
 use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Renderable, rsx};
+use iconic::fontawesome;
 use wingy_hypertext::attributes::CommonAttributeSetters;
 use wingy_hypertext::class::TEXT_CENTER;
 use wingy_hypertext::components::callout::Callout;
@@ -8,8 +9,6 @@ use wingy_hypertext::components::head::HeadLevel::*;
 use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
 use wingy_hypertext::layouts::divider::Divider;
 use wingy_hypertext::orientation::Orientation::*;
-
-use crate::fontawesome;
 
 pub fn overview() -> impl Renderable {
     rsx! {
@@ -115,7 +114,7 @@ pub fn overview() -> impl Renderable {
             </CodeExampleSource>
             <CodeExampleButton>"Code"</CodeExampleButton>
         </CodeExample>
-        <Callout icon=(fontawesome::icon("circle-info"))>
+        <Callout icon=(fontawesome::solid::CircleInfo)>
             "If your container isn't Flexbox or CSS Grid, you may need to set an explicit height for the divider."
         </Callout>
     }

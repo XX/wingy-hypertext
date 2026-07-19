@@ -1,5 +1,6 @@
 use hypertext::prelude::{GlobalAttributes, HtmxAttributes, hypertext_elements};
 use hypertext::{Renderable, RenderableExt, rsx};
+use iconic::fontawesome;
 use wasm_bindgen::prelude::*;
 use wingy_hypertext::appearance::Appearance::*;
 use wingy_hypertext::attributes::CommonAttributeSetters;
@@ -23,7 +24,6 @@ use wingy_hypertext_web::{
 };
 
 pub mod components;
-pub mod fontawesome;
 pub mod helpers;
 pub mod layouts;
 
@@ -89,7 +89,7 @@ pub fn render_root(url_path: &str) -> String {
             <header class=SPLIT>
                 <div class=CLUSTER>
                     <span class=ICON style="color: var(--wa-color-brand-fill-loud); font-size: 1.5em; --rotate-angle: 0deg;">
-                        (fontawesome::icon("puzzle-piece"))
+                        (fontawesome::solid::PuzzlePiece)
                     </span>
                     <span id="brand-name" class=(HEADING_M, " ", "wa-desktop-only")>"Wingy Hypertext"</span>
                     <a href="#">"Example Link"</a>
@@ -97,7 +97,7 @@ pub fn render_root(url_path: &str) -> String {
                 <div class=(CLUSTER, " ", GAP_XS)>
                     <Button variant=Brand appearance=Accent class=SIZE_SMALL href="https://github.com/XX/wingy-hypertext" target=Blank>
                         <span class=(START, " ", ICON)>
-                            (fontawesome::icon("github"))
+                            (fontawesome::brand::Github)
                         </span>
                         "GitHub"
                     </Button>
@@ -242,7 +242,7 @@ pub fn render_root(url_path: &str) -> String {
             <footer class=(GRID, " ", GAP_XL)>
                 <div class=CLUSTER style="flex-wrap: nowrap">
                     <span class=ICON>
-                        (fontawesome::icon("puzzle-piece"))
+                        (fontawesome::solid::PuzzlePiece)
                     </span>
                     <span id="brand-name" class=HEADING_M>"Wingy Hypertext"</span>
                 </div>

@@ -1,8 +1,9 @@
 use std::borrow::Cow;
 
 use derive_more::{AsMut, AsRef};
-use hypertext::prelude::{GlobalAttributes, SvgGlobalAttributes, hypertext_elements, hypertext_svg_elements};
+use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable, rsx};
+use iconic::fontawesome_ext;
 use wingy_hypertext_macros::{DynRenderable, Props, const_str};
 
 use crate::attributes::{CommonAttributeGetters, CommonAttributeSetters, CommonAttrs};
@@ -68,12 +69,7 @@ impl<R: Renderable> CodeExamplePreview<R> {
                 @if self.resize {
                     <div class=CODE_EXAMPLE_RESIZER>
                         <span class=ICON>
-                            // grip-lines-vertical
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 512">
-                                // ! Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com
-                                // License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.
-                                <path fill="currentColor" d="M64 64c0-17.7-14.3-32-32-32S0 46.3 0 64L0 448c0 17.7 14.3 32 32 32s32-14.3 32-32L64 64zm128 0c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 384c0 17.7 14.3 32 32 32s32-14.3 32-32l0-384z"></path>
-                            </svg>
+                            (fontawesome_ext::regular::GripLinesVertical)
                         </span>
                     </div>
                 }
@@ -151,12 +147,7 @@ impl<R: Renderable> CodeExampleButton<R> {
                     (children)
                     " "
                     <span class=ICON>
-                        // chevron-down
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                            // ! Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com
-                            // License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.
-                            <path fill="currentColor" d="M201.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 338.7 54.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"></path>
-                        </svg>
+                        (fontawesome_ext::regular::ChevronDown)
                     </span>
                 </button>
             </div>

@@ -1,5 +1,6 @@
-use hypertext::prelude::{GlobalAttributes, SvgGlobalAttributes, hypertext_elements, hypertext_svg_elements};
+use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Renderable, rsx};
+use iconic::fontawesome;
 use wingy_hypertext::appearance::Appearance::*;
 use wingy_hypertext::attributes::CommonAttributeSetters;
 use wingy_hypertext::class::{
@@ -256,47 +257,27 @@ pub fn overview() -> impl Renderable {
                 <div class=(CLUSTER, " ", GAP_2XS)>
                     <Button appearance=Accent>
                         <span class=ICON>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                // !Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com
-                                // License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.
-                                <path fill="currentColor" d="M277.8 8.6c-12.3-11.4-31.3-11.4-43.5 0l-224 208c-9.6 9-12.8 22.9-8 35.1S18.8 272 32 272l16 0 0 176c0 35.3 28.7 64 64 64l288 0c35.3 0 64-28.7 64-64l0-176 16 0c13.2 0 25-8.1 29.8-20.3s1.6-26.2-8-35.1l-224-208zM240 320l32 0c26.5 0 48 21.5 48 48l0 96-128 0 0-96c0-26.5 21.5-48 48-48z"/>
-                            </svg>
+                            (fontawesome::solid::House)
                         </span>
                     </Button>
                     <Button appearance=FilledOutlined>
                         <span class=ICON>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                // !Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com
-                                // License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.
-                                <path fill="currentColor" d="M277.8 8.6c-12.3-11.4-31.3-11.4-43.5 0l-224 208c-9.6 9-12.8 22.9-8 35.1S18.8 272 32 272l16 0 0 176c0 35.3 28.7 64 64 64l288 0c35.3 0 64-28.7 64-64l0-176 16 0c13.2 0 25-8.1 29.8-20.3s1.6-26.2-8-35.1l-224-208zM240 320l32 0c26.5 0 48 21.5 48 48l0 96-128 0 0-96c0-26.5 21.5-48 48-48z"/>
-                            </svg>
+                            (fontawesome::solid::House)
                         </span>
                     </Button>
                     <Button appearance=Filled>
                         <span class=ICON>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                // !Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com
-                                // License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.
-                                <path fill="currentColor" d="M277.8 8.6c-12.3-11.4-31.3-11.4-43.5 0l-224 208c-9.6 9-12.8 22.9-8 35.1S18.8 272 32 272l16 0 0 176c0 35.3 28.7 64 64 64l288 0c35.3 0 64-28.7 64-64l0-176 16 0c13.2 0 25-8.1 29.8-20.3s1.6-26.2-8-35.1l-224-208zM240 320l32 0c26.5 0 48 21.5 48 48l0 96-128 0 0-96c0-26.5 21.5-48 48-48z"/>
-                            </svg>
+                            (fontawesome::solid::House)
                         </span>
                     </Button>
                     <Button appearance=Outlined>
                         <span class=ICON>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                // !Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com
-                                // License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.
-                                <path fill="currentColor" d="M277.8 8.6c-12.3-11.4-31.3-11.4-43.5 0l-224 208c-9.6 9-12.8 22.9-8 35.1S18.8 272 32 272l16 0 0 176c0 35.3 28.7 64 64 64l288 0c35.3 0 64-28.7 64-64l0-176 16 0c13.2 0 25-8.1 29.8-20.3s1.6-26.2-8-35.1l-224-208zM240 320l32 0c26.5 0 48 21.5 48 48l0 96-128 0 0-96c0-26.5 21.5-48 48-48z"/>
-                            </svg>
+                            (fontawesome::solid::House)
                         </span>
                     </Button>
                     <Button appearance=Plain>
                         <span class=ICON>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                // !Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com
-                                // License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.
-                                <path fill="currentColor" d="M277.8 8.6c-12.3-11.4-31.3-11.4-43.5 0l-224 208c-9.6 9-12.8 22.9-8 35.1S18.8 272 32 272l16 0 0 176c0 35.3 28.7 64 64 64l288 0c35.3 0 64-28.7 64-64l0-176 16 0c13.2 0 25-8.1 29.8-20.3s1.6-26.2-8-35.1l-224-208zM240 320l32 0c26.5 0 48 21.5 48 48l0 96-128 0 0-96c0-26.5 21.5-48 48-48z"/>
-                            </svg>
+                            (fontawesome::solid::House)
                         </span>
                     </Button>
                 </div>
@@ -305,11 +286,7 @@ pub fn overview() -> impl Renderable {
                 <code class="language-html">r#"
                     <Button appearance=Accent>
                         <span class=ICON>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                // !Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com
-                                // License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.
-                                <path fill="currentColor" d="M277.8 8.6c-12.3-11.4-31.3-11.4-43.5 0l-224 208c-9.6 9-12.8 22.9-8 35.1S18.8 272 32 272l16 0 0 176c0 35.3 28.7 64 64 64l288 0c35.3 0 64-28.7 64-64l0-176 16 0c13.2 0 25-8.1 29.8-20.3s1.6-26.2-8-35.1l-224-208zM240 320l32 0c26.5 0 48 21.5 48 48l0 96-128 0 0-96c0-26.5 21.5-48 48-48z"/>
-                            </svg>
+                            (fontawesome::solid::House)
                         </span>
                     </Button>
                     <Button appearance=FilledOutlined>

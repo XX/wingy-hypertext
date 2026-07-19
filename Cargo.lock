@@ -223,6 +223,7 @@ name = "example-client"
 version = "0.1.0"
 dependencies = [
  "hypertext",
+ "iconic",
  "js-sys",
  "wasm-bindgen",
  "wasm-dom",
@@ -384,7 +385,7 @@ checksum = "df3b46402a9d5adb4c86a0cf463f42e19994e3ee891101b1841f30a545cb49a9"
 [[package]]
 name = "hypertext"
 version = "0.12.1"
-source = "git+https://github.com/vidhanio/hypertext.git#97732000c7916f5d7f39de581436c80c58b80a82"
+source = "git+https://github.com/vidhanio/hypertext.git#90e1bc427c6efc81f94acbe6c8bce43616f1c417"
 dependencies = [
  "axum-core",
  "bon",
@@ -397,12 +398,20 @@ dependencies = [
 [[package]]
 name = "hypertext-macros"
 version = "0.12.1"
-source = "git+https://github.com/vidhanio/hypertext.git#97732000c7916f5d7f39de581436c80c58b80a82"
+source = "git+https://github.com/vidhanio/hypertext.git#90e1bc427c6efc81f94acbe6c8bce43616f1c417"
 dependencies = [
  "html-escape",
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "iconic"
+version = "0.1.0"
+source = "git+https://github.com/XX/iconic#c9eed44d8a8a02b5c676116e2fc31802a506ffe2"
+dependencies = [
+ "hypertext",
 ]
 
 [[package]]
@@ -834,6 +843,7 @@ version = "0.1.0"
 dependencies = [
  "derive_more",
  "hypertext",
+ "iconic",
  "strum",
  "wingy-hypertext-macros",
 ]
