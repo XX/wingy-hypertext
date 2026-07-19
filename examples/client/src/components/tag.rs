@@ -14,6 +14,7 @@ use wingy_hypertext::components::head::HeadLevel::*;
 use wingy_hypertext::components::tag::Tag;
 use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
 use wingy_hypertext::variant::Variant::*;
+use wingy_hypertext_web::components::tag;
 
 pub fn overview() -> impl Renderable {
     rsx! {
@@ -155,7 +156,7 @@ pub fn overview() -> impl Renderable {
             "Removable"
         </Head>
         <p>"Use the "<code>with_remove</code>" attribute to add a remove button to the tag. "
-            "Activating it emits a bubbling "<code>"wa-remove"</code>
+            "Activating it emits a bubbling "<code>"wg-remove"</code>
             " event on the tag so you can handle the removal — the tags below fade out and come back after two seconds."
         </p>
         <CodeExample>
@@ -180,7 +181,7 @@ pub fn overview() -> impl Renderable {
                         <Tag with_remove=true class=SIZE_LARGE>"Large"</Tag>
                     </div>
 
-                    // The removal is handled by a "wa-remove" listener,
+                    // The removal is handled by a "wg-remove" listener,
                     // see `listen_tag_removable_demo` in examples/client/src/components/tag.rs
                 "#</code>
             </CodeExampleSource>
@@ -189,20 +190,16 @@ pub fn overview() -> impl Renderable {
     }
 }
 
-//
-// Removable demo wiring
-//
-
-/// One-time wiring: tags inside `.tags-removable` fade out on `wa-remove`
-/// and come back after two seconds, like in the Web Awesome docs example.
 pub fn listen_tag_removable_demo() {
     let document = dom::existing::document();
 
-    document.add_steady_event_listener("wa-remove", |event| {
+    document.add_steady_event_listener(tag::REMOVE_EVENT, |event| {
         handle_demo_remove(&event);
     });
 }
 
+// One-time wiring: tags inside `.tags-removable` fade out on `wg-remove`
+// and come back after two seconds.
 fn handle_demo_remove(event: &Event) -> Option<()> {
     let tag = event.target()?.maybe_into_element()?;
     tag.closest(".tags-removable").ok()??;
@@ -210,10 +207,9 @@ fn handle_demo_remove(event: &Event) -> Option<()> {
     let tag = tag.maybe_into_html()?;
     tag.style().set_property("opacity", "0").ok();
 
-    let restored = tag.clone();
     dom::set_timeout(
         move || {
-            restored.style().set_property("opacity", "1").ok();
+            tag.style().set_property("opacity", "1").ok();
         },
         2000,
     )

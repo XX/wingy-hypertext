@@ -1,6 +1,6 @@
 //! The remove behavior of `Tag`: activating the remove button dispatches a
-//! bubbling `wa-remove` event on the `.tag` element, like `wa-tag` does. The
-//! tag does not remove itself — the consumer handles the event and decides.
+//! bubbling `wg-remove` event on the `.tag` element. The tag does not remove
+//! itself — the consumer handles the event and decides.
 
 use wasm_dom as dom;
 use wasm_dom::event::EventListener;
@@ -8,7 +8,7 @@ use wasm_dom::existing::access::CastToElement;
 use web_sys::{Element, Event, EventInit};
 
 /// The name of the event emitted when the tag's remove button is activated.
-pub const REMOVE_EVENT: &str = "wa-remove";
+pub const REMOVE_EVENT: &str = "wg-remove";
 
 pub fn dispatch_remove_tag(tag: &Element) {
     let init = EventInit::new();
@@ -27,7 +27,7 @@ pub fn handle_remove_tag(event: &Event) -> Option<()> {
     Some(())
 }
 
-/// Installs the document-level listener that emits `wa-remove` for every
+/// Installs the document-level listener that emits `wg-remove` for every
 /// removable tag on the page.
 pub fn listen_remove_tags() {
     let document = dom::existing::document();

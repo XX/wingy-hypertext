@@ -11,7 +11,7 @@ use crate::variant::Variant;
 
 /// A compact visual marker: use it for status indicators, filters, or removable
 /// chips. With `with_remove`, the tag gets a remove button; activating it emits
-/// a bubbling `wa-remove` event on the tag (the tag does not remove itself —
+/// a bubbling `wg-remove` event on the tag (the tag does not remove itself —
 /// handle the event to decide). The event is dispatched by `wingy-hypertext-web`,
 /// wired up on the client with `listen_remove_tags`.
 #[derive(AsRef, AsMut, Props, DynRenderable)]
