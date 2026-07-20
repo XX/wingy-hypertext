@@ -6,6 +6,7 @@ pub mod appearance;
 pub mod attributes;
 pub mod class;
 pub mod components;
+pub mod convert;
 pub mod helpers;
 pub mod htmx;
 pub mod layouts;

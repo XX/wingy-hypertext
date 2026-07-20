@@ -18,7 +18,7 @@ fn combobox(placeholder: Option<&str>, name: Option<&str>) -> String {
 
 fn select_popup(combobox: &str, multiselectable: &str, options: &str) -> String {
     format!(
-        r#"<div class="select-popup popup" data-placement="bottom" data-flip data-shift data-sync="width" data-auto-size="vertical" data-auto-size-padding="10">{combobox}<div class="popup-body"><div class="listbox" role="listbox" tabindex="-1" aria-multiselectable="{multiselectable}" hidden>{options}</div></div></div>"#
+        r#"<div class="popup select-popup" data-placement="bottom" data-flip="" data-shift="" data-sync="width" data-auto-size="vertical" data-auto-size-padding="10">{combobox}<div class="popup-body"><div class="listbox" role="listbox" tabindex="-1" aria-multiselectable="{multiselectable}" hidden>{options}</div></div></div>"#
     )
 }
 

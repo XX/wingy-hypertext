@@ -8,11 +8,13 @@ use strum::{AsRefStr, IntoStaticStr};
 use wingy_hypertext_macros::{DynRenderable, Props, const_str};
 
 use crate::appearance::Appearance;
-use crate::attributes::{CommonAttributeGetters, CommonAttrs};
+use crate::attributes::{CommonAttributeGetters, CommonAttributeSetters, CommonAttrs};
 use crate::class::{
     CHECK, CLEAR_BUTTON, COMBOBOX, DISABLED, DISPLAY_INPUT, EXPAND_ICON, HINT, LABEL, LISTBOX, MULTIPLE, OPTION,
-    OPTION_LABEL, PILL, POPUP, POPUP_BODY, REQUIRED, SELECT, SELECT_POPUP, SELECTED, TAGS, VALUE_INPUT,
+    OPTION_LABEL, PILL, REQUIRED, SELECT, SELECT_POPUP, SELECTED, TAGS, VALUE_INPUT,
 };
+use crate::convert;
+use crate::helpers::popup::{self, Popup, PopupBody, PopupPlacement};
 
 /// The preferred placement of the select's menu. The actual placement may
 /// flip to keep the listbox in the viewport.
@@ -22,6 +24,15 @@ pub enum SelectPlacement {
     #[default]
     Bottom,
     Top,
+}
+
+impl From<SelectPlacement> for PopupPlacement {
+    fn from(value: SelectPlacement) -> Self {
+        match value {
+            SelectPlacement::Bottom => Self::Bottom,
+            SelectPlacement::Top => Self::Top,
+        }
+    }
 }
 
 /// A dropdown control mirroring Web Awesome's `wa-select`: a combobox with a
@@ -100,14 +111,15 @@ impl<R: Renderable> Select<R> {
                 @if let Some(label) = &self.label {
                     <label class=LABEL>(label)</label>
                 }
-                <div
-                    class=(SELECT_POPUP, " ", POPUP)
-                    data-placement=(self.placement.into_str())
-                    data-flip
-                    data-shift
-                    data-sync="width"
-                    data-auto-size="vertical"
-                    data-auto-size-padding="10"
+                <Popup
+                    class=(SELECT_POPUP)
+                    placement=(self.placement.into())
+                    flip=true
+                    shift=true
+                    sync=(popup::SyncSize::Width)
+                    auto_size=(popup::AutoSize::Vertical)
+                    auto_size_padding=10
+                    bare=true
                 >
                     <div class=COMBOBOX>
                         <input
@@ -146,18 +158,18 @@ impl<R: Renderable> Select<R> {
                             (fontawesome_ext::regular::ChevronDown)
                         </span>
                     </div>
-                    <div class=POPUP_BODY>
+                    <PopupBody>
                         <div
                             class=LISTBOX
                             role="listbox"
                             tabindex="-1"
-                            aria-multiselectable=(if self.multiple { "true" } else { "false" })
+                            aria-multiselectable=(convert::bool_to_str(self.multiple))
                             hidden
                         >
                             (children)
                         </div>
-                    </div>
-                </div>
+                    </PopupBody>
+                </Popup>
                 @if let Some(hint) = &self.hint {
                     <small class=HINT>(hint)</small>
                 }
@@ -210,7 +222,7 @@ impl<R: Renderable> SelectOption<R> {
                 style=[&style_line]
                 role="option"
                 tabindex="-1"
-                aria-selected=(if self.selected { "true" } else { "false" })
+                aria-selected=(convert::bool_to_str(self.selected))
                 aria-disabled=[self.disabled.then_some("true")]
                 data-value=[&self.value]
                 data-label=[&self.label]

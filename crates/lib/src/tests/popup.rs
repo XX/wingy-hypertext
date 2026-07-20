@@ -1,7 +1,7 @@
 use hypertext::prelude::hypertext_elements;
 use hypertext::{RenderableExt, rsx};
 
-use crate::helpers::popup::Placement::*;
+use crate::helpers::popup::PopupPlacement::*;
 use crate::helpers::popup::{AutoSize, Popup, SyncSize};
 
 #[test]

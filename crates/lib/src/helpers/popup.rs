@@ -13,7 +13,7 @@ use crate::class::{ACTIVE, ARROW, POPUP, POPUP_BODY, POPUP_HOVER_BRIDGE};
 /// placement may vary to keep the popup inside of the viewport when `flip` is on.
 #[derive(Copy, Clone, Debug, Default, IntoStaticStr, AsRefStr, PartialEq, Eq)]
 #[strum(const_into_str, serialize_all = "kebab-case")]
-pub enum Placement {
+pub enum PopupPlacement {
     #[default]
     Top,
     TopStart,
@@ -75,7 +75,7 @@ pub enum ArrowPlacement {
 #[props(builder)]
 pub struct Popup<A: Renderable = (), R: Renderable = ()> {
     #[prop(impl_from)]
-    pub placement: Placement,
+    pub placement: PopupPlacement,
 
     /// Activates the positioning logic and shows the popup.
     pub active: bool,
@@ -126,6 +126,8 @@ pub struct Popup<A: Renderable = (), R: Renderable = ()> {
     #[as_mut]
     pub attrs: CommonAttrs,
 
+    pub bare: bool,
+
     /// The element the popup will be anchored to; rendered as the first child
     /// of the popup host.
     #[prop(convert)]
@@ -167,12 +169,47 @@ impl<A: Renderable, R: Renderable> Popup<A, R> {
                 @if self.hover_bridge {
                     <span class=POPUP_HOVER_BRIDGE></span>
                 }
-                <div class=POPUP_BODY>
+                @if self.bare {
                     (children)
-                    @if self.arrow {
-                        <div class=ARROW role="presentation"></div>
-                    }
-                </div>
+                } @else {
+                    <PopupBody arrow=(self.arrow)>
+                        (children)
+                    </PopupBody>
+                }
+            </div>
+        }
+        .render_to(buffer);
+    }
+}
+
+#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
+#[const_str(CLASS = POPUP_BODY)]
+#[props(builder)]
+pub struct PopupBody<R: Renderable = ()> {
+    /// Attaches an arrow to the popup, customizable with the `--arrow-size`
+    /// and `--arrow-color` custom properties.
+    pub arrow: bool,
+
+    #[as_ref]
+    #[as_mut]
+    pub attrs: CommonAttrs,
+
+    #[prop(convert)]
+    pub children: Option<R>,
+}
+
+impl<R: Renderable> PopupBody<R> {
+    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
+        let id = self.id();
+        let class_line = self.class_line_with(&[Self::CLASS]);
+        let style_line = self.style_line_with(&[]);
+
+        rsx! {
+            <div id=[id] class=[&class_line] style=[&style_line]>
+                (children)
+                @if self.arrow {
+                    <div class=ARROW role="presentation"></div>
+                }
             </div>
         }
         .render_to(buffer);

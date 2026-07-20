@@ -365,3 +365,78 @@
   Проверено: clippy и fmt чистые, 65 снапшот-тестов проходят, смоук-тест в Node рендерит все страницы с идентичным HTML.
   
   Финальное состояние после всей серии оптимизаций: 3 437 810 → 452 116 байт (−87%).
+
+---
+
+Почему с введением последних изменений - использование Popup и PopupBody в Select - размер WASM-файла сильно возрос?
+
+---
+
+● Let me look at the git history to see exactly what "the last change" (introducing Popup/PopupBody into Select) modified.
+● This is the key change. Let me measure the actual before/after size to ground the explanation, rather than only reasoning about it. First let me check the build tooling is available.
+● Current worktree WASM is 517,625 bytes — up from the 452,116 the issue log ended at. Let me get a clean before/after by building both HEAD and the working tree, then analyze where the bytes went.
+● The task was skipped (incremental guard, nothing changed). Let me force a clean rebuild for both versions to get a reliable comparison.
+● Confirmed: HEAD = 442,400 bytes → worktree = 517,625 bytes (+75,225 bytes, +17%). Now let me restore the worktree and do a function-level diff to pinpoint exactly where those ~75 KB went.
+● ~75 KB confirmed. The final artifact is name-stripped, but the pre-bindgen intermediate keeps symbol names. Let me check what analysis tooling exists, then break down the intermediate for both versions.
+● objdump is section-level only. I'll write a small parser (code section function sizes + name section) to get a name→bytes table, and diff HEAD vs worktree intermediates. First, regenerate the HEAD intermediate (it was overwritten).
+● Both intermediates captured (worktree restored). Now the parser to attribute bytes to demangled function names:
+● This is decisive. Let me confirm the exact copy counts to nail the mechanism — specifically whether Popup gets one un-foldable body per distinct Select<R>.
+● Everything I need is measured. Let me confirm the worktree is fully restored before answering.
+● Замерил «до/после» и разобрал бинарь по функциям — причина не в разметке, а в том, что вставка Popup/PopupBody сломала ту самую оптимизацию стирания типа, ради которой делалась вся задача.
+
+  Замер
+
+  ┌─────────────────────────────────────────────────────┬─────────────────────────────────┬──────────────────────┐
+  │                       Сборка                        │ client_bg.wasm (после wasm-opt) │ код (до оптимизации) │
+  ├─────────────────────────────────────────────────────┼─────────────────────────────────┼──────────────────────┤
+  │ HEAD (инлайн <div>, без компонентов Popup в Select) │ 442 400                         │ 486 917              │
+  ├─────────────────────────────────────────────────────┼─────────────────────────────────┼──────────────────────┤
+  │ Рабочее дерево (Popup + PopupBody в Select)         │ 517 625 (+75 225, +17%)         │ 598 777 (+111 860)   │
+  └─────────────────────────────────────────────────────┴─────────────────────────────────┴──────────────────────┘
+
+  Куда ушли байты (пофункционально, intermediate с именами)
+
+  ┌────────────────────────────────────┬──────────────────┬─────────────────────────────────┐
+  │               Символ               │       HEAD       │         Рабочее дерево          │
+  ├────────────────────────────────────┼──────────────────┼─────────────────────────────────┤
+  │ Select<R>::render_to               │ 1 копия, 1 965 б │ 22 копии, 28 490 б              │
+  ├────────────────────────────────────┼──────────────────┼─────────────────────────────────┤
+  │ Popup<A,R>::render_to              │ 1 копия, 1 886 б │ 33 копии, 61 446 б (по 1 862 б) │
+  ├────────────────────────────────────┼──────────────────┼─────────────────────────────────┤
+  │ PopupBody<R>::render_to            │ 0                │ 2 копии, 1 120 б                │
+  ├────────────────────────────────────┼──────────────────┼─────────────────────────────────┤
+  │ Lazy<F>::render_to (rsx-замыкания) │ 92 391 б         │ 111 989 б (+20 КБ)              │
+  └────────────────────────────────────┴──────────────────┴─────────────────────────────────┘
+
+  То есть +75 КБ в финале — это в основном Popup::render_to, размножившийся с 1 до 33 копий, плюс Select::render_to с 1 до 22.
+
+  Почему стирание типа перестало работать
+
+  Вспомни механику пункта 1 из задачи: тело render_to формально остаётся impl<R> Foo<R> (generic по R), а в одну копию его схлопывает не система типов, а LLVM-проход слияния одинаковых функций (identical code
+  folding). Слияние срабатывает, только пока машинный код инстанциаций побайтово одинаков. В отчёте это уже отмечалось как «цена подхода»: у некоторых компонентов получалось по 2 копии, потому что при разных R
+  меняется раскладка полей структуры.
+
+  В HEAD вся разметка Select была одним монолитным rsx! внутри Select::render_to. children стёрт в &dyn, поэтому тело было R-независимым → все инстанциации слились в одну (1 копия). Popup жил отдельно (только
+  на своей демо-странице) → тоже 1 копия.
+
+  С новым кодом Select строит внутри себя значение Popup<A, R>. Разметка, которую он передаёт в anchor/children попапа, — это rsx-замыкания, и они захватывают self: &Select<R> (читают self.multiple, self.name,
+  self.placeholder, self.with_clear и т.д.). Значит тип замыкания параметризован R, и Popup<(), Замыкание<R>> — отдельный тип для каждого R селекта. Галерея инстанцирует Select примерно 22 разными типами детей
+  → 22 разных типа Popup.
+  
+  Дальше цепная реакция ломает слияние в двух местах:
+  
+  1. Popup::render_to хоть и получает anchor/children уже как &dyn, но живёт на &Popup<A,R>. При разных A,R меняется размер/раскладка полей anchor: Option<A> и children: Option<R>, а значит смещения, по которым
+  тело читает self.placement, self.active, self.flip и остальные 17 data-*. Код перестаёт быть побайтово одинаковым → 33 копии по 1 862 б вместо одной.
+  1. Select::render_to больше не R-независим: он конструирует Popup<A, Замыкание<R>> и вызывает его render_to — адрес цели и код построения замыкания зависят от R. Слияние ломается → 22 копии.
+  
+  Плюс сама вложенность (Select → Popup → PopupBody → listbox) добавила новые Lazy-замыкания (+20 КБ), а Popup, будучи не bare, оборачивает содержимое ещё в один PopupBody (отсюда 2 копии PopupBody::render_to,
+  и, к слову, лишний вложенный popup-body в разметке — combobox оказывается внутри popup-body, что похоже на баг: комбобокс логичнее передавать как anchor, а не как ребёнка).
+  
+  Суть одной фразой
+  
+  Стирание типа в задаче применялось только к собственному children компонента на границе Renderable. Как только Select начал скармливать вложенному generic-компоненту (Popup) разметку, замыкания которой держат
+  &Select<R>, тип R снова протёк во все нижележащие типы. И Select, и Popup вернулись к помономорфизированным по R телам, которые LLVM уже не может слить, потому что их раскладка полей (а значит и машкод)
+  отличается для каждого R.
+  
+  Если нужно — могу предложить и проверить фикс: стирать anchor/children в &dyn до конструирования Popup (тот же приём as_dyn, но на один уровень раньше), чтобы Popup инстанцировался единственным типом. По
+  оценке это вернёт ~60–70 КБ.

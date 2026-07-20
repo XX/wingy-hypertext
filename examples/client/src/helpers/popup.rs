@@ -13,7 +13,7 @@ use wingy_hypertext::components::input::Input;
 use wingy_hypertext::components::input::InputType::Number;
 use wingy_hypertext::components::select::{Select, SelectOption};
 use wingy_hypertext::components::switch::Switch;
-use wingy_hypertext::helpers::popup::Placement::*;
+use wingy_hypertext::helpers::popup::PopupPlacement::*;
 use wingy_hypertext::helpers::popup::{AutoSize, Popup, SyncSize};
 use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
 use wingy_hypertext::layouts::divider::Divider;
