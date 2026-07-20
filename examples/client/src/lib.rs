@@ -2,6 +2,10 @@ use hypertext::prelude::{GlobalAttributes, HtmxAttributes, hypertext_elements};
 use hypertext::{Renderable, RenderableExt, rsx};
 use iconic::fontawesome;
 use wasm_bindgen::prelude::*;
+use wasm_dom as dom;
+use wasm_dom::event::EventListener;
+use wasm_dom::existing::access::{CastToElement, CastToHtmlElement};
+use web_sys::Event;
 use wingy_hypertext::appearance::Appearance::*;
 use wingy_hypertext::attributes::CommonAttributeSetters;
 use wingy_hypertext::class::{
@@ -18,10 +22,14 @@ use wingy_hypertext_web::components::select::{init_selects, listen_selects};
 use wingy_hypertext_web::components::tag::listen_remove_tags;
 use wingy_hypertext_web::helpers::animation::init_animations;
 use wingy_hypertext_web::helpers::popup::{init_popups, listen_popups};
+use wingy_hypertext_web::utils::event;
 use wingy_hypertext_web::{
     init_code_examples, init_page_element, init_scroll_to_anchor, listen_click_actions, listen_code_examples,
     register_copy_action,
 };
+
+use crate::helpers::animation::listen_animation_overview;
+use crate::helpers::popup::listen_popup_overview;
 
 pub mod components;
 pub mod helpers;
@@ -38,9 +46,9 @@ pub fn init() {
     listen_selects();
     listen_popups();
     listen_remove_tags();
-    helpers::animation::listen_animation_overview();
-    helpers::popup::listen_popup_overview();
-    components::tag::listen_tag_removable_demo();
+    listen_animation_overview();
+    listen_popup_overview();
+    listen_removable_demo();
 }
 
 /// Re-initialization run after every htmx settle.
@@ -80,6 +88,34 @@ fn main_section(route_path: &str) -> impl Renderable {
             _ => {},
         }
     }
+}
+
+pub fn listen_removable_demo() {
+    let document = dom::existing::document();
+
+    document.add_steady_event_listener(event::CLOSE, |event| {
+        handle_close(&event);
+    });
+    document.add_steady_event_listener(event::REMOVE, |event| {
+        handle_close(&event);
+    });
+}
+
+fn handle_close(event: &Event) -> Option<()> {
+    let element = event.target()?.maybe_into_element()?;
+    element.closest(".removable").ok()??;
+
+    let element = element.maybe_into_html()?;
+    element.style().set_property("opacity", "0").ok();
+
+    dom::set_timeout(
+        move || {
+            element.style().set_property("opacity", "1").ok();
+        },
+        2000,
+    )
+    .ok()
+    .map(drop)
 }
 
 #[wasm_bindgen]

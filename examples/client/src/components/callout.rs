@@ -262,7 +262,7 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <div class=STACK>
+                <div class=(STACK, " ", "removable")>
                     <Callout variant=Success icon=(fontawesome::solid::CircleCheck)>
                         <div class="wa-flank:end wa-align-items-start">
                             <div>

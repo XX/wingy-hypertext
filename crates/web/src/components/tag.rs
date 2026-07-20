@@ -5,26 +5,16 @@
 use wasm_dom as dom;
 use wasm_dom::event::EventListener;
 use wasm_dom::existing::access::CastToElement;
-use web_sys::{Element, Event, EventInit};
+use web_sys::Event;
 
-/// The name of the event emitted when the tag's remove button is activated.
-pub const REMOVE_EVENT: &str = "wg-remove";
-
-pub fn dispatch_remove_tag(tag: &Element) {
-    let init = EventInit::new();
-    init.set_bubbles(true);
-    if let Ok(event) = Event::new_with_event_init_dict(REMOVE_EVENT, &init) {
-        tag.dispatch_event(&event).ok();
-    }
-}
+use crate::utils::event;
 
 pub fn handle_remove_tag(event: &Event) -> Option<()> {
     let target = event.target()?.maybe_into_element()?;
     let remove_button = target.closest(".tag-remove").ok()??;
     let tag = remove_button.closest(".tag").ok()??;
 
-    dispatch_remove_tag(&tag);
-    Some(())
+    event::dispatch(&tag, event::REMOVE, true).ok().map(drop)
 }
 
 /// Installs the document-level listener that emits `wg-remove` for every

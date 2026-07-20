@@ -1,9 +1,5 @@
 use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Renderable, rsx};
-use wasm_dom as dom;
-use wasm_dom::event::EventListener;
-use wasm_dom::existing::access::{CastToElement, CastToHtmlElement};
-use web_sys::Event;
 use wingy_hypertext::appearance::Appearance::*;
 use wingy_hypertext::attributes::CommonAttributeSetters;
 use wingy_hypertext::class::{
@@ -14,7 +10,6 @@ use wingy_hypertext::components::head::HeadLevel::*;
 use wingy_hypertext::components::tag::Tag;
 use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
 use wingy_hypertext::variant::Variant::*;
-use wingy_hypertext_web::components::tag;
 
 pub fn overview() -> impl Renderable {
     rsx! {
@@ -161,7 +156,7 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <div class=(CLUSTER, " ", GAP_2XS, " ", "tags-removable")>
+                <div class=(CLUSTER, " ", GAP_2XS, " ", "removable")>
                     <Tag with_remove=true class=SIZE_SMALL style="transition: opacity var(--wa-transition-normal);">
                         "Small"
                     </Tag>
@@ -175,45 +170,16 @@ pub fn overview() -> impl Renderable {
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <div class="tags-removable">
+                    <div class="removable">
                         <Tag with_remove=true class=SIZE_SMALL>"Small"</Tag>
                         <Tag with_remove=true class=SIZE_MEDIUM>"Medium"</Tag>
                         <Tag with_remove=true class=SIZE_LARGE>"Large"</Tag>
                     </div>
 
-                    // The removal is handled by a "wg-remove" listener,
-                    // see `listen_tag_removable_demo` in examples/client/src/components/tag.rs
+                    // The removal is handled by a "wg-remove" listener.
                 "#</code>
             </CodeExampleSource>
             <CodeExampleButton>"Code"</CodeExampleButton>
         </CodeExample>
     }
-}
-
-pub fn listen_tag_removable_demo() {
-    let document = dom::existing::document();
-
-    document.add_steady_event_listener(tag::REMOVE_EVENT, |event| {
-        handle_demo_remove(&event);
-    });
-}
-
-// One-time wiring: tags inside `.tags-removable` fade out on `wg-remove`
-// and come back after two seconds.
-fn handle_demo_remove(event: &Event) -> Option<()> {
-    let tag = event.target()?.maybe_into_element()?;
-    tag.closest(".tags-removable").ok()??;
-
-    let tag = tag.maybe_into_html()?;
-    tag.style().set_property("opacity", "0").ok();
-
-    dom::set_timeout(
-        move || {
-            tag.style().set_property("opacity", "1").ok();
-        },
-        2000,
-    )
-    .ok();
-
-    Some(())
 }
