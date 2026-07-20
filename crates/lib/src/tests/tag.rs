@@ -20,6 +20,9 @@ fn default() {
 fn variant_and_appearance() {
     let tag_markup = r#"<span class="tag success accent"><span class="tag-content">Done</span></span>"#;
 
+    let tag = Tag::builder().variant(Success).appearance(Accent).children("Done");
+    assert_eq!(tag.render().as_inner(), tag_markup);
+
     let tag = rsx! { <Tag variant=Success appearance=Accent>"Done"</Tag> };
     assert_eq!(tag.render().as_inner(), tag_markup);
 }
@@ -27,6 +30,9 @@ fn variant_and_appearance() {
 #[test]
 fn pill() {
     let tag_markup = r#"<span class="tag pill neutral filled-outlined"><span class="tag-content">Pill</span></span>"#;
+
+    let tag = Tag::builder().pill(true).children("Pill");
+    assert_eq!(tag.render().as_inner(), tag_markup);
 
     let tag = rsx! { <Tag pill=true>"Pill"</Tag> };
     assert_eq!(tag.render().as_inner(), tag_markup);
@@ -44,13 +50,16 @@ fn with_remove() {
 
 #[test]
 fn additional_attributes() {
-    let tag_markup = r#"<span id="the-tag" class="tag danger filled test" style="color: red"><span class="tag-content"></span></span>"#;
+    let tag_markup = r#"<span id="test-tag" class="tag danger filled test" style="color: red"><span class="tag-content"></span></span>"#;
 
     let tag = Tag::builder()
         .variant(Danger)
         .appearance(Filled)
-        .id("the-tag")
+        .id("test-tag")
         .class("test")
         .style("color: red");
+    assert_eq!(tag.render().as_inner(), tag_markup);
+
+    let tag = rsx! { <Tag id="test-tag" class="test" variant=Danger appearance=Filled style="color: red" /> };
     assert_eq!(tag.render().as_inner(), tag_markup);
 }
