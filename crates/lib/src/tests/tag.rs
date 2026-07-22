@@ -20,7 +20,7 @@ fn default() {
 fn variant_and_appearance() {
     let tag_markup = r#"<span class="tag success accent"><span class="tag-content">Done</span></span>"#;
 
-    let tag = Tag::builder().variant(Success).appearance(Accent).children("Done");
+    let tag = Tag::builder().variant(Success).appearance(Accent).children(&"Done");
     assert_eq!(tag.render().as_inner(), tag_markup);
 
     let tag = rsx! { <Tag variant=Success appearance=Accent>"Done"</Tag> };
@@ -31,7 +31,7 @@ fn variant_and_appearance() {
 fn pill() {
     let tag_markup = r#"<span class="tag pill neutral filled-outlined"><span class="tag-content">Pill</span></span>"#;
 
-    let tag = Tag::builder().pill(true).children("Pill");
+    let tag = Tag::builder().pill(true).children(&"Pill");
     assert_eq!(tag.render().as_inner(), tag_markup);
 
     let tag = rsx! { <Tag pill=true>"Pill"</Tag> };

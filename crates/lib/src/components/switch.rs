@@ -3,7 +3,7 @@ use std::borrow::Cow;
 use derive_more::{AsMut, AsRef};
 use hypertext::prelude::{AriaAttributes, GlobalAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable, rsx};
-use wingy_hypertext_macros::{DynRenderable, Props, const_str};
+use wingy_hypertext_macros::{Props, const_str};
 
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::{CONTROL, DISABLED, HINT, LABEL, REQUIRED, SWITCH, SWITCH_TOGGLE, THUMB, TRACK};
@@ -13,10 +13,10 @@ use crate::class::{CONTROL, DISABLED, HINT, LABEL, REQUIRED, SWITCH, SWITCH_TOGG
 /// styled with `:checked`), so no client-side behavior is needed. The switch's
 /// look is adjusted with the `--width`, `--height` and `--thumb-size` custom
 /// properties.
-#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
+#[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = SWITCH)]
 #[props(builder)]
-pub struct Switch<R: Renderable = ()> {
+pub struct Switch<'a> {
     pub checked: bool,
 
     pub disabled: bool,
@@ -45,12 +45,11 @@ pub struct Switch<R: Renderable = ()> {
     pub attrs: CommonAttrs,
 
     /// The switch's label, or the whole body markup when `bare` is set.
-    #[prop(convert)]
-    pub children: Option<R>,
+    pub children: Option<&'a dyn Renderable>,
 }
 
-impl<R: Renderable> Switch<R> {
-    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
+impl<'a> Renderable for Switch<'a> {
+    fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
@@ -66,13 +65,13 @@ impl<R: Renderable> Switch<R> {
             name: self.name.clone(),
             value: self.value.clone(),
             attrs: CommonAttrs::default(),
-            children,
+            children: self.children,
         });
 
         rsx! {
             <div id=[id] class=[&class_line] style=[&style_line]>
                 @if self.bare {
-                    (children)
+                    (self.children)
                 } @else {
                     (toggle)
                 }
@@ -88,10 +87,10 @@ impl<R: Renderable> Switch<R> {
 /// The label block of a [`Switch`]: the native checkbox control, the track
 /// with the thumb, and the label content. Used standalone inside a bare
 /// [`Switch`] to compose the body manually.
-#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
+#[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = SWITCH_TOGGLE)]
 #[props(builder)]
-pub struct Toggle<R: Renderable = ()> {
+pub struct Toggle<'a> {
     pub checked: bool,
 
     pub disabled: bool,
@@ -108,12 +107,11 @@ pub struct Toggle<R: Renderable = ()> {
     #[as_mut]
     pub attrs: CommonAttrs,
 
-    #[prop(convert)]
-    pub children: Option<R>,
+    pub children: Option<&'a dyn Renderable>,
 }
 
-impl<R: Renderable> Toggle<R> {
-    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
+impl<'a> Renderable for Toggle<'a> {
+    fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
@@ -137,7 +135,7 @@ impl<R: Renderable> Toggle<R> {
                 <span class=TRACK>
                     <span class=THUMB></span>
                 </span>
-                <span class=LABEL>(children)</span>
+                <span class=LABEL>(self.children)</span>
             </label>
         }
         .render_to(buffer);

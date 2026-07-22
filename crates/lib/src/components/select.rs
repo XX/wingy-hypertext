@@ -5,7 +5,7 @@ use hypertext::prelude::{AriaAttributes, GlobalAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable, rsx};
 use iconic::{fontawesome, fontawesome_ext};
 use strum::{AsRefStr, IntoStaticStr};
-use wingy_hypertext_macros::{DynRenderable, Props, const_str};
+use wingy_hypertext_macros::{Props, const_str};
 
 use crate::appearance::Appearance;
 use crate::attributes::{CommonAttributeGetters, CommonAttributeSetters, CommonAttrs};
@@ -40,10 +40,10 @@ impl From<SelectPlacement> for PopupPlacement {
 /// behavior (opening, selection, keyboard navigation) is implemented in
 /// `wingy-hypertext-web` (`components::select`) and must be wired up on the
 /// client with `init_selects`/`listen_selects`.
-#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
+#[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = SELECT)]
 #[props(builder)]
-pub struct Select<R: Renderable = ()> {
+pub struct Select<'a> {
     #[prop(impl_from)]
     pub appearance: Appearance,
 
@@ -81,12 +81,11 @@ pub struct Select<R: Renderable = ()> {
     #[as_mut]
     pub attrs: CommonAttrs,
 
-    #[prop(convert)]
-    pub children: Option<R>,
+    pub children: Option<&'a dyn Renderable>,
 }
 
-impl<R: Renderable> Select<R> {
-    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
+impl<'a> Renderable for Select<'a> {
+    fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
@@ -166,7 +165,7 @@ impl<R: Renderable> Select<R> {
                             aria-multiselectable=(convert::bool_to_str(self.multiple))
                             hidden
                         >
-                            (children)
+                            (self.children)
                         </div>
                     </PopupBody>
                 </Popup>
@@ -181,10 +180,10 @@ impl<R: Renderable> Select<R> {
 
 /// A single choice within a [`Select`], mirroring Web Awesome's `wa-option`.
 /// Named `SelectOption` to avoid clashing with `std::option::Option`.
-#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
+#[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = OPTION)]
 #[props(builder)]
-pub struct SelectOption<R: Renderable = ()> {
+pub struct SelectOption<'a> {
     #[prop(into)]
     pub value: Option<Cow<'static, str>>,
 
@@ -201,12 +200,11 @@ pub struct SelectOption<R: Renderable = ()> {
     #[as_mut]
     pub attrs: CommonAttrs,
 
-    #[prop(convert)]
-    pub children: Option<R>,
+    pub children: Option<&'a dyn Renderable>,
 }
 
-impl<R: Renderable> SelectOption<R> {
-    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
+impl<'a> Renderable for SelectOption<'a> {
+    fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
@@ -230,7 +228,7 @@ impl<R: Renderable> SelectOption<R> {
                 <span class=CHECK aria-hidden="true">
                     (fontawesome::solid::Check)
                 </span>
-                <span class=OPTION_LABEL>(children)</span>
+                <span class=OPTION_LABEL>(self.children)</span>
             </div>
         }
         .render_to(buffer);

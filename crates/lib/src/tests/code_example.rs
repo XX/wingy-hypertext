@@ -124,23 +124,22 @@ fn attributes() {
     .map(str::trim_start)
     .collect::<String>();
 
-    let code_example = CodeExample::builder()
-        .open(true)
-        .children(Lazy::dangerously_create(|buffer| {
-            CodeExamplePreview::builder()
-                .resize(true)
-                .id("preview")
-                .render_to(buffer);
-            CodeExampleSource::builder()
-                .id("source")
-                .class("code")
-                .copy_button(true)
-                .render_to(buffer);
-            CodeExampleButton::builder()
-                .class("toggle")
-                .style("color: red")
-                .render_to(buffer);
-        }));
+    let chldren = Lazy::dangerously_create(|buffer| {
+        CodeExamplePreview::builder()
+            .resize(true)
+            .id("preview")
+            .render_to(buffer);
+        CodeExampleSource::builder()
+            .id("source")
+            .class("code")
+            .copy_button(true)
+            .render_to(buffer);
+        CodeExampleButton::builder()
+            .class("toggle")
+            .style("color: red")
+            .render_to(buffer);
+    });
+    let code_example = CodeExample::builder().open(true).children(&chldren);
     assert_eq!(code_example.render().as_inner(), &code_example_markup);
 
     let code_example = rsx! {
@@ -188,27 +187,21 @@ fn children() {
     .map(str::trim_start)
     .collect::<String>();
 
-    let code_example = CodeExample::builder().children(Lazy::dangerously_create(|buffer| {
+    let preview = rsx!(<Badge>"Badge"</Badge>);
+    let source = rsx! {
+        <code class="language-html">
+            r#"<Badge>"Badge"</Badge>"#
+        </code>
+    };
+    let children = Lazy::dangerously_create(|buffer| {
         CodeExamplePreview::builder()
             .resize(true)
-            .children(Lazy::dangerously_create(|buffer| {
-                rsx!(<Badge>"Badge"</Badge>).render_to(buffer)
-            }))
+            .children(&preview)
             .render_to(buffer);
-        CodeExampleSource::builder()
-            .children(Lazy::dangerously_create(|buffer| {
-                rsx! {
-                    <code class="language-html">
-                        r#"<Badge>"Badge"</Badge>"#
-                    </code>
-                }
-                .render_to(buffer);
-            }))
-            .render_to(buffer);
-        CodeExampleButton::builder()
-            .children(Lazy::dangerously_create(|buffer| "Code".render_to(buffer)))
-            .render_to(buffer);
-    }));
+        CodeExampleSource::builder().children(&source).render_to(buffer);
+        CodeExampleButton::builder().children(&"Code").render_to(buffer);
+    });
+    let code_example = CodeExample::builder().children(&children);
     assert_eq!(code_example.render().as_inner(), &code_example_markup);
 
     let code_example = rsx! {

@@ -70,7 +70,7 @@ fn children() {
 fn icon() {
     let callout_markup = r#"<div class="callout brand filled-outlined"><div class="callout-icon">*</div><div class="callout-message">Hello, world!</div></div>"#;
 
-    let callout = Callout::builder().icon("*").children("Hello, world!");
+    let callout = Callout::builder().icon("*").children(&"Hello, world!");
     assert_eq!(callout.render().as_inner(), callout_markup);
 
     let callout = rsx! { <Callout icon="*">"Hello, world!"</Callout> };
@@ -81,9 +81,10 @@ fn icon() {
 fn bare() {
     let callout_markup = r#"<div class="callout brand filled-outlined"><span>Hello, world!</span></div>"#;
 
-    let callout = Callout::builder().bare(true).children(rsx! {
+    let children = rsx! {
         <span>"Hello, world!"</span>
-    });
+    };
+    let callout = Callout::builder().bare(true).children(&children);
     assert_eq!(callout.render().as_inner(), callout_markup);
 
     let callout = rsx! { <Callout bare=true><span>"Hello, world!"</span></Callout> };

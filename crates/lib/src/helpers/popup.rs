@@ -73,7 +73,7 @@ pub enum ArrowPlacement {
 #[derive(Default, AsRef, AsMut, Props, DynRenderable)]
 #[const_str(CLASS = POPUP)]
 #[props(builder)]
-pub struct Popup<A: Renderable = (), R: Renderable = ()> {
+pub struct Popup<'a, A: Renderable = ()> {
     #[prop(impl_from)]
     pub placement: PopupPlacement,
 
@@ -133,12 +133,11 @@ pub struct Popup<A: Renderable = (), R: Renderable = ()> {
     #[prop(convert)]
     pub anchor: Option<A>,
 
-    #[prop(convert)]
-    pub children: Option<R>,
+    pub children: Option<&'a dyn Renderable>,
 }
 
-impl<A: Renderable, R: Renderable> Popup<A, R> {
-    fn render_to(&self, buffer: &mut Buffer, anchor: Option<&dyn Renderable>, children: Option<&dyn Renderable>) {
+impl<'a, A: Renderable> Popup<'a, A> {
+    fn render_to(&self, buffer: &mut Buffer, anchor: Option<&dyn Renderable>) {
         let id = self.id();
         let class_line = self.class_line_with(&[Self::CLASS, if self.active { ACTIVE } else { "" }]);
         let style_line = self.style_line_with(&[]);
@@ -170,10 +169,10 @@ impl<A: Renderable, R: Renderable> Popup<A, R> {
                     <span class=POPUP_HOVER_BRIDGE></span>
                 }
                 @if self.bare {
-                    (children)
+                    (self.children)
                 } @else {
                     <PopupBody arrow=(self.arrow)>
-                        (children)
+                        (self.children)
                     </PopupBody>
                 }
             </div>
@@ -182,10 +181,10 @@ impl<A: Renderable, R: Renderable> Popup<A, R> {
     }
 }
 
-#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
+#[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = POPUP_BODY)]
 #[props(builder)]
-pub struct PopupBody<R: Renderable = ()> {
+pub struct PopupBody<'a> {
     /// Attaches an arrow to the popup, customizable with the `--arrow-size`
     /// and `--arrow-color` custom properties.
     pub arrow: bool,
@@ -194,19 +193,18 @@ pub struct PopupBody<R: Renderable = ()> {
     #[as_mut]
     pub attrs: CommonAttrs,
 
-    #[prop(convert)]
-    pub children: Option<R>,
+    pub children: Option<&'a dyn Renderable>,
 }
 
-impl<R: Renderable> PopupBody<R> {
-    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
+impl<'a> Renderable for PopupBody<'a> {
+    fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
 
         rsx! {
             <div id=[id] class=[&class_line] style=[&style_line]>
-                (children)
+                (self.children)
                 @if self.arrow {
                     <div class=ARROW role="presentation"></div>
                 }

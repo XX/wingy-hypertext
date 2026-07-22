@@ -23,11 +23,14 @@ strip = "debuginfo"
 derive_more = { version = "2.1", features = ["as_ref"] }
 env_logger = "0.11"
 futures = "0.3"
-hypertext = { git = "https://github.com/vidhanio/hypertext.git", version = "0.12", features = ["axum", "htmx"] }
+hypertext = { git = "https://github.com/XX/hypertext.git", branch = "children-ref", version = "0.12", features = ["axum", "htmx"] }
 iconic = { git = "https://github.com/XX/iconic", features = ["hypertext", "fontawesome", "fontawesome-ext"] }
 js-sys = "0.3"
 strum = { version = "0.28", features = ["derive"] }
+syn = { version = "2.0", features = ["extra-traits", "full"] }
 tiny_file_server = "0.1"
+proc-macro2 = "1.0"
+quote = "1.0"
 wingy-hypertext = { path = "crates/lib" }
 wingy-hypertext-macros = { path = "crates/macros" }
 wingy-hypertext-web = { path = "crates/web" }

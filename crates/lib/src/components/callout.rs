@@ -11,7 +11,7 @@ use crate::variant::Variant;
 #[derive(AsRef, AsMut, Props, DynRenderable)]
 #[const_str(CLASS = CALLOUT)]
 #[props(builder)]
-pub struct Callout<I: Renderable = (), R: Renderable = ()> {
+pub struct Callout<'a, I: Renderable = ()> {
     #[prop(impl_from)]
     pub variant: Variant,
 
@@ -29,11 +29,10 @@ pub struct Callout<I: Renderable = (), R: Renderable = ()> {
     #[prop(convert)]
     pub icon: Option<I>,
 
-    #[prop(convert)]
-    pub children: Option<R>,
+    pub children: Option<&'a dyn Renderable>,
 }
 
-impl<I: Renderable, R: Renderable> Default for Callout<I, R> {
+impl<'a, I: Renderable> Default for Callout<'a, I> {
     fn default() -> Self {
         Self {
             variant: Variant::Brand,
@@ -46,8 +45,8 @@ impl<I: Renderable, R: Renderable> Default for Callout<I, R> {
     }
 }
 
-impl<I: Renderable, R: Renderable> Callout<I, R> {
-    fn render_to(&self, buffer: &mut Buffer, icon: Option<&dyn Renderable>, children: Option<&dyn Renderable>) {
+impl<'a, I: Renderable> Callout<'a, I> {
+    fn render_to(&self, buffer: &mut Buffer, icon: Option<&dyn Renderable>) {
         let id = self.id();
         let class_line = self.class_line_with(&[Self::CLASS, self.variant.into_str(), self.appearance.into_str()]);
         let style_line = self.style_line_with(&[]);
@@ -58,10 +57,10 @@ impl<I: Renderable, R: Renderable> Callout<I, R> {
                     <div class=CALLOUT_ICON>(icon)</div>
                 }
                 @if self.bare {
-                    (children)
+                    (self.children)
                 } @else {
                     <div class=CALLOUT_MESSAGE>
-                        (children)
+                        (self.children)
                     </div>
                 }
             </div>

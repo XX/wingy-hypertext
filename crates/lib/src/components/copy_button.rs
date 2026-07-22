@@ -4,7 +4,7 @@ use derive_more::{AsMut, AsRef};
 use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable, rsx};
 use iconic::fontawesome;
-use wingy_hypertext_macros::{DynRenderable, Props, const_str};
+use wingy_hypertext_macros::{Props, const_str};
 
 use crate::action::ActionSetters;
 use crate::appearance::Appearance::Plain;
@@ -12,10 +12,10 @@ use crate::attributes::{CommonAttributeSetters, CommonAttrs};
 use crate::class::{COPY_BUTTON, COPY_BUTTON_COPY, COPY_BUTTON_ERROR, COPY_BUTTON_SUCCESS, ICON};
 use crate::components::button::Button;
 
-#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
+#[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = COPY_BUTTON)]
 #[props(builder)]
-pub struct CopyButton<R: Renderable = ()> {
+pub struct CopyButton<'a> {
     pub disabled: bool,
 
     #[prop(into)]
@@ -25,17 +25,15 @@ pub struct CopyButton<R: Renderable = ()> {
     #[as_mut]
     pub attrs: CommonAttrs,
 
-    #[prop(convert)]
-    pub children: Option<R>,
+    pub children: Option<&'a dyn Renderable>,
 }
 
-impl<R: Renderable> CopyButton<R> {
-    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
+impl<'a> Renderable for CopyButton<'a> {
+    fn render_to(&self, buffer: &mut Buffer) {
         let content = rsx! {
-            @if let Some(children) = children {
+            @if let Some(children) = self.children {
                 (children)
-            }
-            @else {
+            } @else {
                 <span class=(ICON, " ", COPY_BUTTON_COPY)>
                     (fontawesome::regular::Copy)
                 </span>

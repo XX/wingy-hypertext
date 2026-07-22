@@ -2,7 +2,7 @@ use derive_more::{AsMut, AsRef};
 use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable, rsx};
 use iconic::fontawesome_ext;
-use wingy_hypertext_macros::{DynRenderable, Props, const_str};
+use wingy_hypertext_macros::{Props, const_str};
 
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::{
@@ -104,10 +104,10 @@ impl HeadLevel {
     }
 }
 
-#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
+#[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = HEAD)]
 #[props(builder)]
-pub struct Head<R: Renderable = ()> {
+pub struct Head<'a> {
     pub anchor: bool,
 
     #[prop(impl_from)]
@@ -117,12 +117,11 @@ pub struct Head<R: Renderable = ()> {
     #[as_mut]
     pub attrs: CommonAttrs,
 
-    #[prop(convert)]
-    pub children: Option<R>,
+    pub children: Option<&'a dyn Renderable>,
 }
 
-impl<R: Renderable> Head<R> {
-    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
+impl<'a> Renderable for Head<'a> {
+    fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
@@ -133,7 +132,7 @@ impl<R: Renderable> Head<R> {
 
         rsx! {
             <div id=[id] class=[&class_line] style=[&style_line]>
-                (children)
+                (self.children)
                 @if self.anchor {
                     @let href = format!("#{}", id.map(|id| id.as_ref()).unwrap_or_default());
 

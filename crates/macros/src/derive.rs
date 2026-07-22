@@ -18,6 +18,25 @@ pub fn props(input: DeriveInput) -> syn::Result<TokenStream> {
     let vis = &input.vis;
     let struct_name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
+    let generic_params = input
+        .generics
+        .params
+        .iter()
+        .filter_map(|param| {
+            if let GenericParam::Type(type_param) = param
+                && type_param.default.is_some()
+            {
+                None
+            } else {
+                Some(quote!(#param))
+            }
+        })
+        .collect::<Vec<_>>();
+    let impl_needed_generics = if !generic_params.is_empty() {
+        quote!(<#(#generic_params,)*>)
+    } else {
+        quote!()
+    };
 
     let mut generate_builder = false;
     let mut impl_builder_struct_ga = None;
@@ -48,8 +67,10 @@ pub fn props(input: DeriveInput) -> syn::Result<TokenStream> {
                     let struct_ga = props_args.parse::<AngleBracketedGenericArguments>()?;
                     impl_builder_struct_ga = Some(quote!(#struct_ga));
                 } else if input.generics.type_params().all(|param| param.default.is_some()) {
-                    let params = input.generics.type_params().map(|param| {
-                        if let Some(default) = &param.default {
+                    let params = input.generics.params.iter().map(|param| {
+                        if let GenericParam::Type(type_param) = param
+                            && let Some(default) = &type_param.default
+                        {
                             quote!(#default)
                         } else {
                             quote!(#param)
@@ -61,7 +82,7 @@ pub fn props(input: DeriveInput) -> syn::Result<TokenStream> {
                 if let Some(struct_ga) = &impl_builder_struct_ga {
                     builder_impl = Some(quote! {
                         #[automatically_derived]
-                        impl #struct_name #struct_ga {
+                        impl #impl_needed_generics #struct_name #struct_ga {
                             #builder_start_fn
                         }
                     });
@@ -218,7 +239,7 @@ pub fn props(input: DeriveInput) -> syn::Result<TokenStream> {
                 from_impls.push(if let Some(struct_ga) = &impl_builder_struct_ga {
                     quote! {
                         #[automatically_derived]
-                        impl From<#ty> for #struct_name #struct_ga {
+                        impl #impl_needed_generics From<#ty> for #struct_name #struct_ga {
                             fn from(#name: #ty) -> Self {
                                 #body
                             }

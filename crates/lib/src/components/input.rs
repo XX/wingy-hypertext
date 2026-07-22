@@ -4,7 +4,7 @@ use derive_more::{AsMut, AsRef};
 use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable, rsx};
 use strum::{AsRefStr, IntoStaticStr};
-use wingy_hypertext_macros::{DynRenderable, Props, const_str};
+use wingy_hypertext_macros::{Props, const_str};
 
 use crate::appearance::Appearance;
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
@@ -40,10 +40,10 @@ impl InputType {
     pub const TIME: &str = Self::Time.into_str();
 }
 
-#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
+#[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = INPUT)]
 #[props(builder)]
-pub struct Input<R: Renderable = ()> {
+pub struct Input<'a> {
     #[prop(impl_from)]
     pub input_type: InputType,
 
@@ -77,11 +77,10 @@ pub struct Input<R: Renderable = ()> {
     #[as_mut]
     pub attrs: CommonAttrs,
 
-    #[prop(convert)]
-    pub children: Option<R>,
+    pub children: Option<&'a dyn Renderable>,
 }
 
-impl<R: Renderable> Input<R> {
+impl<'a> Input<'a> {
     fn has_text_field_props(&self) -> bool {
         self.input_type != InputType::default()
             || self.disabled
@@ -91,8 +90,10 @@ impl<R: Renderable> Input<R> {
             || self.value.is_some()
             || self.placeholder.is_some()
     }
+}
 
-    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
+impl<'a> Renderable for Input<'a> {
+    fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
@@ -102,7 +103,7 @@ impl<R: Renderable> Input<R> {
         ]);
         let style_line = self.style_line_with(&[]);
 
-        let text_field = (children.is_none() || self.has_text_field_props()).then(|| TextField {
+        let text_field = (self.children.is_none() || self.has_text_field_props()).then(|| TextField {
             input_type: self.input_type,
             disabled: self.disabled,
             readonly: self.readonly,
@@ -119,7 +120,7 @@ impl<R: Renderable> Input<R> {
                     <label class=LABEL>(label)</label>
                 }
                 (text_field)
-                (children)
+                (self.children)
                 @if let Some(hint) = &self.hint {
                     <small class=HINT>(hint)</small>
                 }

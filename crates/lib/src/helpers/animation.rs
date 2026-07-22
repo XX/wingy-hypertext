@@ -4,7 +4,7 @@ use derive_more::{AsMut, AsRef};
 use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable, rsx};
 use strum::{AsRefStr, IntoStaticStr};
-use wingy_hypertext_macros::{DynRenderable, Props, const_str};
+use wingy_hypertext_macros::{Props, const_str};
 
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::ANIMATION;
@@ -45,10 +45,10 @@ pub enum Fill {
 /// `Animation`s. The animation does not start until `play` is set; the
 /// attribute is automatically removed when the animation finishes or gets
 /// canceled.
-#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
+#[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = ANIMATION)]
 #[props(builder)]
-pub struct Animation<R: Renderable = ()> {
+pub struct Animation<'a> {
     /// The name of the built-in animation to use. For custom animations, use `keyframes`.
     #[prop(into)]
     pub name: Option<Cow<'static, str>>,
@@ -99,12 +99,11 @@ pub struct Animation<R: Renderable = ()> {
 
     /// The element to animate. Rendered as the content of the host element;
     /// only the first element child is animated.
-    #[prop(convert)]
-    pub children: Option<R>,
+    pub children: Option<&'a dyn Renderable>,
 }
 
-impl<R: Renderable> Animation<R> {
-    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
+impl<'a> Renderable for Animation<'a> {
+    fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
@@ -129,7 +128,7 @@ impl<R: Renderable> Animation<R> {
                 data-keyframes=[&self.keyframes]
                 data-playback-rate=[self.playback_rate]
             >
-                (children)
+                (self.children)
             </div>
         }
         .render_to(buffer);

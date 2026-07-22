@@ -2,7 +2,7 @@ use derive_more::{AsMut, AsRef};
 use hypertext::prelude::{AriaAttributes, GlobalAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable, rsx};
 use iconic::fontawesome;
-use wingy_hypertext_macros::{DynRenderable, Props, const_str};
+use wingy_hypertext_macros::{Props, const_str};
 
 use crate::appearance::Appearance;
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
@@ -14,10 +14,10 @@ use crate::variant::Variant;
 /// a bubbling `wg-remove` event on the tag (the tag does not remove itself —
 /// handle the event to decide). The event is dispatched by `wingy-hypertext-web`,
 /// wired up on the client with `listen_remove_tags`.
-#[derive(AsRef, AsMut, Props, DynRenderable)]
+#[derive(AsRef, AsMut, Props)]
 #[const_str(CLASS = TAG)]
 #[props(builder)]
-pub struct Tag<R: Renderable = ()> {
+pub struct Tag<'a> {
     #[prop(impl_from)]
     pub variant: Variant,
 
@@ -33,11 +33,10 @@ pub struct Tag<R: Renderable = ()> {
     #[as_mut]
     pub attrs: CommonAttrs,
 
-    #[prop(convert)]
-    pub children: Option<R>,
+    pub children: Option<&'a dyn Renderable>,
 }
 
-impl<R: Renderable> Default for Tag<R> {
+impl<'a> Default for Tag<'a> {
     fn default() -> Self {
         Self {
             variant: Variant::Neutral,
@@ -50,8 +49,8 @@ impl<R: Renderable> Default for Tag<R> {
     }
 }
 
-impl<R: Renderable> Tag<R> {
-    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
+impl<'a> Renderable for Tag<'a> {
+    fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
@@ -63,7 +62,7 @@ impl<R: Renderable> Tag<R> {
 
         rsx! {
             <span id=[id] class=[&class_line] style=[&style_line]>
-                <span class=TAG_CONTENT>(children)</span>
+                <span class=TAG_CONTENT>(self.children)</span>
                 @if self.with_remove {
                     <button class=TAG_REMOVE type="button" tabindex="-1" aria-label="Remove">
                         (fontawesome::solid::Xmark)

@@ -125,7 +125,7 @@ fn create_tag(select: &Element, label: &str, value: Option<&str>) -> Option<Elem
     let markup = Tag::builder()
         .pill(select.class_list().contains("pill"))
         .with_remove(value.is_some())
-        .children(label)
+        .children(&label)
         .render();
 
     let holder = dom::existing::document().create_element("div").ok()?;

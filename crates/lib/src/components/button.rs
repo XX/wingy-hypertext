@@ -1,7 +1,7 @@
 use derive_more::{AsMut, AsRef};
 use hypertext::prelude::{GlobalAttributes, HtmxAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable};
-use wingy_hypertext_macros::{DynRenderable, Props, const_str, htmx_rsx};
+use wingy_hypertext_macros::{Props, const_str, htmx_rsx};
 
 use crate::action::Action;
 use crate::appearance::Appearance;
@@ -11,10 +11,10 @@ use crate::htmx::Htmx;
 use crate::link::Link;
 use crate::variant::Variant;
 
-#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
+#[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = BUTTON)]
 #[props(builder)]
-pub struct Button<R: Renderable = ()> {
+pub struct Button<'a> {
     #[prop(impl_from)]
     pub variant: Variant,
 
@@ -43,12 +43,11 @@ pub struct Button<R: Renderable = ()> {
     #[as_mut]
     pub htmx: Htmx,
 
-    #[prop(convert)]
-    pub children: Option<R>,
+    pub children: Option<&'a dyn Renderable>,
 }
 
-impl<R: Renderable> Button<R> {
-    fn render_to(&self, buffer: &mut Buffer, children: Option<&dyn Renderable>) {
+impl<'a> Renderable for Button<'a> {
+    fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
@@ -72,7 +71,7 @@ impl<R: Renderable> Button<R> {
                     data-args=[&self.action_data.args]
                     htmx=[self.htmx]
                 >
-                    (children)
+                    (self.children)
                 </a>
             }
             .render_to(buffer);
@@ -88,7 +87,7 @@ impl<R: Renderable> Button<R> {
                     data-args=[&self.action_data.args]
                     htmx=[self.htmx]
                 >
-                    (children)
+                    (self.children)
                 </button>
             }
             .render_to(buffer);

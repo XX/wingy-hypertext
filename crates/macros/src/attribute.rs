@@ -2,7 +2,7 @@ use proc_macro2::TokenStream;
 use quote::{ToTokens, format_ident, quote};
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::{Expr, Ident, ItemStruct, Token};
+use syn::{Expr, GenericParam, Ident, ItemStruct, Token};
 
 struct ConstStr {
     ident: Ident,
@@ -25,7 +25,7 @@ impl ToTokens for ConstStr {
         let value = &self.value;
 
         tokens.extend(quote! {
-            pub const #ident: &str = #value;
+            pub const #ident: &'static str = #value;
         });
     }
 }
@@ -85,17 +85,51 @@ pub fn const_str(args: Args, input: ItemStruct) -> syn::Result<TokenStream> {
         });
 
         if input.generics.type_params().all(|param| param.default.is_some()) {
-            let params = input.generics.type_params().map(|param| {
-                if let Some(default) = &param.default {
-                    quote!(#default)
-                } else {
-                    quote!(#param)
-                }
-            });
+            let generic_params = input
+                .generics
+                .params
+                .iter()
+                .filter_map(|param| {
+                    if let GenericParam::Type(type_param) = param
+                        && type_param.default.is_some()
+                    {
+                        None
+                    } else {
+                        Some(quote!(#param))
+                    }
+                })
+                .collect::<Vec<_>>();
+            let params = input
+                .generics
+                .params
+                .iter()
+                .map(|param| {
+                    if let GenericParam::Type(type_param) = param
+                        && let Some(default) = &type_param.default
+                    {
+                        quote!(#default)
+                    } else {
+                        quote!(#param)
+                    }
+                })
+                .collect::<Vec<_>>();
+
+            let impl_generics = if !generic_params.is_empty() {
+                Some(quote! {<#(#generic_params,)*>})
+            } else {
+                None
+            };
+            let struct_generics = if !params.is_empty() {
+                Some(quote! {<#(#params,)*>})
+            } else {
+                None
+            };
+
             let const_fns = args.consts.iter().map(ConstStrFn);
+
             impl_const_fns = Some(quote! {
                 #[automatically_derived]
-                impl #struct_name <#(#params,)*> {
+                impl #impl_generics #struct_name #struct_generics {
                     #(#const_fns)*
                 }
             });
