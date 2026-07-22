@@ -10,11 +10,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `crates/lib` (`wingy-hypertext`) — the component library. This is the product.
 - `crates/macros` (`wingy-hypertext-macros`) — proc-macros (`#[derive(Props)]`, `#[derive(DynRenderable)]`, `#[const_str(...)]`, `htmx_rsx!`) used by the library.
-- `crates/web` (`wingy-hypertext-web`) — Rust/WASM port of the gallery's client-side scripts (web-sys/js-sys); modules mirror `webassets/js` one-to-one. Consumed by `example-client`.
+- `crates/web` (`wingy-hypertext-web`) — client-side behavior in Rust/WASM (web-sys/js-sys/`wasm-dom`); started as a port of the gallery's `webassets/js` scripts and has since grown beyond them (e.g. `helpers/` for popup/animation, custom events in `utils/event.rs`). Consumed by `example-client`.
 - `examples/client` (`example-client`) — `cdylib`/`rlib` compiled to `wasm32-unknown-unknown`; renders the gallery pages.
 - `examples/server` (`example-server`) — serves `target/web` over `127.0.0.1:9080`.
 - `webassets/` — shared CSS (`webassets/style/`) and JS (`webassets/js/`) for components/layouts; copied into `target/web` at build time.
 - `examples/client/webassets/` — gallery-specific static assets (`index.html`, `main.js`, vendored htmx/highlight.js); also copied into `target/web`.
+- `issues/` — markdown-based task tracking (mostly in Russian): one file per task plus `BACKLOG.md`; finished tasks move to `issues/done/`.
 - `tmp/` — scratch (git-ignored), including `client_old/` legacy code. Not part of the build.
 
 ## Commands
@@ -37,6 +38,10 @@ Tooling required for the example build: the `wasm32-unknown-unknown` target, `wa
 - `cargo make lint-test` runs all three in sequence.
 
 ## Architecture
+
+### Library layout
+
+`crates/lib/src` groups renderables into `components/` (badge, button, callout, copy_button, head, input, select, switch, tag), `layouts/` (code_example, divider, page), and `helpers/` (animation, popup). All three follow the same component pattern below.
 
 ### Component pattern
 
@@ -70,17 +75,20 @@ The `#[derive(Props)]` macro (`crates/macros/src/derive.rs`) generates per-field
 The gallery has **no real backend**. Flow:
 
 1. `examples/client/webassets/main.js` boots the WASM module, calls `wasm.render_root(path)` to render the full page shell, and inserts it into `#root`.
-2. `examples/client/webassets/vendor/htmx/client_patch.js` monkey-patches `XMLHttpRequest` so htmx requests (anything not starting with `/api/`) are intercepted and answered synchronously by `wasm.request(url)` — see `examples/client/src/lib.rs`, which routes the path to the matching component overview (`badge`/`button`/`copy-button`/`input`).
-3. htmx swaps the returned fragment into `.main-content`; `htmx:afterSettle` re-runs highlight.js and re-inits page/scroll JS.
+2. `examples/client/webassets/vendor/htmx/client_patch.js` monkey-patches `XMLHttpRequest` so htmx requests (anything not starting with `/api/`) are intercepted and answered synchronously by `wasm.request(url)` — see `main_section` in `examples/client/src/lib.rs`, which routes the path to the matching overview page (one route per component/layout/helper).
+3. htmx swaps the returned fragment into `.main-content`; `htmx:afterSettle` re-runs highlight.js and calls `wasm.reinit()`.
 
 So changing gallery content means editing the Rust in `examples/client/src/` (and rebuilding the WASM), not adding server routes. The server (`examples/server/src/main.rs`) only serves static files from `target/web`.
 
 ### Client-side behavior in Rust
 
-The interactive client-side behavior (copy button, code-example expand/resize, action dispatch, page/scroll init) is implemented in Rust in `crates/web` (`wingy-hypertext-web`) via `web-sys`/`js-sys`, as a close port of the JavaScript modules under `webassets/js` (each Rust module mirrors one JS module). `main.js` wires the gallery up by calling thin `#[wasm_bindgen]` entry points re-exported from `examples/client/src/lib.rs` (e.g. `register_copy_action`, `listen_code_examples`, `init_page_element`) instead of importing the `webassets/js` modules; only third-party vendor scripts (htmx, highlight.js) and the htmx request interception (`client_patch.js`) stay on the JS side. The old `webassets/js` modules are retained as reference. The crate uses still-unstable web-sys Web Animations bindings, so the build needs `--cfg=web_sys_unstable_apis` — set workspace-wide in `.cargo/config.toml` and repeated in `Makefile.toml`'s `RUSTFLAGS` (which would otherwise override the config).
+The interactive client-side behavior (copy button, code-example expand/resize, action dispatch, page/scroll init, selects, popups, animations, tag/callout closing) is implemented in Rust in `crates/web` (`wingy-hypertext-web`) via `web-sys`/`js-sys`/`wasm-dom`, originally as a port of the JavaScript modules under `webassets/js`. `main.js` wires the gallery up through two aggregate `#[wasm_bindgen]` entry points in `examples/client/src/lib.rs`: `init()` (one-time — registers actions and document-level event listeners) and `reinit()` (run after boot and after every `htmx:afterSettle` — re-inits page elements, selects, popups, animations). Only third-party vendor scripts (htmx, highlight.js) and the htmx request interception (`client_patch.js`) stay on the JS side. The old `webassets/js` modules are retained as reference.
+
+Components that dismiss themselves (Callout close, Tag remove) don't mutate the DOM directly from their click handlers — they dispatch bubbling custom DOM events (`wg-close`, `wg-remove`; constants and `dispatch` helper in `crates/web/src/utils/event.rs`), and document-level listeners (`listen_close_callout`, `listen_remove_tags`) perform the actual removal. This also lets gallery demos intercept the same events. The crate uses still-unstable web-sys Web Animations bindings, so the build needs `--cfg=web_sys_unstable_apis` — set workspace-wide in `.cargo/config.toml` and repeated in `Makefile.toml`'s `RUSTFLAGS` (which would otherwise override the config).
 
 ## Conventions
 
+- Icon markup is never hand-written: icons come from the [`iconic`](https://github.com/XX/iconic) crate (git dependency, `fontawesome`/`fontawesome-ext` + `hypertext` features) and render as `Renderable`s, e.g. `(fontawesome::solid::PuzzlePiece)` inside a `class=ICON` span.
 - CSS class names are not hardcoded as string literals. They live as `&str` constants in `crates/lib/src/class.rs` (e.g. `BUTTON`, `LABEL`, `HINT`, `STACK`, `HEADING_M`, and `wa-*` utility classes). Reference these constants both in `#[const_str(CLASS = …)]` on components and in `class=(…)` attributes throughout the gallery; add new entries there rather than inlining a literal. Because `class=` then takes constants, multi-class attributes are built by tupling with separators, e.g. `class=(STACK, " ", GAP_S)`.
 - Rust edition 2024 across the workspace.
 - The library is rendering-only and intentionally minimal — it produces Web Awesome-classed markup; the actual styling/behavior lives in `webassets/style` and `webassets/js` (and Web Awesome itself).
