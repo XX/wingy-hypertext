@@ -15,7 +15,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `examples/server` (`example-server`) — serves `target/web` over `127.0.0.1:9080`.
 - `webassets/` — shared CSS (`webassets/style/`) and JS (`webassets/js/`) for components/layouts; copied into `target/web` at build time.
 - `examples/client/webassets/` — gallery-specific static assets (`index.html`, `main.js`, vendored htmx/highlight.js); also copied into `target/web`.
-- `issues/` — markdown-based task tracking (mostly in Russian): one file per task plus `BACKLOG.md`; finished tasks move to `issues/done/`.
+- `issues/` — markdown-based task tracking (mostly in Russian): one file per task plus `BACKLOG.md`. Finished tasks live in `issues/done/`, but only the maintainer moves them there after accepting the result — never move an issue file to `done/` yourself (appending resolution notes to it is fine).
 - `tmp/` — scratch (git-ignored), including `client_old/` legacy code. Not part of the build.
 
 ## Commands
