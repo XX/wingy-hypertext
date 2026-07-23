@@ -88,10 +88,10 @@ args = [
 
 [tasks.client]
 condition = { files_modified = { input = [
-        "${TARGET_DIR}/wasm32-unknown-unknown/${PROFILE_BUILD_DIR}/example_client.wasm",
-    ], output = [
-        "${TARGET_DIR}/web/dist/client_bg.wasm",
-    ] } }
+    "${TARGET_DIR}/wasm32-unknown-unknown/${PROFILE_BUILD_DIR}/example_client.wasm",
+], output = [
+    "${TARGET_DIR}/web/dist/client_bg.wasm",
+] } }
 run_task = { name = ["deploy-client", "optimize-client"] }
 dependencies = ["build-client", "copy-static"]
 

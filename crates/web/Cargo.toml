@@ -8,14 +8,10 @@ license.workspace = true
 futures = { workspace = true }
 hypertext = { workspace = true }
 js-sys = { workspace = true }
-wingy-hypertext = { workspace = true }
 wasm-bindgen = { workspace = true }
 wasm-bindgen-futures = { workspace = true }
 wasm-dom = { workspace = true }
-
-[dependencies.web-sys]
-workspace = true
-features = [
+web-sys = { workspace = true, features = [
     "AddEventListenerOptions",
     "Animation",
     "AnimationPlayState",
@@ -48,4 +44,5 @@ features = [
     "TouchEvent",
     "TouchList",
     "Window",
-]
+] }
+wingy-hypertext = { workspace = true }

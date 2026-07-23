@@ -11,14 +11,9 @@ crate-type = ["cdylib", "rlib"]
 hypertext = { workspace = true }
 iconic = { workspace = true }
 js-sys = { workspace = true }
-wingy-hypertext = { workspace = true }
-wingy-hypertext-web = { workspace = true }
 wasm-bindgen = { workspace = true }
 wasm-dom = { workspace = true }
-
-[dependencies.web-sys]
-workspace = true
-features = [
+web-sys = { workspace = true, features = [
     "Document",
     "DomTokenList",
     "Element",
@@ -29,4 +24,6 @@ features = [
     "IntersectionObserverEntry",
     "Node",
     "Window",
-]
+] }
+wingy-hypertext = { workspace = true }
+wingy-hypertext-web = { workspace = true }
