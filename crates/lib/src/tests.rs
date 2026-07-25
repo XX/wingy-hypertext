@@ -4,6 +4,7 @@ pub mod button;
 pub mod callout;
 pub mod code_example;
 pub mod divider;
+pub mod drawer;
 pub mod dyn_renderable;
 pub mod input;
 pub mod page;

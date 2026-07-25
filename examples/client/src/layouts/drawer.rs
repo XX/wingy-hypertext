@@ -1,0 +1,427 @@
+use hypertext::prelude::{AriaAttributes, GlobalAttributes, hypertext_elements};
+use hypertext::{Renderable, rsx};
+use iconic::fontawesome;
+use wasm_bindgen::JsCast;
+use wasm_dom as dom;
+use wasm_dom::event::EventListener;
+use wasm_dom::existing::JsObjectAccess;
+use wasm_dom::existing::access::CastToElement;
+use web_sys::{CustomEvent, Element, Event};
+use wingy_hypertext::appearance::Appearance;
+use wingy_hypertext::attributes::CommonAttributeSetters;
+use wingy_hypertext::class::{BUTTON, CONTROL, ICON, INPUT, TEXT_FIELD};
+use wingy_hypertext::components::head::Head;
+use wingy_hypertext::components::head::HeadLevel::*;
+use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
+use wingy_hypertext::layouts::drawer::Drawer;
+use wingy_hypertext::layouts::drawer::DrawerPlacement::*;
+use wingy_hypertext::variant::Variant;
+
+/// A raw button carrying a `data-drawer` value (`open <id>` or `close`), used
+/// throughout the demos instead of a scripted click handler.
+fn drawer_button(label: &'static str, data_drawer: &'static str, classes: &'static str) -> impl Renderable {
+    rsx! {
+        <button class=(BUTTON, " ", classes) type="button" data-drawer=(data_drawer)>
+            (label)
+        </button>
+    }
+}
+
+fn open_button(id: &'static str) -> impl Renderable {
+    let data_drawer = match id {
+        "drawer-overview" => "open drawer-overview",
+        "drawer-without-header" => "open drawer-without-header",
+        "drawer-footer" => "open drawer-footer",
+        "drawer-opening" => "open drawer-opening",
+        "drawer-dismiss" => "open drawer-dismiss",
+        "drawer-placement-start" => "open drawer-placement-start",
+        "drawer-placement-bottom" => "open drawer-placement-bottom",
+        "drawer-custom-size" => "open drawer-custom-size",
+        "drawer-scrolling" => "open drawer-scrolling",
+        "drawer-header-actions" => "open drawer-header-actions",
+        "drawer-light-dismiss" => "open drawer-light-dismiss",
+        "drawer-deny-close" => "open drawer-deny-close",
+        "drawer-focus" => "open drawer-focus",
+        _ => "",
+    };
+    drawer_button("Open Drawer", data_drawer, Appearance::FILLED)
+}
+
+fn close_button() -> impl Renderable {
+    drawer_button("Close", "close", Variant::BRAND)
+}
+
+pub fn overview() -> impl Renderable {
+    rsx! {
+        <Head level=H1>"Drawer"</Head>
+        <p>"Drawers slide in from the edge of the screen to expose additional options and information without "
+            "navigating away. They are useful for navigation menus, filters, and secondary content. The drawer is "
+            "rendered as a native "<code>"<dialog>"</code>" element; its open/close behavior is implemented in Rust "
+            "in "<code>"wingy-hypertext-web"</code>" and wired up with "<code>"listen_drawers"</code>" and "
+            <code>"init_drawers"</code>". Open any drawer declaratively with a "<code>r#"data-drawer="open <id>""#</code>
+            " trigger, and close it from within with "<code>r#"data-drawer="close""#</code>"."
+        </p>
+        <CodeExample>
+            <CodeExamplePreview resize=true>
+                <Drawer label="Drawer" id="drawer-overview" footer=(close_button())>
+                    "Drawers are great for showing additional content without leaving the current page."
+                </Drawer>
+                (open_button("drawer-overview"))
+            </CodeExamplePreview>
+            <CodeExampleSource copy_button=true>
+                <code class="language-html">r#"
+                    <Drawer label="Drawer" id="drawer-overview" footer=(close_button())>
+                        "Drawers are great for showing additional content without leaving the current page."
+                    </Drawer>
+
+                    // The open button carries `data-drawer="open drawer-overview"`
+                    <button class=(BUTTON, " ", Appearance::FILLED) data-drawer="open drawer-overview">
+                        "Open Drawer"
+                    </button>
+                "#</code>
+            </CodeExampleSource>
+            <CodeExampleButton>"Code"</CodeExampleButton>
+        </CodeExample>
+
+        <Head level=H2 id="examples" anchor=true>
+            "Examples"
+        </Head>
+
+        <Head level=H3 id="without-a-header" anchor=true>
+            "Without a Header"
+        </Head>
+        <p>"Headers are enabled by default. To render a drawer without a header, add the "
+            <code>"without_header"</code>" attribute."
+        </p>
+        <CodeExample>
+            <CodeExamplePreview resize=true>
+                <Drawer label="Drawer" without_header=true id="drawer-without-header" footer=(close_button())>
+                    "Look ma, no header!"
+                </Drawer>
+                (open_button("drawer-without-header"))
+            </CodeExamplePreview>
+            <CodeExampleSource copy_button=true>
+                <code class="language-html">r#"
+                    <Drawer label="Drawer" without_header=true id="drawer-without-header" footer=(close_button())>
+                        "Look ma, no header!"
+                    </Drawer>
+                "#</code>
+            </CodeExampleSource>
+            <CodeExampleButton>"Code"</CodeExampleButton>
+        </CodeExample>
+
+        <Head level=H3 id="footer" anchor=true>
+            "Footer"
+        </Head>
+        <p>"Footers can be used to display titles and more. Use the "<code>"footer"</code>
+            " property to add a footer to the drawer."
+        </p>
+        <CodeExample>
+            <CodeExamplePreview resize=true>
+                <Drawer label="Drawer" id="drawer-footer" footer=(close_button())>
+                    "This drawer has a footer where you can put actions and other controls."
+                </Drawer>
+                (open_button("drawer-footer"))
+            </CodeExamplePreview>
+            <CodeExampleSource copy_button=true>
+                <code class="language-html">r#"
+                    <Drawer label="Drawer" id="drawer-footer" footer=(close_button())>
+                        "This drawer has a footer where you can put actions and other controls."
+                    </Drawer>
+                "#</code>
+            </CodeExampleSource>
+            <CodeExampleButton>"Code"</CodeExampleButton>
+        </CodeExample>
+
+        <Head level=H3 id="opening-closing-declaratively" anchor=true>
+            "Opening & Closing Declaratively"
+        </Head>
+        <p>"Add "<code>r#"data-drawer="open <id>""#</code>" to any button on the page, where "<code>"<id>"</code>
+            " is the id of the drawer you want to open. Similarly, add "<code>r#"data-drawer="close""#</code>
+            " to a button "<em>"inside"</em>" of a drawer to tell it to close — no JavaScript required."
+        </p>
+        <CodeExample>
+            <CodeExamplePreview resize=true>
+                <Drawer label="Drawer" id="drawer-opening" footer=(close_button())>
+                    "This drawer was opened declaratively using a data attribute on the button."
+                </Drawer>
+                (open_button("drawer-opening"))
+            </CodeExamplePreview>
+            <CodeExampleSource copy_button=true>
+                <code class="language-html">r#"
+                    <Drawer label="Drawer" id="drawer-opening" footer=(close_button())>
+                        "This drawer was opened declaratively using a data attribute on the button."
+                    </Drawer>
+
+                    <button class=(BUTTON, " ", Appearance::FILLED) data-drawer="open drawer-opening">
+                        "Open Drawer"
+                    </button>
+                "#</code>
+            </CodeExampleSource>
+            <CodeExampleButton>"Code"</CodeExampleButton>
+        </CodeExample>
+
+        <Head level=H3 id="placement" anchor=true>
+            "Placement"
+        </Head>
+        <p>"Drawers slide in from the end by default. Set the "<code>"placement"</code>
+            " attribute to "<code>"Start"</code>", "<code>"End"</code>", "<code>"Top"</code>", or "
+            <code>"Bottom"</code>" to slide in from a different edge."
+        </p>
+        <CodeExample>
+            <CodeExamplePreview resize=true>
+                <Drawer label="Drawer" placement=Start id="drawer-placement-start" footer=(close_button())>
+                    "This drawer slides in from the start."
+                </Drawer>
+                (drawer_button("Open from Start", "open drawer-placement-start", Appearance::FILLED))
+
+                <Drawer label="Drawer" placement=Bottom id="drawer-placement-bottom" footer=(close_button())>
+                    "This drawer slides in from the bottom."
+                </Drawer>
+                (drawer_button("Open from Bottom", "open drawer-placement-bottom", Appearance::FILLED))
+            </CodeExamplePreview>
+            <CodeExampleSource copy_button=true>
+                <code class="language-html">r#"
+                    <Drawer label="Drawer" placement=Start id="drawer-placement-start" footer=(close_button())>
+                        "This drawer slides in from the start."
+                    </Drawer>
+
+                    <Drawer label="Drawer" placement=Bottom id="drawer-placement-bottom" footer=(close_button())>
+                        "This drawer slides in from the bottom."
+                    </Drawer>
+                "#</code>
+            </CodeExampleSource>
+            <CodeExampleButton>"Code"</CodeExampleButton>
+        </CodeExample>
+
+        <Head level=H3 id="size" anchor=true>
+            "Size"
+        </Head>
+        <p>"Use the "<code>"--size"</code>" custom property to set the drawer's size. This will be applied to the "
+            "drawer's width or height depending on its placement."
+        </p>
+        <CodeExample>
+            <CodeExamplePreview resize=true>
+                <Drawer label="Drawer" id="drawer-custom-size" style="--size: 50vw;" footer=(close_button())>
+                    "This drawer is always 50% of the viewport."
+                </Drawer>
+                (open_button("drawer-custom-size"))
+            </CodeExamplePreview>
+            <CodeExampleSource copy_button=true>
+                <code class="language-html">r#"
+                    <Drawer label="Drawer" id="drawer-custom-size" style="--size: 50vw;" footer=(close_button())>
+                        "This drawer is always 50% of the viewport."
+                    </Drawer>
+                "#</code>
+            </CodeExampleSource>
+            <CodeExampleButton>"Code"</CodeExampleButton>
+        </CodeExample>
+
+        <Head level=H3 id="scrolling" anchor=true>
+            "Scrolling"
+        </Head>
+        <p>"By design, a drawer's height will never exceed 100% of its container. As such, drawers will not scroll "
+            "with the page to ensure the header and footer are always accessible to the user."
+        </p>
+        <CodeExample>
+            <CodeExamplePreview resize=true>
+                <Drawer label="Drawer" id="drawer-scrolling" footer=(close_button())>
+                    <div style="height: 150vh; border: dashed 2px var(--wa-color-surface-border); padding: 0 1rem;">
+                        <p>"Scroll down and give it a try! 👇"</p>
+                    </div>
+                </Drawer>
+                (open_button("drawer-scrolling"))
+            </CodeExamplePreview>
+            <CodeExampleSource copy_button=true>
+                <code class="language-html">r#"
+                    <Drawer label="Drawer" id="drawer-scrolling" footer=(close_button())>
+                        <div style="height: 150vh; ...">
+                            <p>"Scroll down and give it a try! 👇"</p>
+                        </div>
+                    </Drawer>
+                "#</code>
+            </CodeExampleSource>
+            <CodeExampleButton>"Code"</CodeExampleButton>
+        </CodeExample>
+
+        <Head level=H3 id="header-actions" anchor=true>
+            "Header Actions"
+        </Head>
+        <p>"The header shows a functional close button by default. Use the "<code>"header_actions"</code>
+            " property to add additional buttons if needed."
+        </p>
+        <CodeExample>
+            <CodeExamplePreview resize=true>
+                <Drawer
+                    label="Drawer"
+                    id="drawer-header-actions"
+                    class="drawer-header-actions-demo"
+                    footer=(close_button())
+                    header_actions=(rsx! {
+                        <button class=(BUTTON, " ", Appearance::PLAIN, " ", "new-window") type="button" aria-label="Open in new window">
+                            <span class=ICON>
+                                (fontawesome::solid::Gear)
+                            </span>
+                        </button>
+                    })
+                >
+                    "You can add custom actions to the header, like the button up there to open in a new window."
+                </Drawer>
+                (open_button("drawer-header-actions"))
+            </CodeExamplePreview>
+            <CodeExampleSource copy_button=true>
+                <code class="language-html">r#"
+                    <Drawer
+                        label="Drawer"
+                        id="drawer-header-actions"
+                        footer=(close_button())
+                        header_actions=(rsx! {
+                            <button class=(BUTTON, " ", Appearance::PLAIN, " ", "new-window") aria-label="Open in new window">
+                                <span class=ICON>(fontawesome::solid::Gear)</span>
+                            </button>
+                        })
+                    >
+                        "You can add custom actions to the header, like the button up there to open in a new window."
+                    </Drawer>
+                "#</code>
+            </CodeExampleSource>
+            <CodeExampleButton>"Code"</CodeExampleButton>
+        </CodeExample>
+
+        <Head level=H3 id="light-dismissal" anchor=true>
+            "Light Dismissal"
+        </Head>
+        <p>"If you want the drawer to close when the user clicks on the overlay, add the "
+            <code>"light_dismiss"</code>" attribute."
+        </p>
+        <CodeExample>
+            <CodeExamplePreview resize=true>
+                <Drawer label="Drawer" light_dismiss=true id="drawer-light-dismiss" footer=(close_button())>
+                    "This drawer will close when you click on the overlay."
+                </Drawer>
+                (open_button("drawer-light-dismiss"))
+            </CodeExamplePreview>
+            <CodeExampleSource copy_button=true>
+                <code class="language-html">r#"
+                    <Drawer label="Drawer" light_dismiss=true id="drawer-light-dismiss" footer=(close_button())>
+                        "This drawer will close when you click on the overlay."
+                    </Drawer>
+                "#</code>
+            </CodeExampleSource>
+            <CodeExampleButton>"Code"</CodeExampleButton>
+        </CodeExample>
+
+        <Head level=H3 id="preventing-closing" anchor=true>
+            "Preventing the Drawer from Closing"
+        </Head>
+        <p>"By default, drawers close when the user clicks the close button, clicks the overlay, or presses "
+            <code>"Escape"</code>". To keep the drawer open in cases where closing would be destructive, cancel "
+            "the "<code>"wg-hide"</code>" event. When canceled, the drawer stays open and pulses briefly. Inspect "
+            <code>"event.detail.source"</code>" to determine what triggered the request to close — this demo only "
+            "allows the footer close button to dismiss the drawer."
+        </p>
+        <CodeExample>
+            <CodeExamplePreview resize=true>
+                <Drawer label="Drawer" id="drawer-deny-close" class="drawer-deny-close" footer=(close_button())>
+                    "This drawer will only close when you click the button below."
+                </Drawer>
+                (open_button("drawer-deny-close"))
+            </CodeExamplePreview>
+            <CodeExampleSource copy_button=true>
+                <code class="language-html">r#"
+                    <Drawer label="Drawer" id="drawer-deny-close" class="drawer-deny-close" footer=(close_button())>
+                        "This drawer will only close when you click the button below."
+                    </Drawer>
+
+                    // Prevent closing unless the close button is the source
+                    document.add_steady_event_listener("wg-hide", |event| { ... });
+                "#</code>
+            </CodeExampleSource>
+            <CodeExampleButton>"Code"</CodeExampleButton>
+        </CodeExample>
+
+        <Head level=H3 id="initial-focus" anchor=true>
+            "Initial Focus"
+        </Head>
+        <p>"To give focus to a specific element when the drawer opens, use the "<code>"autofocus"</code>
+            " attribute on that element."
+        </p>
+        <CodeExample>
+            <CodeExamplePreview resize=true>
+                <Drawer label="Drawer" id="drawer-focus" footer=(close_button())>
+                    <div class=INPUT>
+                        <div class=TEXT_FIELD>
+                            <input
+                                class=CONTROL
+                                type="text"
+                                autofocus
+                                placeholder="I will have focus when the drawer is opened"
+                            />
+                        </div>
+                    </div>
+                </Drawer>
+                (open_button("drawer-focus"))
+            </CodeExamplePreview>
+            <CodeExampleSource copy_button=true>
+                <code class="language-html">r#"
+                    <Drawer label="Drawer" id="drawer-focus" footer=(close_button())>
+                        <input class=CONTROL type="text" autofocus placeholder="I will have focus when the drawer is opened"/>
+                    </Drawer>
+                "#</code>
+            </CodeExampleSource>
+            <CodeExampleButton>"Code"</CodeExampleButton>
+        </CodeExample>
+    }
+}
+
+//
+// Interactive overview demo wiring
+//
+
+/// One-time wiring for the two demos that need scripted behavior: preventing
+/// the deny-close drawer from closing and opening a new window from the header
+/// actions button.
+pub fn listen_drawer_overview() {
+    let document = dom::existing::document();
+
+    // Prevent `.drawer-deny-close` from closing unless the footer close button
+    // was the source of the request.
+    document.add_steady_event_listener("wg-hide", |event| {
+        prevent_deny_close(&event);
+    });
+
+    // The header-actions "new window" button opens the current page in a new tab.
+    document.add_steady_event_listener("click", |event| {
+        handle_new_window(&event);
+    });
+}
+
+fn prevent_deny_close(event: &Event) -> Option<()> {
+    let target = event.target()?.maybe_into_element()?;
+    target.closest(".drawer-deny-close").ok()??;
+
+    let custom: &CustomEvent = event.dyn_ref()?;
+    let source = custom.detail().get("source");
+    let is_close_button = source
+        .dyn_into::<Element>()
+        .ok()
+        .and_then(|element| element.closest("[data-drawer='close']").ok().flatten())
+        .is_some();
+
+    if !is_close_button {
+        event.prevent_default();
+    }
+
+    Some(())
+}
+
+fn handle_new_window(event: &Event) -> Option<()> {
+    let target = event.target()?.maybe_into_element()?;
+    target.closest(".new-window").ok()??;
+
+    let window = dom::existing::window();
+    let href = window.location().href().ok()?;
+    window.open_with_url(&href).ok();
+
+    Some(())
+}

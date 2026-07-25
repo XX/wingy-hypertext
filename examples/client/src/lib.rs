@@ -22,6 +22,7 @@ use wingy_hypertext_web::components::select::{init_selects, listen_selects};
 use wingy_hypertext_web::components::tag::listen_remove_tags;
 use wingy_hypertext_web::helpers::animation::init_animations;
 use wingy_hypertext_web::helpers::popup::{init_popups, listen_popups};
+use wingy_hypertext_web::layouts::drawer::{init_drawers, listen_drawers};
 use wingy_hypertext_web::utils::event;
 use wingy_hypertext_web::{
     init_code_examples, init_page_element, init_scroll_to_anchor, listen_click_actions, listen_code_examples,
@@ -49,6 +50,8 @@ pub fn init() {
     listen_animation_overview();
     listen_popup_overview();
     listen_removable_demo();
+    listen_drawers();
+    layouts::drawer::listen_drawer_overview();
 }
 
 /// Re-initialization run after every htmx settle.
@@ -59,6 +62,7 @@ pub fn reinit() {
     init_selects();
     init_popups();
     init_animations();
+    init_drawers();
     helpers::animation::init_animation_overview();
     helpers::popup::init_popup_overview();
 }
@@ -80,6 +84,7 @@ fn main_section(route_path: &str) -> impl Renderable {
             "callout" => (components::callout::overview()),
             "copy-button" => (components::copy_button::overview()),
             "divider" => (layouts::divider::overview()),
+            "drawer" => (layouts::drawer::overview()),
             "input" => (components::input::overview()),
             "popup" => (helpers::popup::overview()),
             "select" => (components::select::overview()),
@@ -240,6 +245,16 @@ pub fn render_root(url_path: &str) -> String {
                             hx-push-url="true"
                         >
                             <span>"Divider"</span>
+                        </a>
+                        <a
+                            class=FLANK
+                            href="/drawer"
+                            hx-get="/drawer"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Drawer"</span>
                         </a>
                         <a class=FLANK href="#"><span>"Page"</span></a>
                     </nav>
