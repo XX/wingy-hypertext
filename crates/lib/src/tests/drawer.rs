@@ -3,11 +3,10 @@ use hypertext::{RenderableExt, rsx};
 use iconic::fontawesome;
 
 use crate::attributes::CommonAttributeSetters;
-use crate::layouts::drawer::Drawer;
+use crate::class::{BOTTOM, START, TOP};
+use crate::layouts::INVISIBLE;
 use crate::layouts::drawer::DrawerPlacement::*;
-
-// A zero-width space keeps the header from collapsing when there is no label.
-const EMPTY_LABEL: &str = "\u{200B}";
+use crate::layouts::drawer::{Drawer, DrawerBody, DrawerFooter, DrawerHeader};
 
 /// The close button icon is rendered from the `iconic` crate; build the
 /// expected header markup dynamically so the tests don't hardcode the SVG.
@@ -27,10 +26,7 @@ fn header(title: &str) -> String {
 
 #[test]
 fn default() {
-    let expected = format!(
-        r#"<dialog class="drawer end">{}<div class="drawer-body"></div></dialog>"#,
-        header(EMPTY_LABEL)
-    );
+    let expected = r#"<dialog class="drawer start"></dialog>"#;
 
     let drawer = Drawer::builder();
     assert_eq!(drawer.render().as_inner(), &expected);
@@ -43,85 +39,84 @@ fn default() {
 }
 
 #[test]
-fn label() {
-    let expected = format!(
-        r#"<dialog class="drawer end">{}<div class="drawer-body"></div></dialog>"#,
-        header("Drawer")
-    );
+fn title() {
+    let expected = format!(r#"<dialog class="drawer start">{}</dialog>"#, header("Drawer"));
 
-    let drawer = Drawer::builder().label("Drawer");
+    let drawer_header = DrawerHeader::builder().children(&"Drawer");
+    let drawer = Drawer::builder().children(&drawer_header);
     assert_eq!(drawer.render().as_inner(), &expected);
 
-    let drawer = rsx! { <Drawer label="Drawer"/> };
+    let drawer = rsx! { <Drawer><DrawerHeader>"Drawer"</DrawerHeader></Drawer> };
     assert_eq!(drawer.render().as_inner(), &expected);
 }
 
 #[test]
 fn placement() {
-    for (placement_markup, class) in [("start", "start"), ("bottom", "bottom"), ("top", "top")] {
-        let expected = format!(
-            r#"<dialog class="drawer {class}">{}<div class="drawer-body"></div></dialog>"#,
-            header(EMPTY_LABEL)
-        );
-        let actual = match placement_markup {
-            "start" => rsx! { <Drawer placement=Start/> }.render().into_inner(),
-            "bottom" => rsx! { <Drawer placement=Bottom/> }.render().into_inner(),
-            _ => rsx! { <Drawer placement=Top/> }.render().into_inner(),
+    for placement_class in [START, BOTTOM, TOP] {
+        let expected = format!(r#"<dialog class="drawer {placement_class}"></dialog>"#);
+        let actual = match placement_class {
+            START => rsx! { <Drawer placement=Start/> }.render().into_inner(),
+            BOTTOM => rsx! { <Drawer placement=Bottom/> }.render().into_inner(),
+            TOP => rsx! { <Drawer placement=Top/> }.render().into_inner(),
+            _ => unreachable!(),
         };
         assert_eq!(actual, expected);
     }
 
-    let expected = format!(
-        r#"<dialog class="drawer start">{}<div class="drawer-body"></div></dialog>"#,
-        header(EMPTY_LABEL)
-    );
+    let expected = r#"<dialog class="drawer start"></dialog>"#;
     let drawer = Drawer::builder().placement(Start);
     assert_eq!(drawer.render().as_inner(), &expected);
 }
 
 #[test]
-fn without_header() {
-    let expected = r#"<dialog class="drawer end"><div class="drawer-body"></div></dialog>"#;
+fn with_empty_body() {
+    let expected = r#"<dialog class="drawer start"><div class="drawer-body"></div></dialog>"#;
 
-    let drawer = Drawer::builder().without_header(true);
+    let drawer_body = DrawerBody::builder();
+    let drawer = Drawer::builder().children(&drawer_body);
     assert_eq!(drawer.render().as_inner(), &expected);
 
-    let drawer = rsx! { <Drawer without_header=true/> };
+    let drawer = rsx! { <Drawer><DrawerBody/></Drawer> };
     assert_eq!(drawer.render().as_inner(), &expected);
 }
 
 #[test]
 fn flags() {
-    let expected =
-        r#"<dialog class="drawer end" data-open="" data-light-dismiss=""><div class="drawer-body"></div></dialog>"#;
+    let expected = r#"<dialog class="drawer start" data-open="" data-light-dismiss=""></dialog>"#;
 
-    let drawer = rsx! { <Drawer without_header=true open=true light_dismiss=true/> };
+    let drawer = rsx! { <Drawer open=true light_dismiss=true/> };
     assert_eq!(drawer.render().as_inner(), &expected);
 }
 
 #[test]
-fn children() {
+fn header_and_body() {
     let expected = format!(
-        r#"<dialog class="drawer end">{}<div class="drawer-body">Hello, world!</div></dialog>"#,
-        header(EMPTY_LABEL)
+        r#"<dialog class="drawer start">{}<div class="drawer-body">Hello, world!</div></dialog>"#,
+        header(INVISIBLE)
     );
 
-    let drawer = rsx! { <Drawer>"Hello, world!"</Drawer> };
+    let drawer = rsx! { <Drawer><DrawerHeader/><DrawerBody>"Hello, world!"</DrawerBody></Drawer> };
     assert_eq!(drawer.render().as_inner(), &expected);
 }
 
 #[test]
 fn footer_and_header_actions() {
-    let footer = rsx! { <button>"Close"</button> };
-    let actions = rsx! { <span class="new-window"></span> };
     let drawer = rsx! {
-        <Drawer label="Drawer" header_actions=(actions) footer=(footer)>"Body"</Drawer>
+        <Drawer>
+            <DrawerHeader actions=(rsx! { <span class="new-window"></span> })>
+                "Drawer"
+            </DrawerHeader>
+            <DrawerBody>"Body"</DrawerBody>
+            <DrawerFooter>
+                <button>"Close"</button>
+            </DrawerFooter>
+        </Drawer>
     };
 
-    let icon = rsx! { (fontawesome::solid::Xmark) }.render().into_inner();
+    let icon = fontawesome::solid::Xmark.render().into_inner();
     let expected = format!(
         concat!(
-            r#"<dialog class="drawer end"><header class="drawer-header">"#,
+            r#"<dialog class="drawer start"><header class="drawer-header">"#,
             r#"<h2 class="drawer-title">Drawer</h2><div class="drawer-header-actions">"#,
             r#"<span class="new-window"></span>"#,
             r#"<button class="button plain drawer-close" type="button" data-drawer="close" aria-label="Close">"#,
@@ -136,10 +131,7 @@ fn footer_and_header_actions() {
 
 #[test]
 fn additional_attributes() {
-    let expected = format!(
-        r#"<dialog id="the-drawer" class="drawer end test" style="--size: 50vw">{}<div class="drawer-body"></div></dialog>"#,
-        header(EMPTY_LABEL)
-    );
+    let expected = r#"<dialog id="the-drawer" class="drawer start test" style="--size: 50vw"></dialog>"#;
 
     let drawer = Drawer::builder().id("the-drawer").class("test").style("--size: 50vw");
     assert_eq!(drawer.render().as_inner(), &expected);

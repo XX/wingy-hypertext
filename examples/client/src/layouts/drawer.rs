@@ -1,4 +1,4 @@
-use hypertext::prelude::{AriaAttributes, GlobalAttributes, hypertext_elements};
+use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Renderable, rsx};
 use iconic::fontawesome;
 use wasm_bindgen::JsCast;
@@ -7,14 +7,16 @@ use wasm_dom::event::EventListener;
 use wasm_dom::existing::JsObjectAccess;
 use wasm_dom::existing::access::CastToElement;
 use web_sys::{CustomEvent, Element, Event};
-use wingy_hypertext::appearance::Appearance;
+use wingy_hypertext::appearance::Appearance::{self, *};
 use wingy_hypertext::attributes::CommonAttributeSetters;
-use wingy_hypertext::class::{BUTTON, CONTROL, ICON, INPUT, TEXT_FIELD};
+use wingy_hypertext::class::{BUTTON, ICON};
+use wingy_hypertext::components::button::Button;
 use wingy_hypertext::components::head::Head;
 use wingy_hypertext::components::head::HeadLevel::*;
+use wingy_hypertext::components::input::Input;
 use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
-use wingy_hypertext::layouts::drawer::Drawer;
 use wingy_hypertext::layouts::drawer::DrawerPlacement::*;
+use wingy_hypertext::layouts::drawer::{Drawer, DrawerBody, DrawerFooter, DrawerHeader};
 use wingy_hypertext::variant::Variant;
 
 /// A raw button carrying a `data-drawer` value (`open <id>` or `close`), used
@@ -63,15 +65,23 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Drawer label="Drawer" id="drawer-overview" footer=(close_button())>
-                    "Drawers are great for showing additional content without leaving the current page."
+                <Drawer id="drawer-overview">
+                    <DrawerHeader>"Drawer"</DrawerHeader>
+                    <DrawerBody>
+                        "Drawers are great for showing additional content without leaving the current page."
+                    </DrawerBody>
+                    <DrawerFooter>(close_button())</DrawerFooter>
                 </Drawer>
                 (open_button("drawer-overview"))
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Drawer label="Drawer" id="drawer-overview" footer=(close_button())>
-                        "Drawers are great for showing additional content without leaving the current page."
+                    <Drawer id="drawer-overview">
+                        <DrawerHeader>"Drawer"</DrawerHeader>
+                        <DrawerBody>
+                            "Drawers are great for showing additional content without leaving the current page."
+                        </DrawerBody>
+                        <DrawerFooter>(close_button())</DrawerFooter>
                     </Drawer>
 
                     // The open button carries `data-drawer="open drawer-overview"`
@@ -95,15 +105,21 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Drawer label="Drawer" without_header=true id="drawer-without-header" footer=(close_button())>
-                    "Look ma, no header!"
+                <Drawer id="drawer-without-header">
+                    <DrawerBody>
+                        "Look ma, no header!"
+                    </DrawerBody>
+                    <DrawerFooter>(close_button())</DrawerFooter>
                 </Drawer>
                 (open_button("drawer-without-header"))
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Drawer label="Drawer" without_header=true id="drawer-without-header" footer=(close_button())>
-                        "Look ma, no header!"
+                    <Drawer id="drawer-without-header">
+                        <DrawerBody>
+                            "Look ma, no header!"
+                        </DrawerBody>
+                        <DrawerFooter>(close_button())</DrawerFooter>
                     </Drawer>
                 "#</code>
             </CodeExampleSource>
@@ -118,15 +134,29 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Drawer label="Drawer" id="drawer-footer" footer=(close_button())>
-                    "This drawer has a footer where you can put actions and other controls."
+                <Drawer id="drawer-footer">
+                    <DrawerHeader>"Drawer"</DrawerHeader>
+                    <DrawerBody>
+                        "This drawer has a footer where you can put actions and other controls."
+                    </DrawerBody>
+                    <DrawerFooter>
+                        "Footer"
+                        (close_button())
+                    </DrawerFooter>
                 </Drawer>
                 (open_button("drawer-footer"))
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Drawer label="Drawer" id="drawer-footer" footer=(close_button())>
-                        "This drawer has a footer where you can put actions and other controls."
+                    <Drawer id="drawer-footer">
+                        <DrawerHeader>"Drawer"</DrawerHeader>
+                        <DrawerBody>
+                            "This drawer has a footer where you can put actions and other controls."
+                        </DrawerBody>
+                        <DrawerFooter>
+                            "Footer"
+                            (close_button())
+                        </DrawerFooter>
                     </Drawer>
                 "#</code>
             </CodeExampleSource>
@@ -142,15 +172,23 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Drawer label="Drawer" id="drawer-opening" footer=(close_button())>
-                    "This drawer was opened declaratively using a data attribute on the button."
+                <Drawer id="drawer-opening">
+                    <DrawerHeader>"Drawer"</DrawerHeader>
+                    <DrawerBody>
+                        "This drawer was opened declaratively using a data attribute on the button."
+                    </DrawerBody>
+                    <DrawerFooter>(close_button())</DrawerFooter>
                 </Drawer>
                 (open_button("drawer-opening"))
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Drawer label="Drawer" id="drawer-opening" footer=(close_button())>
-                        "This drawer was opened declaratively using a data attribute on the button."
+                    <Drawer id="drawer-opening">
+                        <DrawerHeader>"Drawer"</DrawerHeader>
+                        <DrawerBody>
+                            "This drawer was opened declaratively using a data attribute on the button."
+                        </DrawerBody>
+                        <DrawerFooter>(close_button())</DrawerFooter>
                     </Drawer>
 
                     <button class=(BUTTON, " ", Appearance::FILLED) data-drawer="open drawer-opening">
@@ -164,30 +202,46 @@ pub fn overview() -> impl Renderable {
         <Head level=H3 id="placement" anchor=true>
             "Placement"
         </Head>
-        <p>"Drawers slide in from the end by default. Set the "<code>"placement"</code>
+        <p>"Drawers slide in from the start by default. Set the "<code>"placement"</code>
             " attribute to "<code>"Start"</code>", "<code>"End"</code>", "<code>"Top"</code>", or "
             <code>"Bottom"</code>" to slide in from a different edge."
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Drawer label="Drawer" placement=Start id="drawer-placement-start" footer=(close_button())>
-                    "This drawer slides in from the start."
+                <Drawer id="drawer-placement-end" placement=End>
+                    <DrawerHeader>"Drawer"</DrawerHeader>
+                    <DrawerBody>
+                        "This drawer slides in from the end."
+                    </DrawerBody>
+                    <DrawerFooter>(close_button())</DrawerFooter>
                 </Drawer>
-                (drawer_button("Open from Start", "open drawer-placement-start", Appearance::FILLED))
+                (drawer_button("Open from End", "open drawer-placement-end", Appearance::FILLED))
 
-                <Drawer label="Drawer" placement=Bottom id="drawer-placement-bottom" footer=(close_button())>
-                    "This drawer slides in from the bottom."
+                <Drawer id="drawer-placement-bottom" placement=Bottom>
+                    <DrawerHeader>"Drawer"</DrawerHeader>
+                    <DrawerBody>
+                        "This drawer slides in from the bottom."
+                    </DrawerBody>
+                    <DrawerFooter>(close_button())</DrawerFooter>
                 </Drawer>
                 (drawer_button("Open from Bottom", "open drawer-placement-bottom", Appearance::FILLED))
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Drawer label="Drawer" placement=Start id="drawer-placement-start" footer=(close_button())>
-                        "This drawer slides in from the start."
+                    <Drawer id="drawer-placement-end" placement=End>
+                        <DrawerHeader>"Drawer"</DrawerHeader>
+                        <DrawerBody>
+                            "This drawer slides in from the end."
+                        </DrawerBody>
+                        <DrawerFooter>(close_button())</DrawerFooter>
                     </Drawer>
 
-                    <Drawer label="Drawer" placement=Bottom id="drawer-placement-bottom" footer=(close_button())>
-                        "This drawer slides in from the bottom."
+                    <Drawer id="drawer-placement-bottom" placement=Bottom>
+                        <DrawerHeader>"Drawer"</DrawerHeader>
+                        <DrawerBody>
+                            "This drawer slides in from the bottom."
+                        </DrawerBody>
+                        <DrawerFooter>(close_button())</DrawerFooter>
                     </Drawer>
                 "#</code>
             </CodeExampleSource>
@@ -202,15 +256,23 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Drawer label="Drawer" id="drawer-custom-size" style="--size: 50vw;" footer=(close_button())>
-                    "This drawer is always 50% of the viewport."
+                <Drawer id="drawer-custom-size" style="--size: 50vw;">
+                    <DrawerHeader>"Drawer"</DrawerHeader>
+                    <DrawerBody>
+                        "This drawer is always 50% of the viewport."
+                    </DrawerBody>
+                    <DrawerFooter>(close_button())</DrawerFooter>
                 </Drawer>
                 (open_button("drawer-custom-size"))
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Drawer label="Drawer" id="drawer-custom-size" style="--size: 50vw;" footer=(close_button())>
-                        "This drawer is always 50% of the viewport."
+                    <Drawer id="drawer-custom-size" style="--size: 50vw;">
+                        <DrawerHeader>"Drawer"</DrawerHeader>
+                        <DrawerBody>
+                            "This drawer is always 50% of the viewport."
+                        </DrawerBody>
+                        <DrawerFooter>(close_button())</DrawerFooter>
                     </Drawer>
                 "#</code>
             </CodeExampleSource>
@@ -225,19 +287,27 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Drawer label="Drawer" id="drawer-scrolling" footer=(close_button())>
-                    <div style="height: 150vh; border: dashed 2px var(--wa-color-surface-border); padding: 0 1rem;">
-                        <p>"Scroll down and give it a try! 👇"</p>
-                    </div>
+                <Drawer id="drawer-scrolling">
+                    <DrawerHeader>"Drawer"</DrawerHeader>
+                    <DrawerBody>
+                        <div style="height: 150vh; border: dashed 2px var(--wa-color-surface-border); padding: 0 1rem;">
+                            <p>"Scroll down and give it a try! 👇"</p>
+                        </div>
+                    </DrawerBody>
+                    <DrawerFooter>(close_button())</DrawerFooter>
                 </Drawer>
                 (open_button("drawer-scrolling"))
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Drawer label="Drawer" id="drawer-scrolling" footer=(close_button())>
-                        <div style="height: 150vh; ...">
-                            <p>"Scroll down and give it a try! 👇"</p>
-                        </div>
+                    <Drawer id="drawer-scrolling">
+                        <DrawerHeader>"Drawer"</DrawerHeader>
+                        <DrawerBody>
+                            <div style="height: 150vh; ...">
+                                <p>"Scroll down and give it a try! 👇"</p>
+                            </div>
+                        </DrawerBody>
+                        <DrawerFooter>(close_button())</DrawerFooter>
                     </Drawer>
                 "#</code>
             </CodeExampleSource>
@@ -252,36 +322,39 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Drawer
-                    label="Drawer"
-                    id="drawer-header-actions"
-                    class="drawer-header-actions-demo"
-                    footer=(close_button())
-                    header_actions=(rsx! {
-                        <button class=(BUTTON, " ", Appearance::PLAIN, " ", "new-window") type="button" aria-label="Open in new window">
+                <Drawer id="drawer-header-actions" class="drawer-header-actions-demo">
+                    <DrawerHeader actions=(rsx! {
+                        <Button class="new-window" appearance=Plain>
                             <span class=ICON>
                                 (fontawesome::solid::Gear)
                             </span>
-                        </button>
-                    })
-                >
-                    "You can add custom actions to the header, like the button up there to open in a new window."
+                        </Button>
+                    })>
+                        "Drawer"
+                    </DrawerHeader>
+                    <DrawerBody>
+                        "You can add custom actions to the header, like the button up there to open in a new window."
+                    </DrawerBody>
+                    <DrawerFooter>(close_button())</DrawerFooter>
                 </Drawer>
                 (open_button("drawer-header-actions"))
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Drawer
-                        label="Drawer"
-                        id="drawer-header-actions"
-                        footer=(close_button())
-                        header_actions=(rsx! {
-                            <button class=(BUTTON, " ", Appearance::PLAIN, " ", "new-window") aria-label="Open in new window">
-                                <span class=ICON>(fontawesome::solid::Gear)</span>
-                            </button>
-                        })
-                    >
-                        "You can add custom actions to the header, like the button up there to open in a new window."
+                    <Drawer id="drawer-header-actions" class="drawer-header-actions-demo">
+                        <DrawerHeader actions=(rsx! {
+                            <Button class="new-window" appearance=Plain>
+                                <span class=ICON>
+                                    (fontawesome::solid::Gear)
+                                </span>
+                            </Button>
+                        })>
+                            "Drawer"
+                        </DrawerHeader>
+                        <DrawerBody>
+                            "You can add custom actions to the header, like the button up there to open in a new window."
+                        </DrawerBody>
+                        <DrawerFooter>(close_button())</DrawerFooter>
                     </Drawer>
                 "#</code>
             </CodeExampleSource>
@@ -296,15 +369,23 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Drawer label="Drawer" light_dismiss=true id="drawer-light-dismiss" footer=(close_button())>
-                    "This drawer will close when you click on the overlay."
+                <Drawer id="drawer-light-dismiss" light_dismiss=true>
+                    <DrawerHeader>"Drawer"</DrawerHeader>
+                    <DrawerBody>
+                        "This drawer will close when you click on the overlay."
+                    </DrawerBody>
+                    <DrawerFooter>(close_button())</DrawerFooter>
                 </Drawer>
                 (open_button("drawer-light-dismiss"))
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Drawer label="Drawer" light_dismiss=true id="drawer-light-dismiss" footer=(close_button())>
-                        "This drawer will close when you click on the overlay."
+                    <Drawer id="drawer-light-dismiss" light_dismiss=true>
+                        <DrawerHeader>"Drawer"</DrawerHeader>
+                        <DrawerBody>
+                            "This drawer will close when you click on the overlay."
+                        </DrawerBody>
+                        <DrawerFooter>(close_button())</DrawerFooter>
                     </Drawer>
                 "#</code>
             </CodeExampleSource>
@@ -322,15 +403,23 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Drawer label="Drawer" id="drawer-deny-close" class="drawer-deny-close" footer=(close_button())>
-                    "This drawer will only close when you click the button below."
+                <Drawer id="drawer-deny-close" class="drawer-deny-close">
+                    <DrawerHeader>"Drawer"</DrawerHeader>
+                    <DrawerBody>
+                        "This drawer will only close when you click the button below."
+                    </DrawerBody>
+                    <DrawerFooter>(close_button())</DrawerFooter>
                 </Drawer>
                 (open_button("drawer-deny-close"))
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Drawer label="Drawer" id="drawer-deny-close" class="drawer-deny-close" footer=(close_button())>
-                        "This drawer will only close when you click the button below."
+                    <Drawer id="drawer-deny-close" class="drawer-deny-close">
+                        <DrawerHeader>"Drawer"</DrawerHeader>
+                        <DrawerBody>
+                            "This drawer will only close when you click the button below."
+                        </DrawerBody>
+                        <DrawerFooter>(close_button())</DrawerFooter>
                     </Drawer>
 
                     // Prevent closing unless the close button is the source
@@ -348,24 +437,23 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Drawer label="Drawer" id="drawer-focus" footer=(close_button())>
-                    <div class=INPUT>
-                        <div class=TEXT_FIELD>
-                            <input
-                                class=CONTROL
-                                type="text"
-                                autofocus
-                                placeholder="I will have focus when the drawer is opened"
-                            />
-                        </div>
-                    </div>
+                <Drawer id="drawer-focus">
+                    <DrawerHeader>"Drawer"</DrawerHeader>
+                    <DrawerBody>
+                        <Input autofocus=true placeholder="I will have focus when the drawer is opened" />
+                    </DrawerBody>
+                    <DrawerFooter>(close_button())</DrawerFooter>
                 </Drawer>
                 (open_button("drawer-focus"))
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Drawer label="Drawer" id="drawer-focus" footer=(close_button())>
-                        <input class=CONTROL type="text" autofocus placeholder="I will have focus when the drawer is opened"/>
+                    <Drawer id="drawer-focus">
+                        <DrawerHeader>"Drawer"</DrawerHeader>
+                        <DrawerBody>
+                            <Input autofocus=true placeholder="I will have focus when the drawer is opened" />
+                        </DrawerBody>
+                        <DrawerFooter>(close_button())</DrawerFooter>
                     </Drawer>
                 "#</code>
             </CodeExampleSource>

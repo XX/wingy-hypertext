@@ -52,6 +52,8 @@ pub struct Input<'a> {
 
     pub pill: bool,
 
+    pub autofocus: bool,
+
     pub disabled: bool,
 
     pub readonly: bool,
@@ -105,6 +107,7 @@ impl<'a> Renderable for Input<'a> {
 
         let text_field = (self.children.is_none() || self.has_text_field_props()).then(|| TextField {
             input_type: self.input_type,
+            autofocus: self.autofocus,
             disabled: self.disabled,
             readonly: self.readonly,
             required: self.required,
@@ -138,6 +141,8 @@ pub struct TextField {
     #[prop(impl_from)]
     pub input_type: InputType,
 
+    pub autofocus: bool,
+
     pub disabled: bool,
 
     pub readonly: bool,
@@ -164,6 +169,7 @@ impl Renderable for TextField {
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
 
+        let autofocus = self.autofocus.then_some(true);
         let disabled = self.disabled.then_some(true);
         let readonly = self.readonly.then_some(true);
         let required = self.required.then_some(true);
@@ -176,6 +182,7 @@ impl Renderable for TextField {
                     name=[&self.name]
                     value=[&self.value]
                     placeholder=[&self.placeholder]
+                    autofocus=[autofocus]
                     disabled=[disabled]
                     readonly=[readonly]
                     required=[required]
