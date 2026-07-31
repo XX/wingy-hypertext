@@ -9,7 +9,8 @@ use wasm_dom::existing::access::CastToElement;
 use web_sys::{CustomEvent, Element, Event};
 use wingy_hypertext::appearance::Appearance::{self, *};
 use wingy_hypertext::attributes::CommonAttributeSetters;
-use wingy_hypertext::class::{BUTTON, ICON};
+use wingy_hypertext::attrs;
+use wingy_hypertext::class::ICON;
 use wingy_hypertext::components::button::Button;
 use wingy_hypertext::components::head::Head;
 use wingy_hypertext::components::head::HeadLevel::*;
@@ -23,9 +24,9 @@ use wingy_hypertext::variant::Variant;
 /// throughout the demos instead of a scripted click handler.
 fn drawer_button(label: &'static str, data_drawer: &'static str, classes: &'static str) -> impl Renderable {
     rsx! {
-        <button class=(BUTTON, " ", classes) type="button" data-drawer=(data_drawer)>
+        <Button class=(classes) attrs=(attrs!["data-drawer" = &data_drawer])>
             (label)
-        </button>
+        </Button>
     }
 }
 
@@ -85,9 +86,9 @@ pub fn overview() -> impl Renderable {
                     </Drawer>
 
                     // The open button carries `data-drawer="open drawer-overview"`
-                    <button class=(BUTTON, " ", Appearance::FILLED) data-drawer="open drawer-overview">
+                    <Button appearance=Filled attrs=(attrs!["data-drawer" = &"open drawer-overview"])>
                         "Open Drawer"
-                    </button>
+                    </Button>
                 "#</code>
             </CodeExampleSource>
             <CodeExampleButton>"Code"</CodeExampleButton>
@@ -191,9 +192,9 @@ pub fn overview() -> impl Renderable {
                         <DrawerFooter>(close_button())</DrawerFooter>
                     </Drawer>
 
-                    <button class=(BUTTON, " ", Appearance::FILLED) data-drawer="open drawer-opening">
+                    <Button appearance=Filled attrs=(attrs!["data-drawer" = &"open drawer-overview"])>
                         "Open Drawer"
-                    </button>
+                    </Button>
                 "#</code>
             </CodeExampleSource>
             <CodeExampleButton>"Code"</CodeExampleButton>
