@@ -22,7 +22,7 @@ pub struct Badge<'a> {
 
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     pub children: Option<&'a dyn Renderable>,
 }
@@ -39,7 +39,7 @@ impl<'a> Renderable for Badge<'a> {
         let style_line = self.style_line_with(&[]);
 
         rsx! {
-            <div id=[id] class=[&class_line] style=[&style_line]>
+            <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
                 (self.children)
             </div>
         }

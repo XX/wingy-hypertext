@@ -1,7 +1,19 @@
 use std::borrow::Cow;
 use std::ops::Deref;
 
-pub trait CommonAttributeSetters {
+use hypertext::Renderable;
+use hypertext::context::AttributeValue;
+
+pub type NamedAttribute<'a> = hypertext::NamedAttribute<Cow<'static, str>, &'a dyn Renderable<AttributeValue>>;
+
+#[macro_export]
+macro_rules! attrs {
+    ($($name:tt = $value:expr),*) => {
+        [$($crate::attributes::NamedAttribute::new(($name).into(), ($value) as _)),*]
+    };
+}
+
+pub trait CommonAttributeSetters<'a> {
     fn id(mut self, id: impl Into<Cow<'static, str>>) -> Self
     where
         Self: Sized,
@@ -34,7 +46,23 @@ pub trait CommonAttributeSetters {
         self
     }
 
-    fn common_attrs_mut(&mut self) -> &mut CommonAttrs;
+    fn attr(mut self, attr: impl Into<NamedAttribute<'a>>) -> Self
+    where
+        Self: Sized,
+    {
+        self.add_attr(attr);
+        self
+    }
+
+    fn attrs(mut self, attrs: impl Into<Vec<NamedAttribute<'a>>>) -> Self
+    where
+        Self: Sized,
+    {
+        self.set_attrs(attrs.into());
+        self
+    }
+
+    fn common_attrs_mut(&mut self) -> &mut CommonAttrs<'a>;
 
     fn set_id(&mut self, id: impl Into<Cow<'static, str>>) {
         self.common_attrs_mut().id = id.into();
@@ -48,6 +76,10 @@ pub trait CommonAttributeSetters {
         self.common_attrs_mut().styles = styles;
     }
 
+    fn set_attrs(&mut self, attrs: Vec<NamedAttribute<'a>>) {
+        self.common_attrs_mut().attrs = attrs;
+    }
+
     fn add_class(&mut self, class: impl Into<Cow<'static, str>>) {
         self.common_attrs_mut().classes.push(class.into());
     }
@@ -55,77 +87,96 @@ pub trait CommonAttributeSetters {
     fn add_style(&mut self, style: impl Into<Cow<'static, str>>) {
         self.common_attrs_mut().styles.push(style.into());
     }
+
+    fn add_attr(&mut self, attr: impl Into<NamedAttribute<'a>>) {
+        self.common_attrs_mut().attrs.push(attr.into());
+    }
 }
 
-pub trait CommonAttributeGetters {
-    fn id(&self) -> Option<&Cow<'static, str>> {
+pub trait CommonAttributeGetters<'a> {
+    fn id(&'a self) -> Option<&'a Cow<'a, str>> {
         self.get_id().into_not_empty()
     }
 
-    fn class_line_with(&self, first_classes: &[&str]) -> Option<String> {
+    fn class_line_with(&'a self, first_classes: &[&str]) -> Option<String> {
         join_not_empty(first_classes, self.get_classes(), " ")
     }
 
-    fn style_line_with(&self, first_styles: &[&str]) -> Option<String> {
+    fn style_line_with(&'a self, first_styles: &[&str]) -> Option<String> {
         join_not_empty(first_styles, self.get_styles(), "; ")
     }
 
-    fn common_attrs_ref(&self) -> &CommonAttrs;
+    fn common_attrs_ref(&self) -> &CommonAttrs<'a>;
 
-    fn get_id(&self) -> &Cow<'static, str> {
+    fn get_id(&'a self) -> &'a Cow<'static, str> {
         &self.common_attrs_ref().id
     }
 
-    fn get_classes(&self) -> &[Cow<'static, str>] {
+    fn get_classes(&'a self) -> &'a [Cow<'static, str>] {
         &self.common_attrs_ref().classes
     }
 
-    fn get_styles(&self) -> &[Cow<'static, str>] {
+    fn get_styles(&'a self) -> &'a [Cow<'static, str>] {
         &self.common_attrs_ref().styles
     }
 
-    fn get_class_line(&self) -> String {
+    fn get_class_line(&'a self) -> String {
         self.get_classes().join(" ")
     }
 
-    fn get_style_line(&self) -> String {
+    fn get_style_line(&'a self) -> String {
         self.get_styles().join("; ")
+    }
+
+    fn get_attrs(&self) -> &[NamedAttribute<'a>] {
+        &self.common_attrs_ref().attrs
+    }
+
+    fn get_attr(&self, name: Cow<'static, str>) -> Option<&'a dyn Renderable<AttributeValue>> {
+        self.common_attrs_ref().attrs.iter().find_map(|attr| {
+            if attr.name() == name {
+                attr.value().copied()
+            } else {
+                None
+            }
+        })
     }
 }
 
-#[derive(Clone, Debug, Default, PartialEq, Eq)]
-pub struct CommonAttrs {
+#[derive(Clone, Default)]
+pub struct CommonAttrs<'a> {
     pub id: Cow<'static, str>,
     pub classes: Vec<Cow<'static, str>>,
     pub styles: Vec<Cow<'static, str>>,
+    pub attrs: Vec<NamedAttribute<'a>>,
 }
 
-impl CommonAttrs {
+impl<'a> CommonAttrs<'a> {
     pub fn new() -> Self {
         Self::default()
     }
 }
 
-impl CommonAttributeSetters for CommonAttrs {
-    fn common_attrs_mut(&mut self) -> &mut CommonAttrs {
+impl<'a> CommonAttributeSetters<'a> for CommonAttrs<'a> {
+    fn common_attrs_mut(&mut self) -> &mut CommonAttrs<'a> {
         self
     }
 }
 
-impl CommonAttributeGetters for CommonAttrs {
-    fn common_attrs_ref(&self) -> &CommonAttrs {
+impl<'a> CommonAttributeGetters<'a> for CommonAttrs<'a> {
+    fn common_attrs_ref(&self) -> &CommonAttrs<'a> {
         self
     }
 }
 
-impl<T: AsMut<CommonAttrs>> CommonAttributeSetters for T {
-    fn common_attrs_mut(&mut self) -> &mut CommonAttrs {
+impl<'a, T: AsMut<CommonAttrs<'a>>> CommonAttributeSetters<'a> for T {
+    fn common_attrs_mut(&mut self) -> &mut CommonAttrs<'a> {
         self.as_mut()
     }
 }
 
-impl<T: AsRef<CommonAttrs>> CommonAttributeGetters for T {
-    fn common_attrs_ref(&self) -> &CommonAttrs {
+impl<'a, T: AsRef<CommonAttrs<'a>>> CommonAttributeGetters<'a> for T {
+    fn common_attrs_ref(&self) -> &CommonAttrs<'a> {
         self.as_ref()
     }
 }

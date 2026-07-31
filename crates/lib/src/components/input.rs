@@ -77,7 +77,7 @@ pub struct Input<'a> {
 
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     pub children: Option<&'a dyn Renderable>,
 }
@@ -118,7 +118,7 @@ impl<'a> Renderable for Input<'a> {
         });
 
         rsx! {
-            <div id=[id] class=[&class_line] style=[&style_line]>
+            <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
                 @if let Some(label) = &self.label {
                     <label class=LABEL>(label)</label>
                 }
@@ -137,7 +137,7 @@ impl<'a> Renderable for Input<'a> {
 #[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = TEXT_FIELD)]
 #[props(builder)]
-pub struct TextField {
+pub struct TextField<'a> {
     #[prop(impl_from)]
     pub input_type: InputType,
 
@@ -160,10 +160,10 @@ pub struct TextField {
 
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 }
 
-impl Renderable for TextField {
+impl Renderable for TextField<'_> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
         let class_line = self.class_line_with(&[Self::CLASS]);
@@ -186,6 +186,7 @@ impl Renderable for TextField {
                     disabled=[disabled]
                     readonly=[readonly]
                     required=[required]
+                    (self.get_attrs())
                 />
             </div>
         }

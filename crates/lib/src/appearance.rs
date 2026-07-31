@@ -65,7 +65,7 @@ pub trait AppearanceSetters {
 
 pub trait UseAppearance {}
 
-impl<T: CommonAttributeSetters + UseAppearance> AppearanceSetters for T {
+impl<'a, T: CommonAttributeSetters<'a> + UseAppearance> AppearanceSetters for T {
     fn set_appearance(&mut self, appearance: Appearance) {
         self.add_class(appearance.into_str());
     }

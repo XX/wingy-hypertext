@@ -13,16 +13,16 @@ use crate::orientation::Orientation;
 #[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = DIVIDER)]
 #[props(builder)]
-pub struct Divider {
+pub struct Divider<'a> {
     #[prop(impl_from)]
     pub orientation: Orientation,
 
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 }
 
-impl Renderable for Divider {
+impl Renderable for Divider<'_> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
         let class_line = self.class_line_with(&[
@@ -42,6 +42,7 @@ impl Renderable for Divider {
                 style=[&style_line]
                 role="separator"
                 aria-orientation=(self.orientation.into_str())
+                (self.get_attrs())
             >
             </div>
         }

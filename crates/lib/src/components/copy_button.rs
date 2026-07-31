@@ -23,7 +23,7 @@ pub struct CopyButton<'a> {
 
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     pub children: Option<&'a dyn Renderable>,
 }
@@ -48,13 +48,13 @@ impl<'a> Renderable for CopyButton<'a> {
 
         rsx! {
             @let classes = {
-                let mut classes = self.attrs.classes.clone();
+                let mut classes = self.attributes.classes.clone();
                 classes.insert(0, Self::CLASS.into());
                 classes
             };
             @let from = format!(r#"{{"from":"{}"}}"#, self.from.as_deref().unwrap_or(""));
 
-            <Button attrs=(self.attrs.clone()) classes appearance=Plain disabled=(self.disabled) action="copy" args=from>
+            <Button attributes=(self.attributes.clone()) classes appearance=Plain disabled=(self.disabled) action="copy" args=from>
                 (content)
             </Button>
         }

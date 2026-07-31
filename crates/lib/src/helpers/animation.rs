@@ -95,7 +95,7 @@ pub struct Animation<'a> {
 
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     /// The element to animate. Rendered as the content of the host element;
     /// only the first element child is animated.
@@ -127,6 +127,7 @@ impl<'a> Renderable for Animation<'a> {
                 data-iteration-start=[self.iteration_start]
                 data-keyframes=[&self.keyframes]
                 data-playback-rate=[self.playback_rate]
+                (self.get_attrs())
             >
                 (self.children)
             </div>

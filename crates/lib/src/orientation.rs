@@ -44,7 +44,7 @@ pub trait OrientationSetters {
 
 pub trait UseOrientation {}
 
-impl<T: CommonAttributeSetters + UseOrientation> OrientationSetters for T {
+impl<'a, T: CommonAttributeSetters<'a> + UseOrientation> OrientationSetters for T {
     fn set_variant(&mut self, orientation: Orientation) {
         self.add_class(orientation.into_str());
     }

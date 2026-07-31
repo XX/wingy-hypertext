@@ -16,7 +16,7 @@ fn header(title: &str) -> String {
         concat!(
             r#"<header class="drawer-header"><h2 class="drawer-title">{title}</h2>"#,
             r#"<div class="drawer-header-actions">"#,
-            r#"<button class="button plain drawer-close" type="button" data-drawer="close" aria-label="Close">"#,
+            r#"<button class="button neutral plain drawer-close" data-drawer="close" aria-label="Close">"#,
             r#"<span class="icon">{icon}</span></button></div></header>"#,
         ),
         title = title,
@@ -84,6 +84,9 @@ fn with_empty_body() {
 fn flags() {
     let expected = r#"<dialog class="drawer start" data-open="" data-light-dismiss=""></dialog>"#;
 
+    let drawer = Drawer::builder().open(true).light_dismiss(true);
+    assert_eq!(drawer.render().as_inner(), &expected);
+
     let drawer = rsx! { <Drawer open=true light_dismiss=true/> };
     assert_eq!(drawer.render().as_inner(), &expected);
 }
@@ -119,7 +122,7 @@ fn footer_and_header_actions() {
             r#"<dialog class="drawer start"><header class="drawer-header">"#,
             r#"<h2 class="drawer-title">Drawer</h2><div class="drawer-header-actions">"#,
             r#"<span class="new-window"></span>"#,
-            r#"<button class="button plain drawer-close" type="button" data-drawer="close" aria-label="Close">"#,
+            r#"<button class="button neutral plain drawer-close" data-drawer="close" aria-label="Close">"#,
             r#"<span class="icon">{icon}</span></button></div></header>"#,
             r#"<div class="drawer-body">Body</div>"#,
             r#"<footer class="drawer-footer"><button>Close</button></footer></dialog>"#,

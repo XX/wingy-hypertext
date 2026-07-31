@@ -65,7 +65,7 @@ pub trait VariantSetters {
 
 pub trait UseVariant {}
 
-impl<T: CommonAttributeSetters + UseVariant> VariantSetters for T {
+impl<'a, T: CommonAttributeSetters<'a> + UseVariant> VariantSetters for T {
     fn set_variant(&mut self, variant: Variant) {
         self.add_class(variant.into_str());
     }

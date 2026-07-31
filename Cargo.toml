@@ -23,10 +23,7 @@ strip = "debuginfo"
 derive_more = { version = "2.1", features = ["as_ref"] }
 env_logger = "0.11"
 futures = "0.3"
-hypertext = { git = "https://github.com/XX/hypertext.git", branch = "children-ref", version = "0.12", features = [
-    "axum",
-    "htmx",
-] }
+hypertext = { git = "https://github.com/XX/hypertext", branch = "dev", features = ["axum", "htmx"] }
 iconic = { git = "https://github.com/XX/iconic", features = ["hypertext", "fontawesome", "fontawesome-ext"] }
 js-sys = "0.3"
 proc-macro2 = "1.0"

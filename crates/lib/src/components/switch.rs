@@ -42,7 +42,7 @@ pub struct Switch<'a> {
 
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     /// The switch's label, or the whole body markup when `bare` is set.
     pub children: Option<&'a dyn Renderable>,
@@ -64,12 +64,12 @@ impl<'a> Renderable for Switch<'a> {
             required: self.required,
             name: self.name.clone(),
             value: self.value.clone(),
-            attrs: CommonAttrs::default(),
+            attributes: CommonAttrs::default(),
             children: self.children,
         });
 
         rsx! {
-            <div id=[id] class=[&class_line] style=[&style_line]>
+            <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
                 @if self.bare {
                     (self.children)
                 } @else {
@@ -105,7 +105,7 @@ pub struct Toggle<'a> {
 
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     pub children: Option<&'a dyn Renderable>,
 }
@@ -121,7 +121,7 @@ impl<'a> Renderable for Toggle<'a> {
         let required = self.required.then_some(true);
 
         rsx! {
-            <label id=[id] class=[&class_line] style=[&style_line]>
+            <label id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
                 <input
                     class=CONTROL
                     type="checkbox"

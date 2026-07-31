@@ -24,7 +24,7 @@ pub struct Callout<'a, I: Renderable = ()> {
 
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     #[prop(convert)]
     pub icon: Option<I>,
@@ -38,7 +38,7 @@ impl<'a, I: Renderable> Default for Callout<'a, I> {
             variant: Variant::Brand,
             appearance: Appearance::FilledOutlined,
             bare: false,
-            attrs: CommonAttrs::default(),
+            attributes: CommonAttrs::default(),
             icon: None,
             children: None,
         }
@@ -52,7 +52,7 @@ impl<'a, I: Renderable> Callout<'a, I> {
         let style_line = self.style_line_with(&[]);
 
         rsx! {
-            <div id=[id] class=[&class_line] style=[&style_line]>
+            <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
                 @if let Some(icon) = icon {
                     <div class=CALLOUT_ICON>(icon)</div>
                 }

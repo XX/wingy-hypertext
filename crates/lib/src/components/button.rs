@@ -37,7 +37,7 @@ pub struct Button<'a> {
 
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     #[as_ref]
     #[as_mut]
@@ -70,6 +70,7 @@ impl<'a> Renderable for Button<'a> {
                     data-action=[&self.action_data.action]
                     data-args=[&self.action_data.args]
                     htmx=[self.htmx]
+                    (self.get_attrs())
                 >
                     (self.children)
                 </a>
@@ -86,6 +87,7 @@ impl<'a> Renderable for Button<'a> {
                     data-action=[&self.action_data.action]
                     data-args=[&self.action_data.args]
                     htmx=[self.htmx]
+                    (self.get_attrs())
                 >
                     (self.children)
                 </button>

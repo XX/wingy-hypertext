@@ -31,7 +31,7 @@ pub struct Tag<'a> {
 
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     pub children: Option<&'a dyn Renderable>,
 }
@@ -43,7 +43,7 @@ impl<'a> Default for Tag<'a> {
             appearance: Appearance::FilledOutlined,
             pill: false,
             with_remove: false,
-            attrs: CommonAttrs::default(),
+            attributes: CommonAttrs::default(),
             children: None,
         }
     }
@@ -61,7 +61,7 @@ impl<'a> Renderable for Tag<'a> {
         let style_line = self.style_line_with(&[]);
 
         rsx! {
-            <span id=[id] class=[&class_line] style=[&style_line]>
+            <span id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
                 <span class=TAG_CONTENT>(self.children)</span>
                 @if self.with_remove {
                     <button class=TAG_REMOVE type="button" tabindex="-1" aria-label="Remove">

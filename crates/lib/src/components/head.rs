@@ -13,17 +13,17 @@ use crate::link::{Link, LinkSetters};
 
 #[derive(Default, AsRef, AsMut, Props)]
 #[props(builder)]
-pub struct Anchor {
+pub struct Anchor<'a> {
     #[as_ref]
     #[as_mut]
     pub link: Link,
 
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 }
 
-impl Renderable for Anchor {
+impl Renderable for Anchor<'_> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
         let class_line = self.class_line_with(&[]);
@@ -38,6 +38,7 @@ impl Renderable for Anchor {
                 target=[&self.link.target]
                 download=[&self.link.download]
                 rel=[&self.link.rel]
+                (self.get_attrs())
             >
                 <span class=VISUALLY_HIDDEN>"Jump to heading"</span>
                 <span class=(ICON, " ", ICON_SHRINK)>
@@ -115,7 +116,7 @@ pub struct Head<'a> {
 
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     pub children: Option<&'a dyn Renderable>,
 }
@@ -131,7 +132,7 @@ impl<'a> Renderable for Head<'a> {
         let style_line = self.style_line_with(&[]);
 
         rsx! {
-            <div id=[id] class=[&class_line] style=[&style_line]>
+            <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
                 (self.children)
                 @if self.anchor {
                     @let href = format!("#{}", id.map(|id| id.as_ref()).unwrap_or_default());

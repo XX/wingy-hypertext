@@ -124,7 +124,7 @@ pub struct Popup<'a, A: Renderable = ()> {
 
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     pub bare: bool,
 
@@ -163,6 +163,7 @@ impl<'a, A: Renderable> Popup<'a, A> {
                 data-auto-size-padding=[self.auto_size_padding]
                 data-arrow-placement=[self.arrow_placement.map(|placement| placement.into_str())]
                 data-arrow-padding=[self.arrow_padding]
+                (self.get_attrs())
             >
                 (anchor)
                 @if self.hover_bridge {
@@ -191,7 +192,7 @@ pub struct PopupBody<'a> {
 
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     pub children: Option<&'a dyn Renderable>,
 }

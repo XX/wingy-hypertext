@@ -12,7 +12,7 @@ use crate::class::{PAGE, PAGE_BODY, PAGE_MENU};
 pub struct Page<'a> {
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     pub children: Option<&'a dyn Renderable>,
 }
@@ -24,7 +24,7 @@ impl<'a> Renderable for Page<'a> {
         let style_line = self.style_line_with(&[]);
 
         rsx! {
-            <div id=[id] class=[&class_line] style=[&style_line]>
+            <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
                 (self.children)
             </div>
         }
@@ -38,7 +38,7 @@ impl<'a> Renderable for Page<'a> {
 pub struct PageBody<'a> {
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     pub children: Option<&'a dyn Renderable>,
 }
@@ -50,7 +50,7 @@ impl<'a> Renderable for PageBody<'a> {
         let style_line = self.style_line_with(&[]);
 
         rsx! {
-            <div id=[id] class=[&class_line] style=[&style_line]>
+            <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
                 (self.children)
             </div>
         }
@@ -64,7 +64,7 @@ impl<'a> Renderable for PageBody<'a> {
 pub struct PageMenu<'a> {
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     pub children: Option<&'a dyn Renderable>,
 }
@@ -76,7 +76,7 @@ impl<'a> Renderable for PageMenu<'a> {
         let style_line = self.style_line_with(&[]);
 
         rsx! {
-            <div id=[id] class=[&class_line] style=[&style_line]>
+            <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
                 (self.children)
             </div>
         }

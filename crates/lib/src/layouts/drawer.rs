@@ -1,15 +1,17 @@
 use derive_more::{AsMut, AsRef};
-use hypertext::prelude::{AriaAttributes, GlobalAttributes, hypertext_elements};
+use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable, rsx};
 use iconic::fontawesome;
 use strum::{AsRefStr, IntoStaticStr};
 use wingy_hypertext_macros::{DynRenderable, Props, const_str};
 
-use crate::appearance::Appearance;
-use crate::attributes::{CommonAttributeGetters, CommonAttrs};
+use crate::appearance::Appearance::Plain;
+use crate::attributes::{CommonAttributeGetters, CommonAttributeSetters, CommonAttrs};
+use crate::attrs;
 use crate::class::{
-    BUTTON, DRAWER, DRAWER_BODY, DRAWER_CLOSE, DRAWER_FOOTER, DRAWER_HEADER, DRAWER_HEADER_ACTIONS, DRAWER_TITLE, ICON,
+    DRAWER, DRAWER_BODY, DRAWER_CLOSE, DRAWER_FOOTER, DRAWER_HEADER, DRAWER_HEADER_ACTIONS, DRAWER_TITLE, ICON,
 };
+use crate::components::button::Button;
 use crate::layouts::INVISIBLE;
 
 /// The direction from which the drawer will open.
@@ -48,7 +50,7 @@ pub struct Drawer<'a> {
 
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     pub children: Option<&'a dyn Renderable>,
 }
@@ -69,6 +71,7 @@ impl<'a> Renderable for Drawer<'a> {
                 style=[&style_line]
                 data-open=[open]
                 data-light-dismiss=[light_dismiss]
+                (self.get_attrs())
             >
                 (self.children)
             </dialog>
@@ -83,7 +86,7 @@ impl<'a> Renderable for Drawer<'a> {
 pub struct DrawerHeader<'a, A: Renderable = ()> {
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     /// Actions added to the header next to the close button.
     #[prop(convert)]
@@ -103,7 +106,7 @@ impl<'a, A: Renderable> DrawerHeader<'a, A> {
         let style_line = self.style_line_with(&[]);
 
         rsx! {
-            <header id=[id] class=[&class_line] style=[&style_line]>
+            <header id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
                 @if self.bare {
                     (self.children)
                 } @else {
@@ -117,16 +120,11 @@ impl<'a, A: Renderable> DrawerHeader<'a, A> {
                     </h2>
                     <div class=DRAWER_HEADER_ACTIONS>
                         (actions)
-                        <button
-                            class=(BUTTON, " ", Appearance::PLAIN, " ", DRAWER_CLOSE)
-                            type="button"
-                            data-drawer="close"
-                            aria-label="Close"
-                        >
+                        <Button class=DRAWER_CLOSE appearance=Plain attrs=(attrs!["data-drawer" = &"close", "aria-label" = &"Close"])>
                             <span class=ICON>
                                 (fontawesome::solid::Xmark)
                             </span>
-                        </button>
+                        </Button>
                     </div>
                 }
             </header>
@@ -141,7 +139,7 @@ impl<'a, A: Renderable> DrawerHeader<'a, A> {
 pub struct DrawerBody<'a> {
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     pub children: Option<&'a dyn Renderable>,
 }
@@ -153,7 +151,7 @@ impl<'a> Renderable for DrawerBody<'a> {
         let style_line = self.style_line_with(&[]);
 
         rsx! {
-            <div id=[id] class=[&class_line] style=[&style_line]>
+            <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
                 (self.children)
             </div>
         }
@@ -168,7 +166,7 @@ impl<'a> Renderable for DrawerBody<'a> {
 pub struct DrawerFooter<'a> {
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     pub children: Option<&'a dyn Renderable>,
 }
@@ -180,7 +178,7 @@ impl<'a> Renderable for DrawerFooter<'a> {
         let style_line = self.style_line_with(&[]);
 
         rsx! {
-            <footer id=[id] class=[&class_line] style=[&style_line]>
+            <footer id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
                 (self.children)
             </footer>
         }

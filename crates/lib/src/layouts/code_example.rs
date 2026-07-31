@@ -21,7 +21,7 @@ pub struct CodeExample<'a> {
 
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     pub children: Option<&'a dyn Renderable>,
 }
@@ -34,7 +34,7 @@ impl<'a> Renderable for CodeExample<'a> {
         let style_line = self.style_line_with(&[]);
 
         rsx! {
-            <div id=[id] class=[&class_line] style=[&style_line]>
+            <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
                 (self.children)
             </div>
         }
@@ -50,7 +50,7 @@ pub struct CodeExamplePreview<'a> {
 
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     pub children: Option<&'a dyn Renderable>,
 }
@@ -62,7 +62,7 @@ impl<'a> Renderable for CodeExamplePreview<'a> {
         let style_line = self.style_line_with(&[]);
 
         rsx! {
-            <div id=[id] class=[&class_line] style=[&style_line]>
+            <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
                 (self.children)
                 @if self.resize {
                     <div class=CODE_EXAMPLE_RESIZER>
@@ -90,7 +90,7 @@ pub struct CodeExampleSource<'a> {
 
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     pub children: Option<&'a dyn Renderable>,
 }
@@ -107,7 +107,7 @@ impl<'a> Renderable for CodeExampleSource<'a> {
                 .clone()
                 .or_else(|| id.map(|id| Cow::Owned(format!("{id}-code-block"))));
 
-            <div id=[id] class=[&class_line] style=[&style_line]>
+            <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
                 <pre id=[code_block_id.as_ref()]>
                     (self.children)
                     @if self.copy_button {
@@ -126,7 +126,7 @@ impl<'a> Renderable for CodeExampleSource<'a> {
 pub struct CodeExampleButton<'a> {
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     pub children: Option<&'a dyn Renderable>,
 }
@@ -138,7 +138,7 @@ impl<'a> Renderable for CodeExampleButton<'a> {
         let style_line = self.style_line_with(&[]);
 
         rsx! {
-            <div id=[id] class=[&class_line] style=[&style_line]>
+            <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
                 <button class=CODE_EXAMPLE_TOGGLE type="button">
                     (self.children)
                     " "

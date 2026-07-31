@@ -79,7 +79,7 @@ pub struct Select<'a> {
 
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     pub children: Option<&'a dyn Renderable>,
 }
@@ -106,6 +106,7 @@ impl<'a> Renderable for Select<'a> {
                 class=[&class_line]
                 style=[&style_line]
                 data-max-options-visible=[self.max_options_visible]
+                (self.get_attrs())
             >
                 @if let Some(label) = &self.label {
                     <label class=LABEL>(label)</label>
@@ -198,7 +199,7 @@ pub struct SelectOption<'a> {
 
     #[as_ref]
     #[as_mut]
-    pub attrs: CommonAttrs,
+    pub attributes: CommonAttrs<'a>,
 
     pub children: Option<&'a dyn Renderable>,
 }
@@ -224,6 +225,7 @@ impl<'a> Renderable for SelectOption<'a> {
                 aria-disabled=[self.disabled.then_some("true")]
                 data-value=[&self.value]
                 data-label=[&self.label]
+                (self.get_attrs())
             >
                 <span class=CHECK aria-hidden="true">
                     (fontawesome::solid::Check)
