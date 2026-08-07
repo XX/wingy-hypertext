@@ -127,8 +127,12 @@ dependencies = ["choose-profile"]
 run_task = "clippy"
 dependencies = ["fmt-check"]
 
-[tasks.lint-test]
+[tasks.test]
 toolchain = "stable"
 command = "cargo"
 args = ["test"]
+dependencies = ["choose-profile"]
+
+[tasks.lint-test]
+run_task = "test"
 dependencies = ["lint"]

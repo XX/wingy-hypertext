@@ -43,4 +43,4 @@ jobs:
           cargo make lint
 
       - name: Run tests
-        run: cargo test --verbose
+        run: cargo make test
