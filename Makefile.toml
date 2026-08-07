@@ -5,7 +5,9 @@ additional_profiles = ["debug"]
 [env]
 TARGET_DIR = "target"
 
+# NOTE: `web_sys_unstable_apis` cfg enables the Web Animations bindings in web-sys used by `wingy-hypertext-web`.
 [tasks.choose-profile.env]
+RUSTFLAGS = "--cfg=web_sys_unstable_apis"
 PROFILE = "release"
 PROFILE_BUILD_DIR = "${PROFILE}"
 
@@ -13,7 +15,6 @@ PROFILE_BUILD_DIR = "${PROFILE}"
     PROFILE = "dev"
     PROFILE_BUILD_DIR = "debug"
 
-# NOTE: `web_sys_unstable_apis` cfg enables the Web Animations bindings in web-sys used by `wingy-hypertext-web`.
 [tasks.choose-profile-web.env]
 RUSTFLAGS = "-Copt-level=z --cfg=web_sys_unstable_apis"
 PROFILE = "wasm-release"
@@ -120,6 +121,7 @@ args = ["fmt", "--check"]
 toolchain = "stable"
 command = "cargo"
 args = ["clippy", "--all-targets", "--", "-D", "warnings"]
+dependencies = ["choose-profile"]
 
 [tasks.lint]
 run_task = "clippy"
