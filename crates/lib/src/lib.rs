@@ -5,11 +5,11 @@ pub mod action;
 pub mod appearance;
 pub mod attributes;
 pub mod class;
-pub mod components;
+pub mod component;
 pub mod convert;
-pub mod helpers;
+pub mod helper;
 pub mod htmx;
-pub mod layouts;
+pub mod layout;
 pub mod link;
 pub mod orientation;
 #[cfg(test)]

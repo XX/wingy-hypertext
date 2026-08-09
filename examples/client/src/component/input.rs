@@ -3,11 +3,11 @@ use hypertext::{Renderable, rsx};
 use wingy_hypertext::appearance::Appearance::*;
 use wingy_hypertext::attributes::CommonAttributeSetters;
 use wingy_hypertext::class::{GAP_S, HEADING_S, HINT, LABEL, SIZE_LARGE, SIZE_MEDIUM, SIZE_SMALL, STACK};
-use wingy_hypertext::components::head::Head;
-use wingy_hypertext::components::head::HeadLevel::*;
-use wingy_hypertext::components::input::InputType::*;
-use wingy_hypertext::components::input::{Input, TextField};
-use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
+use wingy_hypertext::component::head::Head;
+use wingy_hypertext::component::head::HeadLevel::*;
+use wingy_hypertext::component::input::InputType::*;
+use wingy_hypertext::component::input::{Input, TextField};
+use wingy_hypertext::layout::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
 
 pub fn overview() -> impl Renderable {
     rsx! {

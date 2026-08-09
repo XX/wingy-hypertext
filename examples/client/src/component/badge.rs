@@ -6,10 +6,10 @@ use wingy_hypertext::attributes::CommonAttributeSetters;
 use wingy_hypertext::class::{
     CLUSTER, END, GAP_2XS, ICON, SIZE_EXTRA_LARGE, SIZE_EXTRA_SMALL, SIZE_LARGE, SIZE_MEDIUM, SIZE_SMALL, START,
 };
-use wingy_hypertext::components::badge::Badge;
-use wingy_hypertext::components::head::Head;
-use wingy_hypertext::components::head::HeadLevel::*;
-use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
+use wingy_hypertext::component::badge::Badge;
+use wingy_hypertext::component::head::Head;
+use wingy_hypertext::component::head::HeadLevel::*;
+use wingy_hypertext::layout::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
 use wingy_hypertext::variant::Variant::*;
 
 pub fn overview() -> impl Renderable {

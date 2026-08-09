@@ -3,7 +3,7 @@ use iconic::{fontawesome, fontawesome_ext};
 
 use crate::appearance::Appearance::*;
 use crate::attributes::CommonAttributeSetters;
-use crate::components::select::{Select, SelectOption};
+use crate::component::select::{Select, SelectOption};
 
 fn combobox(placeholder: Option<&str>, name: Option<&str>) -> String {
     let placeholder = placeholder
@@ -117,7 +117,7 @@ fn max_options_visible() {
 
 #[test]
 fn placement() {
-    let select = Select::builder().placement(crate::components::select::SelectPlacement::Top);
+    let select = Select::builder().placement(crate::component::select::SelectPlacement::Top);
     let markup = select.render();
     let markup = markup.as_inner();
 

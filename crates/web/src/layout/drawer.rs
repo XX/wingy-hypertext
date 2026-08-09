@@ -4,7 +4,7 @@
 //! light-dismiss handling, body scroll locking, and the cancelable
 //! `wg-show`/`wg-hide` (plus `wg-after-show`/`wg-after-hide`) lifecycle events.
 //! The state lives entirely in the DOM, matching the markup produced by
-//! `wingy_hypertext::layouts::drawer`.
+//! `wingy_hypertext::layout::drawer`.
 
 use js_sys::Object;
 use wasm_bindgen::{JsCast, JsValue};
@@ -15,8 +15,8 @@ use wasm_dom::existing::JsObjectAccess;
 use wasm_dom::existing::access::{CastToElement, CastToHtmlElement};
 use web_sys::{Element, Event, HtmlDialogElement, KeyboardEvent};
 
-use crate::utils::animate::animate_with_class;
-use crate::utils::event;
+use crate::util::animate::animate_with_class;
+use crate::util::event;
 
 fn dialog(drawer: &Element) -> Option<HtmlDialogElement> {
     drawer.clone().dyn_into::<HtmlDialogElement>().ok()

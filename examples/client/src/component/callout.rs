@@ -6,11 +6,11 @@ use wingy_hypertext::attributes::CommonAttributeSetters;
 use wingy_hypertext::class::{
     CALLOUT_ICON, CALLOUT_MESSAGE, ICON, SIZE_EXTRA_LARGE, SIZE_EXTRA_SMALL, SIZE_LARGE, SIZE_MEDIUM, SIZE_SMALL, STACK,
 };
-use wingy_hypertext::components::button::Button;
-use wingy_hypertext::components::callout::Callout;
-use wingy_hypertext::components::head::Head;
-use wingy_hypertext::components::head::HeadLevel::*;
-use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
+use wingy_hypertext::component::button::Button;
+use wingy_hypertext::component::callout::Callout;
+use wingy_hypertext::component::head::Head;
+use wingy_hypertext::component::head::HeadLevel::*;
+use wingy_hypertext::layout::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
 use wingy_hypertext::variant::Variant::*;
 
 pub fn overview() -> impl Renderable {

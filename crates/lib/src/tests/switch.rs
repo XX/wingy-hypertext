@@ -3,7 +3,7 @@ use hypertext::{RenderableExt, rsx};
 
 use crate::attributes::CommonAttributeSetters;
 use crate::class::HINT;
-use crate::components::switch::{Switch, Toggle};
+use crate::component::switch::{Switch, Toggle};
 
 const TRACK_MARKUP: &str = r#"<span class="track"><span class="thumb"></span></span>"#;
 

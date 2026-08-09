@@ -2,7 +2,7 @@
 //! animation, single and multiple selection, keyboard navigation with
 //! type-to-select, clearing, and closing on outside interaction. The state
 //! lives entirely in the DOM (classes and attributes), matching the markup
-//! produced by `wingy_hypertext::components::select`.
+//! produced by `wingy_hypertext::component::select`.
 
 use hypertext::RenderableExt;
 use wasm_bindgen::JsCast;
@@ -13,11 +13,11 @@ use wasm_dom::existing::access::{CastToElement, CastToHtmlElement};
 use web_sys::{
     Element, Event, EventInit, HtmlInputElement, KeyboardEvent, ScrollIntoViewOptions, ScrollLogicalPosition,
 };
-use wingy_hypertext::components::tag::Tag;
+use wingy_hypertext::component::tag::Tag;
 
-use crate::helpers::popup;
-use crate::utils::animate::animate_with_class;
-use crate::utils::convert::bool_to_str;
+use crate::helper::popup;
+use crate::util::animate::animate_with_class;
+use crate::util::convert::bool_to_str;
 
 /// How long the type-to-select buffer lives without new keystrokes.
 const TYPEAHEAD_TIMEOUT_MILLIS: f64 = 1000.0;

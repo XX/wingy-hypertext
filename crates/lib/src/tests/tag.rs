@@ -2,7 +2,7 @@ use hypertext::{RenderableExt, rsx};
 
 use crate::appearance::Appearance::*;
 use crate::attributes::CommonAttributeSetters;
-use crate::components::tag::Tag;
+use crate::component::tag::Tag;
 use crate::variant::Variant::*;
 
 #[test]

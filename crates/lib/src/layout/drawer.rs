@@ -11,8 +11,8 @@ use crate::attrs;
 use crate::class::{
     DRAWER, DRAWER_BODY, DRAWER_CLOSE, DRAWER_FOOTER, DRAWER_HEADER, DRAWER_HEADER_ACTIONS, DRAWER_TITLE, ICON,
 };
-use crate::components::button::Button;
-use crate::layouts::INVISIBLE;
+use crate::component::button::Button;
+use crate::layout::INVISIBLE;
 
 /// The direction from which the drawer will open.
 #[derive(Copy, Clone, Debug, Default, IntoStaticStr, AsRefStr, PartialEq, Eq)]

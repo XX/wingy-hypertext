@@ -11,13 +11,13 @@ use wingy_hypertext::appearance::Appearance::*;
 use wingy_hypertext::attributes::CommonAttributeSetters;
 use wingy_hypertext::attrs;
 use wingy_hypertext::class::ICON;
-use wingy_hypertext::components::button::Button;
-use wingy_hypertext::components::head::Head;
-use wingy_hypertext::components::head::HeadLevel::*;
-use wingy_hypertext::components::input::Input;
-use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
-use wingy_hypertext::layouts::drawer::DrawerPlacement::*;
-use wingy_hypertext::layouts::drawer::{Drawer, DrawerBody, DrawerFooter, DrawerHeader};
+use wingy_hypertext::component::button::Button;
+use wingy_hypertext::component::head::Head;
+use wingy_hypertext::component::head::HeadLevel::*;
+use wingy_hypertext::component::input::Input;
+use wingy_hypertext::layout::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
+use wingy_hypertext::layout::drawer::DrawerPlacement::*;
+use wingy_hypertext::layout::drawer::{Drawer, DrawerBody, DrawerFooter, DrawerHeader};
 use wingy_hypertext::variant::Variant::*;
 
 #[renderable(builder = DefaultBuilder)]

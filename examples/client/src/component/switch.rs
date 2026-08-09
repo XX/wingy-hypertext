@@ -2,10 +2,10 @@ use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Renderable, rsx};
 use wingy_hypertext::attributes::CommonAttributeSetters;
 use wingy_hypertext::class::{HINT, SIZE_EXTRA_LARGE, SIZE_EXTRA_SMALL, SIZE_LARGE, SIZE_MEDIUM, SIZE_SMALL, STACK};
-use wingy_hypertext::components::head::Head;
-use wingy_hypertext::components::head::HeadLevel::*;
-use wingy_hypertext::components::switch::{Switch, Toggle};
-use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
+use wingy_hypertext::component::head::Head;
+use wingy_hypertext::component::head::HeadLevel::*;
+use wingy_hypertext::component::switch::{Switch, Toggle};
+use wingy_hypertext::layout::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
 
 pub fn overview() -> impl Renderable {
     rsx! {

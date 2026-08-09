@@ -4,9 +4,9 @@ use iconic::fontawesome;
 
 use crate::attributes::CommonAttributeSetters;
 use crate::class::{BOTTOM, START, TOP};
-use crate::layouts::INVISIBLE;
-use crate::layouts::drawer::DrawerPlacement::*;
-use crate::layouts::drawer::{Drawer, DrawerBody, DrawerFooter, DrawerHeader};
+use crate::layout::INVISIBLE;
+use crate::layout::drawer::DrawerPlacement::*;
+use crate::layout::drawer::{Drawer, DrawerBody, DrawerFooter, DrawerHeader};
 
 /// The close button icon is rendered from the `iconic` crate; build the
 /// expected header markup dynamically so the tests don't hardcode the SVG.

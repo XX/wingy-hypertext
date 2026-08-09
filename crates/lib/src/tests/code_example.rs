@@ -3,8 +3,8 @@ use hypertext::{Lazy, Renderable, RenderableExt, rsx};
 use iconic::{fontawesome, fontawesome_ext};
 
 use crate::attributes::CommonAttributeSetters;
-use crate::components::badge::Badge;
-use crate::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
+use crate::component::badge::Badge;
+use crate::layout::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
 
 #[test]
 fn default() {

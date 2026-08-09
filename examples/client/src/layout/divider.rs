@@ -3,11 +3,11 @@ use hypertext::{Renderable, rsx};
 use iconic::fontawesome;
 use wingy_hypertext::attributes::CommonAttributeSetters;
 use wingy_hypertext::class::TEXT_CENTER;
-use wingy_hypertext::components::callout::Callout;
-use wingy_hypertext::components::head::Head;
-use wingy_hypertext::components::head::HeadLevel::*;
-use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
-use wingy_hypertext::layouts::divider::Divider;
+use wingy_hypertext::component::callout::Callout;
+use wingy_hypertext::component::head::Head;
+use wingy_hypertext::component::head::HeadLevel::*;
+use wingy_hypertext::layout::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
+use wingy_hypertext::layout::divider::Divider;
 use wingy_hypertext::orientation::Orientation::*;
 
 pub fn overview() -> impl Renderable {

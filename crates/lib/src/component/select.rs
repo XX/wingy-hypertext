@@ -14,7 +14,7 @@ use crate::class::{
     OPTION_LABEL, PILL, REQUIRED, SELECT, SELECT_POPUP, SELECTED, TAGS, VALUE_INPUT,
 };
 use crate::convert;
-use crate::helpers::popup::{self, Popup, PopupBody, PopupPlacement};
+use crate::helper::popup::{self, Popup, PopupBody, PopupPlacement};
 
 /// The preferred placement of the select's menu. The actual placement may
 /// flip to keep the listbox in the viewport.

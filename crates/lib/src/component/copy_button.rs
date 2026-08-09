@@ -10,7 +10,7 @@ use crate::action::ActionSetters;
 use crate::appearance::Appearance::Plain;
 use crate::attributes::{CommonAttributeSetters, CommonAttrs};
 use crate::class::{COPY_BUTTON, COPY_BUTTON_COPY, COPY_BUTTON_ERROR, COPY_BUTTON_SUCCESS, ICON};
-use crate::components::button::Button;
+use crate::component::button::Button;
 
 #[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = COPY_BUTTON)]

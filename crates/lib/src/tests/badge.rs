@@ -3,7 +3,7 @@ use hypertext::{RenderableExt, rsx};
 use crate::appearance::Appearance::*;
 use crate::appearance::AppearanceConstructor;
 use crate::attributes::CommonAttributeSetters;
-use crate::components::badge::Badge;
+use crate::component::badge::Badge;
 use crate::variant::Variant::*;
 use crate::variant::VariantConstructor;
 

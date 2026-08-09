@@ -4,7 +4,7 @@ use hypertext::{RenderableExt, rsx};
 use crate::appearance::Appearance::*;
 use crate::appearance::AppearanceConstructor;
 use crate::attributes::CommonAttributeSetters;
-use crate::components::callout::Callout;
+use crate::component::callout::Callout;
 use crate::variant::Variant::*;
 use crate::variant::VariantConstructor;
 

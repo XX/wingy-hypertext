@@ -1,7 +1,7 @@
 use hypertext::{RenderableExt, rsx};
 
 use crate::attributes::CommonAttributeSetters;
-use crate::layouts::divider::Divider;
+use crate::layout::divider::Divider;
 use crate::orientation::Orientation::*;
 
 #[test]

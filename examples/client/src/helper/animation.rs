@@ -12,21 +12,21 @@ use wingy_hypertext::action::ActionSetters;
 use wingy_hypertext::appearance::Appearance::*;
 use wingy_hypertext::attributes::CommonAttributeSetters;
 use wingy_hypertext::class::{CLUSTER, GAP_L};
-use wingy_hypertext::components::button::Button;
-use wingy_hypertext::components::head::Head;
-use wingy_hypertext::components::head::HeadLevel::*;
-use wingy_hypertext::components::input::Input;
-use wingy_hypertext::components::input::InputType::Number;
-use wingy_hypertext::components::select::{Select, SelectOption};
-use wingy_hypertext::helpers::animation::Animation;
-use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
-use wingy_hypertext::layouts::divider::Divider;
+use wingy_hypertext::component::button::Button;
+use wingy_hypertext::component::head::Head;
+use wingy_hypertext::component::head::HeadLevel::*;
+use wingy_hypertext::component::input::Input;
+use wingy_hypertext::component::input::InputType::Number;
+use wingy_hypertext::component::select::{Select, SelectOption};
+use wingy_hypertext::helper::animation::Animation;
+use wingy_hypertext::layout::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
+use wingy_hypertext::layout::divider::Divider;
 use wingy_hypertext::variant::Variant::*;
-use wingy_hypertext_web::helpers::animation::{
+use wingy_hypertext_web::helper::animation::{
     animation_names, create_animation, easing_names, set_animation_current_time, set_animation_play,
     set_animation_playback_rate,
 };
-use wingy_hypertext_web::utils::action::register_action;
+use wingy_hypertext_web::util::action::register_action;
 
 const BOX_STYLE: &str = "display: inline-block; width: 100px; height: 100px; background-color: var(--wa-color-brand-fill-loud); margin: 1.5rem;";
 const SANDBOX_BOX_STYLE: &str = "width: 100px; height: 100px; background-color: var(--wa-color-brand-fill-loud);";

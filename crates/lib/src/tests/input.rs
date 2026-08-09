@@ -4,8 +4,8 @@ use hypertext::{RenderableExt, rsx};
 use crate::appearance::Appearance::*;
 use crate::attributes::CommonAttributeSetters;
 use crate::class::LABEL;
-use crate::components::input::InputType::*;
-use crate::components::input::{Input, TextField};
+use crate::component::input::InputType::*;
+use crate::component::input::{Input, TextField};
 
 #[test]
 fn default() {

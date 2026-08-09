@@ -1,7 +1,7 @@
 use hypertext::prelude::hypertext_elements;
 use hypertext::{RenderableExt, rsx};
 
-use crate::helpers::animation::{Animation, Direction, Fill};
+use crate::helper::animation::{Animation, Direction, Fill};
 
 #[test]
 fn default() {

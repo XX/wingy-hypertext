@@ -10,8 +10,8 @@ use wasm_dom::existing::JsObjectAccess;
 use wasm_dom::existing::access::{CastToElement, CastToHtmlElement};
 use web_sys::{AddEventListenerOptions, Animation, Element, Event, HtmlElement, MouseEvent, TouchEvent};
 
-use crate::utils::animate::{linear_animate, prefers_reduced_motion};
-use crate::utils::convert::{bool_to_str, parse_duration_millis, parse_float};
+use crate::util::animate::{linear_animate, prefers_reduced_motion};
+use crate::util::convert::{bool_to_str, parse_duration_millis, parse_float};
 
 //
 // Resizing previews

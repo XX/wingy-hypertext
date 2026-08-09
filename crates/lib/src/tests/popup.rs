@@ -1,8 +1,8 @@
 use hypertext::prelude::hypertext_elements;
 use hypertext::{RenderableExt, rsx};
 
-use crate::helpers::popup::PopupPlacement::*;
-use crate::helpers::popup::{AutoSize, Popup, SyncSize};
+use crate::helper::popup::PopupPlacement::*;
+use crate::helper::popup::{AutoSize, Popup, SyncSize};
 
 #[test]
 fn default() {

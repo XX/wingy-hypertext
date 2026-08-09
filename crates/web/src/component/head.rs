@@ -2,7 +2,7 @@ use wasm_dom::existing::access::CastToHtmlElement;
 use wasm_dom::{self as dom};
 use web_sys::{ScrollBehavior, ScrollToOptions, Window};
 
-use crate::utils::convert::parse_float;
+use crate::util::convert::parse_float;
 
 /// Smoothly scrolls to the element referenced by the URL hash, or back to the top when there is none.
 pub fn init_scroll_to_anchor() {

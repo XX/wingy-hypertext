@@ -3,12 +3,12 @@ use hypertext::{Renderable, rsx};
 use wingy_hypertext::appearance::Appearance::*;
 use wingy_hypertext::attributes::CommonAttributeSetters;
 use wingy_hypertext::class::{SIZE_EXTRA_SMALL, SIZE_LARGE, SIZE_MEDIUM, SIZE_SMALL, STACK};
-use wingy_hypertext::components::head::Head;
-use wingy_hypertext::components::head::HeadLevel::*;
-use wingy_hypertext::components::select::SelectPlacement::Top;
-use wingy_hypertext::components::select::{Select, SelectOption};
-use wingy_hypertext::layouts::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
-use wingy_hypertext::layouts::divider::Divider;
+use wingy_hypertext::component::head::Head;
+use wingy_hypertext::component::head::HeadLevel::*;
+use wingy_hypertext::component::select::SelectPlacement::Top;
+use wingy_hypertext::component::select::{Select, SelectOption};
+use wingy_hypertext::layout::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
+use wingy_hypertext::layout::divider::Divider;
 
 pub fn overview() -> impl Renderable {
     rsx! {

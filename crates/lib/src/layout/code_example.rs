@@ -11,7 +11,7 @@ use crate::class::{
     CODE_EXAMPLE, CODE_EXAMPLE_BUTTONS, CODE_EXAMPLE_PREVIEW, CODE_EXAMPLE_RESIZER, CODE_EXAMPLE_SOURCE,
     CODE_EXAMPLE_TOGGLE, DARK, ICON, NO_ANIMATION, OPEN,
 };
-use crate::components::copy_button::CopyButton;
+use crate::component::copy_button::CopyButton;
 
 #[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = CODE_EXAMPLE)]

@@ -1,7 +1,7 @@
 use hypertext::prelude::hypertext_elements;
 use hypertext::{RenderableExt, rsx};
 
-use crate::layouts::page::{Page, PageBody, PageMenu};
+use crate::layout::page::{Page, PageBody, PageMenu};
 
 #[test]
 fn empty() {

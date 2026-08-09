@@ -12,29 +12,29 @@ use wingy_hypertext::class::{
     BORDER_END, CLUSTER, FLANK, GAP_XL, GAP_XS, GRID, HEADING_M, HEADING_S, ICON, PAGE_MENU_NAV, SIZE_SMALL, SPLIT,
     STACK, START,
 };
-use wingy_hypertext::components::button::Button;
-use wingy_hypertext::layouts::page::{Page, PageBody, PageMenu};
+use wingy_hypertext::component::button::Button;
+use wingy_hypertext::layout::page::{Page, PageBody, PageMenu};
 use wingy_hypertext::link::LinkSetters;
 use wingy_hypertext::link::Target::*;
 use wingy_hypertext::variant::Variant::*;
-use wingy_hypertext_web::components::callout::listen_close_callout;
-use wingy_hypertext_web::components::select::{init_selects, listen_selects};
-use wingy_hypertext_web::components::tag::listen_remove_tags;
-use wingy_hypertext_web::helpers::animation::init_animations;
-use wingy_hypertext_web::helpers::popup::{init_popups, listen_popups};
-use wingy_hypertext_web::layouts::drawer::{init_drawers, listen_drawers};
-use wingy_hypertext_web::utils::event;
+use wingy_hypertext_web::component::callout::listen_close_callout;
+use wingy_hypertext_web::component::select::{init_selects, listen_selects};
+use wingy_hypertext_web::component::tag::listen_remove_tags;
+use wingy_hypertext_web::helper::animation::init_animations;
+use wingy_hypertext_web::helper::popup::{init_popups, listen_popups};
+use wingy_hypertext_web::layout::drawer::{init_drawers, listen_drawers};
+use wingy_hypertext_web::util::event;
 use wingy_hypertext_web::{
     init_code_examples, init_page_element, init_scroll_to_anchor, listen_click_actions, listen_code_examples,
     register_copy_action,
 };
 
-use crate::helpers::animation::listen_animation_overview;
-use crate::helpers::popup::listen_popup_overview;
+use crate::helper::animation::listen_animation_overview;
+use crate::helper::popup::listen_popup_overview;
 
-pub mod components;
-pub mod helpers;
-pub mod layouts;
+pub mod component;
+pub mod helper;
+pub mod layout;
 
 /// One-time wiring: register actions and listeners.
 #[wasm_bindgen]
@@ -51,7 +51,7 @@ pub fn init() {
     listen_popup_overview();
     listen_removable_demo();
     listen_drawers();
-    layouts::drawer::listen_drawer_overview();
+    layout::drawer::listen_drawer_overview();
 }
 
 /// Re-initialization run after every htmx settle.
@@ -63,8 +63,8 @@ pub fn reinit() {
     init_popups();
     init_animations();
     init_drawers();
-    helpers::animation::init_animation_overview();
-    helpers::popup::init_popup_overview();
+    helper::animation::init_animation_overview();
+    helper::popup::init_popup_overview();
 }
 
 #[wasm_bindgen]
@@ -78,18 +78,18 @@ fn main_section(route_path: &str) -> impl Renderable {
 
     rsx! {
         @match path {
-            "animation" => (helpers::animation::overview()),
-            "badge" => (components::badge::overview()),
-            "button" => (components::button::overview()),
-            "callout" => (components::callout::overview()),
-            "copy-button" => (components::copy_button::overview()),
-            "divider" => (layouts::divider::overview()),
-            "drawer" => (layouts::drawer::overview()),
-            "input" => (components::input::overview()),
-            "popup" => (helpers::popup::overview()),
-            "select" => (components::select::overview()),
-            "switch" => (components::switch::overview()),
-            "tag" => (components::tag::overview()),
+            "animation" => (helper::animation::overview()),
+            "badge" => (component::badge::overview()),
+            "button" => (component::button::overview()),
+            "callout" => (component::callout::overview()),
+            "copy-button" => (component::copy_button::overview()),
+            "divider" => (layout::divider::overview()),
+            "drawer" => (layout::drawer::overview()),
+            "input" => (component::input::overview()),
+            "popup" => (helper::popup::overview()),
+            "select" => (component::select::overview()),
+            "switch" => (component::switch::overview()),
+            "tag" => (component::tag::overview()),
             _ => {},
         }
     }

@@ -3,7 +3,7 @@ use wasm_dom::event::EventListener;
 use wasm_dom::existing::access::CastToElement;
 use web_sys::Event;
 
-use crate::utils::event;
+use crate::util::event;
 
 pub fn handle_close_callout(event: &Event) -> Option<()> {
     let target = event.target()?.maybe_into_element()?;

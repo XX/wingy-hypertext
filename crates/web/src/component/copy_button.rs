@@ -4,8 +4,8 @@ use wasm_dom::existing::JsObjectAccess;
 use wasm_dom::existing::access::{CastToElement, CastToHtmlElement};
 use web_sys::{Element, Event};
 
-use crate::utils::action::register_action;
-use crate::utils::animate::animate_with_class;
+use crate::util::action::register_action;
+use crate::util::animate::animate_with_class;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum Status {

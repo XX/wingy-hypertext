@@ -4,7 +4,7 @@ use crate::action::ActionSetters;
 use crate::appearance::Appearance::*;
 use crate::appearance::AppearanceConstructor;
 use crate::attributes::CommonAttributeSetters;
-use crate::components::button::Button;
+use crate::component::button::Button;
 use crate::htmx::{Htmx, HtmxSetters};
 use crate::link::LinkSetters;
 use crate::variant::Variant::*;
