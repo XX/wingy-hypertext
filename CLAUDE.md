@@ -41,7 +41,7 @@ Tooling required for the example build: the `wasm32-unknown-unknown` target, `wa
 
 ### Library layout
 
-`crates/lib/src` groups renderables into `components/` (badge, button, callout, copy_button, head, input, select, switch, tag), `layouts/` (code_example, divider, page), and `helpers/` (animation, popup). All three follow the same component pattern below.
+`crates/lib/src` groups renderables into `components/` (badge, button, callout, copy_button, dropdown, head, input, select, switch, tag), `layouts/` (code_example, divider, drawer, page), and `helpers/` (animation, popup). All three follow the same component pattern below.
 
 ### Component pattern
 

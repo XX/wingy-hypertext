@@ -2,6 +2,7 @@ pub mod badge;
 pub mod button;
 pub mod callout;
 pub mod copy_button;
+pub mod dropdown;
 pub mod input;
 pub mod select;
 pub mod switch;

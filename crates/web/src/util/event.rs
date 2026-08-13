@@ -7,6 +7,7 @@ pub const SHOW: &str = "wg-show";
 pub const HIDE: &str = "wg-hide";
 pub const AFTER_SHOW: &str = "wg-after-show";
 pub const AFTER_HIDE: &str = "wg-after-hide";
+pub const SELECT: &str = "wg-select";
 
 pub fn dispatch(element: &Element, event_type: &str, bubbles: bool) -> Result<bool, JsValue> {
     let init = EventInit::new();

@@ -18,6 +18,7 @@ use wingy_hypertext::link::LinkSetters;
 use wingy_hypertext::link::Target::*;
 use wingy_hypertext::variant::Variant::*;
 use wingy_hypertext_web::component::callout::listen_close_callout;
+use wingy_hypertext_web::component::dropdown::{init_dropdowns, listen_dropdowns};
 use wingy_hypertext_web::component::select::{init_selects, listen_selects};
 use wingy_hypertext_web::component::tag::listen_remove_tags;
 use wingy_hypertext_web::helper::animation::init_animations;
@@ -28,9 +29,6 @@ use wingy_hypertext_web::{
     init_code_examples, init_page_element, init_scroll_to_anchor, listen_click_actions, listen_code_examples,
     register_copy_action,
 };
-
-use crate::helper::animation::listen_animation_overview;
-use crate::helper::popup::listen_popup_overview;
 
 pub mod component;
 pub mod helper;
@@ -44,14 +42,16 @@ pub fn init() {
     listen_code_examples();
     listen_click_actions();
     listen_close_callout();
+    listen_dropdowns();
     listen_selects();
     listen_popups();
     listen_remove_tags();
-    listen_animation_overview();
-    listen_popup_overview();
-    listen_removable_demo();
     listen_drawers();
+    helper::animation::listen_animation_overview();
+    helper::popup::listen_popup_overview();
+    listen_removable_demo();
     layout::drawer::listen_drawer_overview();
+    component::dropdown::listen_dropdown_overview();
 }
 
 /// Re-initialization run after every htmx settle.
@@ -59,6 +59,7 @@ pub fn init() {
 pub fn reinit() {
     init_page_element();
     init_scroll_to_anchor();
+    init_dropdowns();
     init_selects();
     init_popups();
     init_animations();
@@ -84,6 +85,7 @@ fn main_section(route_path: &str) -> impl Renderable {
             "callout" => (component::callout::overview()),
             "copy-button" => (component::copy_button::overview()),
             "divider" => (layout::divider::overview()),
+            "dropdown" => (component::dropdown::overview()),
             "drawer" => (layout::drawer::overview()),
             "input" => (component::input::overview()),
             "popup" => (helper::popup::overview()),
@@ -189,6 +191,16 @@ pub fn render_root(url_path: &str) -> String {
                             hx-push-url="true"
                         >
                             <span>"Copy Button"</span>
+                        </a>
+                        <a
+                            class=FLANK
+                            href="/dropdown"
+                            hx-get="/dropdown"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Dropdown"</span>
                         </a>
                         <a
                             class=FLANK

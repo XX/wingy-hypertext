@@ -12,7 +12,7 @@ use wasm_dom::existing::access::{CastToElement, CastToHtmlElement};
 use web_sys::{AddEventListenerOptions, Element, HtmlElement};
 
 #[derive(Copy, Clone, PartialEq, Eq)]
-enum Side {
+pub enum Side {
     Top,
     Bottom,
     Left,
@@ -44,7 +44,7 @@ impl Side {
 }
 
 #[derive(Copy, Clone, PartialEq, Eq)]
-enum Align {
+pub enum Align {
     Start,
     Center,
     End,
@@ -85,20 +85,45 @@ impl Rect {
     }
 }
 
-struct PopupConfig {
-    side: Side,
-    align: Align,
-    distance: f64,
-    skidding: f64,
-    flip: bool,
-    flip_padding: f64,
-    shift: bool,
-    shift_padding: f64,
-    sync: Option<String>,
-    auto_size: Option<String>,
-    auto_size_padding: f64,
-    arrow_placement: String,
-    arrow_padding: f64,
+/// The positioning options of a popup, mirroring the `data-*` attributes of the
+/// `.popup` host element. [`PopupConfig::new`] builds the options for a
+/// placement with everything else turned off, so other components (like the
+/// dropdown's submenus) can position elements without a `.popup` host.
+pub struct PopupConfig {
+    pub side: Side,
+    pub align: Align,
+    pub distance: f64,
+    pub skidding: f64,
+    pub flip: bool,
+    pub flip_padding: f64,
+    pub shift: bool,
+    pub shift_padding: f64,
+    pub sync: Option<String>,
+    pub auto_size: Option<String>,
+    pub auto_size_padding: f64,
+    pub arrow_placement: String,
+    pub arrow_padding: f64,
+}
+
+impl PopupConfig {
+    pub fn new(placement: &str) -> Self {
+        let (side, align) = parse_placement(placement);
+        Self {
+            side,
+            align,
+            distance: 0.0,
+            skidding: 0.0,
+            flip: false,
+            flip_padding: 0.0,
+            shift: false,
+            shift_padding: 0.0,
+            sync: None,
+            auto_size: None,
+            auto_size_padding: 0.0,
+            arrow_placement: String::new(),
+            arrow_padding: 0.0,
+        }
+    }
 }
 
 fn parse_placement(placement: &str) -> (Side, Align) {
@@ -117,7 +142,7 @@ fn parse_placement(placement: &str) -> (Side, Align) {
     (side, align)
 }
 
-fn placement_str(side: Side, align: Align) -> String {
+pub fn placement_str(side: Side, align: Align) -> String {
     match align {
         Align::Start => format!("{}-start", side.as_str()),
         Align::End => format!("{}-end", side.as_str()),
@@ -195,7 +220,32 @@ pub fn reposition(host: &Element) -> Option<()> {
     let anchor = anchor_element(host)?;
     let popup = popup_body(host)?;
 
+    let (side, align) = place(&anchor, &popup, &config, host)?;
+
+    host.set_attribute("data-current-placement", &placement_str(side, align))
+        .ok();
+
+    // The arrow is aligned against the popup's final position
     let anchor_rect = Rect::from_element(&anchor);
+    let popup_rect = Rect::from_element(&popup);
+    position_arrow(&config, &popup, &anchor_rect, side, popup_rect.x, popup_rect.y);
+    update_hover_bridge(host, &anchor, &popup, side);
+
+    Some(())
+}
+
+/// Positions the `position: fixed` element `popup` next to `anchor` following
+/// `config`, and returns the resolved placement. The
+/// `--auto-size-available-width/height` custom properties are exposed on
+/// `size_host` (the `.popup` host for a popup, the floating element itself
+/// otherwise).
+pub fn place(
+    anchor: &Element,
+    popup: &HtmlElement,
+    config: &PopupConfig,
+    size_host: &Element,
+) -> Option<(Side, Align)> {
+    let anchor_rect = Rect::from_element(anchor);
     let viewport = viewport_size();
 
     // Sync the popup's dimensions to the anchor first, so all further
@@ -245,7 +295,7 @@ pub fn reposition(host: &Element) -> Option<()> {
     // Expose the available space so auto-sized popups can adhere to it,
     // then re-measure: the `--auto-size-available-*` variables cap the
     // popup's max width/height in CSS.
-    let style = host_style(host)?;
+    let style = host_style(size_host)?;
     let auto_size = config.auto_size.as_deref().unwrap_or("");
     if auto_size == "vertical" || auto_size == "both" {
         let available = match side {
@@ -314,13 +364,7 @@ pub fn reposition(host: &Element) -> Option<()> {
     popup.style().set_property("left", &format!("{x}px")).ok();
     popup.style().set_property("top", &format!("{y}px")).ok();
 
-    host.set_attribute("data-current-placement", &placement_str(side, config.align))
-        .ok();
-
-    position_arrow(&config, &popup, &anchor_rect, side, x, y);
-    update_hover_bridge(host, &anchor, &popup, side);
-
-    Some(())
+    Some((side, config.align))
 }
 
 fn position_arrow(config: &PopupConfig, popup: &HtmlElement, anchor_rect: &Rect, side: Side, x: f64, y: f64) {

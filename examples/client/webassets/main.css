@@ -24,6 +24,13 @@
   margin-inline: auto;
 }
 
+/* Dropdown demos: the line reporting the last selection */
+.dropdown-demo-output {
+  margin-block-start: var(--wa-space-m);
+  color: var(--wa-color-text-quiet);
+  font-size: var(--wa-font-size-smaller);
+}
+
 .code-example-source pre {
   color-scheme: dark;
   color: white;
