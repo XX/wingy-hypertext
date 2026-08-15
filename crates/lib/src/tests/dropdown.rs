@@ -4,7 +4,9 @@ use iconic::{fontawesome, fontawesome_ext};
 
 use crate::attributes::CommonAttributeSetters;
 use crate::component::dropdown::DropdownSize::Small;
-use crate::component::dropdown::{Dropdown, DropdownItem};
+use crate::component::dropdown::{
+    Dropdown, DropdownItem, DropdownItemDetails, DropdownItemIcon, DropdownItemLabel, DropdownMenu, DropdownSubmenu,
+};
 use crate::helper::popup::PopupPlacement::TopEnd;
 use crate::variant::Variant::Danger;
 
@@ -14,7 +16,7 @@ const POPUP_OPTIONS: &str =
     r#"data-flip="" data-shift="" data-shift-padding="10" data-auto-size="vertical" data-auto-size-padding="10""#;
 
 /// The dropdown host (`host_attrs`) wrapping the popup that carries the trigger
-/// and the menu. The menu itself is always rendered, even without items.
+/// and the menu, both of which are composed in as children.
 fn dropdown(host_attrs: &str, popup_attrs: &str, content: &str) -> String {
     format!(
         concat!(
@@ -48,7 +50,7 @@ fn icon(icon: impl hypertext::Renderable) -> String {
 
 #[test]
 fn default() {
-    let expected = dropdown(r#"class="dropdown""#, r#"data-placement="bottom-start""#, &menu(""));
+    let expected = dropdown(r#"class="dropdown""#, r#"data-placement="bottom-start""#, "");
 
     let dropdown = Dropdown::builder();
     assert_eq!(dropdown.render().as_inner(), &expected);
@@ -75,9 +77,16 @@ fn trigger_and_items() {
     );
 
     let dropdown = rsx! {
-        <Dropdown trigger=(rsx! { <button>"Options"</button> })>
-            <DropdownItem value="edit">"Edit"</DropdownItem>
-            <DropdownItem value="delete">"Delete"</DropdownItem>
+        <Dropdown>
+            <button>"Options"</button>
+            <DropdownMenu>
+                <DropdownItem value="edit">
+                    <DropdownItemLabel>"Edit"</DropdownItemLabel>
+                </DropdownItem>
+                <DropdownItem value="delete">
+                    <DropdownItemLabel>"Delete"</DropdownItemLabel>
+                </DropdownItem>
+            </DropdownMenu>
         </Dropdown>
     };
     assert_eq!(dropdown.render().as_inner(), &expected);
@@ -88,7 +97,7 @@ fn positioning() {
     let expected = dropdown(
         r#"class="dropdown""#,
         r#"data-placement="top-end" data-distance="30" data-skidding="-10""#,
-        &menu(""),
+        "",
     );
 
     let dropdown = Dropdown::builder().placement(TopEnd).distance(30).skidding(-10);
@@ -103,13 +112,25 @@ fn size_and_open() {
     let expected = dropdown(
         r#"class="dropdown size-small" data-open="""#,
         r#"data-placement="bottom-start""#,
-        &menu(""),
+        "",
     );
 
     let dropdown = Dropdown::builder().size(Small).open(true);
     assert_eq!(dropdown.render().as_inner(), &expected);
 
     let dropdown = rsx! { <Dropdown size=Small open=true/> };
+    assert_eq!(dropdown.render().as_inner(), &expected);
+}
+
+#[test]
+fn empty_menu() {
+    let expected = dropdown(r#"class="dropdown""#, r#"data-placement="bottom-start""#, &menu(""));
+
+    let dropdown = rsx! {
+        <Dropdown>
+            <DropdownMenu/>
+        </Dropdown>
+    };
     assert_eq!(dropdown.render().as_inner(), &expected);
 }
 
@@ -126,16 +147,19 @@ fn item_states() {
         check = check,
     );
 
+    let label = rsx! { <DropdownItemLabel>"Show grid"</DropdownItemLabel> };
     let item = DropdownItem::builder()
         .checkbox(true)
         .checked(true)
         .value("grid")
         .label("Show grid")
-        .children(&"Show grid");
+        .children(&label);
     assert_eq!(item.render().as_inner(), &expected);
 
     let item = rsx! {
-        <DropdownItem checkbox=true checked=true value="grid" label="Show grid">"Show grid"</DropdownItem>
+        <DropdownItem checkbox=true checked=true value="grid" label="Show grid">
+            <DropdownItemLabel>"Show grid"</DropdownItemLabel>
+        </DropdownItem>
     };
     assert_eq!(item.render().as_inner(), &expected);
 }
@@ -147,7 +171,11 @@ fn item_disabled_and_danger() {
         r#" data-value="delete"><span class="dropdown-item-label">Delete</span></div>"#,
     );
 
-    let item = rsx! { <DropdownItem variant=Danger disabled=true value="delete">"Delete"</DropdownItem> };
+    let item = rsx! {
+        <DropdownItem variant=Danger disabled=true value="delete">
+            <DropdownItemLabel>"Delete"</DropdownItemLabel>
+        </DropdownItem>
+    };
     assert_eq!(item.render().as_inner(), &expected);
 }
 
@@ -165,12 +193,10 @@ fn item_icon_and_details() {
     );
 
     let item = rsx! {
-        <DropdownItem
-            value="home"
-            icon=(rsx! { (fontawesome::solid::House) })
-            details=(rsx! { "⌘H" })
-        >
-            "Home"
+        <DropdownItem value="home">
+            <DropdownItemIcon>(fontawesome::solid::House)</DropdownItemIcon>
+            <DropdownItemLabel>"Home"</DropdownItemLabel>
+            <DropdownItemDetails>"⌘H"</DropdownItemDetails>
         </DropdownItem>
     };
     assert_eq!(item.render().as_inner(), &expected);
@@ -181,7 +207,7 @@ fn item_submenu() {
     let chevron = icon(fontawesome_ext::regular::ChevronRight);
     let expected = format!(
         concat!(
-            r#"<div class="dropdown-item has-submenu neutral" role="menuitem" tabindex="-1""#,
+            r#"<div class="dropdown-item neutral" role="menuitem" tabindex="-1""#,
             r#" aria-haspopup="menu" aria-expanded="false">"#,
             r#"<span class="dropdown-item-label">Export</span>"#,
             r#"<span class="submenu-icon" aria-hidden="true">{chevron}</span>"#,
@@ -193,10 +219,13 @@ fn item_submenu() {
     );
 
     let item = rsx! {
-        <DropdownItem submenu=(rsx! {
-            <DropdownItem value="pdf">"PDF"</DropdownItem>
-        })>
-            "Export"
+        <DropdownItem submenu=true>
+            <DropdownItemLabel>"Export"</DropdownItemLabel>
+            <DropdownSubmenu>
+                <DropdownItem value="pdf">
+                    <DropdownItemLabel>"PDF"</DropdownItemLabel>
+                </DropdownItem>
+            </DropdownSubmenu>
         </DropdownItem>
     };
     assert_eq!(item.render().as_inner(), &expected);
@@ -210,7 +239,9 @@ fn item_adjacent_alignment() {
     );
 
     let item = rsx! {
-        <DropdownItem checkbox_adjacent=true submenu_adjacent=true>"Preferences"</DropdownItem>
+        <DropdownItem checkbox_adjacent=true submenu_adjacent=true>
+            <DropdownItemLabel>"Preferences"</DropdownItemLabel>
+        </DropdownItem>
     };
     assert_eq!(item.render().as_inner(), &expected);
 }
@@ -220,7 +251,7 @@ fn additional_attributes() {
     let expected = dropdown(
         r#"id="the-dropdown" class="dropdown test""#,
         r#"data-placement="bottom-start""#,
-        &menu(""),
+        "",
     );
 
     let dropdown = Dropdown::builder().id("the-dropdown").class("test");

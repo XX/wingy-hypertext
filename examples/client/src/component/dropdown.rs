@@ -12,7 +12,9 @@ use wingy_hypertext::attributes::CommonAttributeSetters;
 use wingy_hypertext::class::{END, ICON, SIZE_SMALL};
 use wingy_hypertext::component::button::Button;
 use wingy_hypertext::component::dropdown::DropdownSize::*;
-use wingy_hypertext::component::dropdown::{Dropdown, DropdownItem};
+use wingy_hypertext::component::dropdown::{
+    Dropdown, DropdownItem, DropdownItemDetails, DropdownItemIcon, DropdownItemLabel, DropdownMenu, DropdownSubmenu,
+};
 use wingy_hypertext::component::head::Head;
 use wingy_hypertext::component::head::HeadLevel::*;
 use wingy_hypertext::helper::popup::PopupPlacement::RightStart;
@@ -45,20 +47,48 @@ pub fn overview() -> impl Renderable {
             "type-to-select) is implemented in Rust in "<code>"wingy-hypertext-web"</code>" and wired up with "
             <code>"listen_dropdowns"</code>" and "<code>"init_dropdowns"</code>"."
         </p>
+        <p>"A dropdown is composed of a trigger — the first child, any element that opens the menu — and a "
+            <code>DropdownMenu</code>" holding the items. Every item composes its own content out of a "
+            <code>DropdownItemIcon</code>", a "<code>DropdownItemLabel</code>", a "<code>DropdownItemDetails</code>
+            " and a "<code>DropdownSubmenu</code>", all of them optional except the label."
+        </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Dropdown trigger=(rsx! { <TriggerButton label="Options"/> })>
-                    <DropdownItem value="edit">"Edit"</DropdownItem>
-                    <DropdownItem value="duplicate">"Duplicate"</DropdownItem>
-                    <DropdownItem value="delete">"Delete"</DropdownItem>
+                <Dropdown>
+                    <TriggerButton label="Options"/>
+                    <DropdownMenu>
+                        <DropdownItem value="edit">
+                            <DropdownItemLabel>"Edit"</DropdownItemLabel>
+                        </DropdownItem>
+                        <DropdownItem value="duplicate">
+                            <DropdownItemLabel>"Duplicate"</DropdownItemLabel>
+                        </DropdownItem>
+                        <DropdownItem value="delete">
+                            <DropdownItemLabel>"Delete"</DropdownItemLabel>
+                        </DropdownItem>
+                    </DropdownMenu>
                 </Dropdown>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Dropdown trigger=(rsx! { <Button appearance=Filled>"Options"</Button> })>
-                        <DropdownItem value="edit">"Edit"</DropdownItem>
-                        <DropdownItem value="duplicate">"Duplicate"</DropdownItem>
-                        <DropdownItem value="delete">"Delete"</DropdownItem>
+                    <Dropdown>
+                        <Button appearance=Filled>
+                            "Options"
+                            <span class=(END, " ", ICON)>
+                                (fontawesome_ext::regular::ChevronDown)
+                            </span>
+                        </Button>
+                        <DropdownMenu>
+                            <DropdownItem value="edit">
+                                <DropdownItemLabel>"Edit"</DropdownItemLabel>
+                            </DropdownItem>
+                            <DropdownItem value="duplicate">
+                                <DropdownItemLabel>"Duplicate"</DropdownItemLabel>
+                            </DropdownItem>
+                            <DropdownItem value="delete">
+                                <DropdownItemLabel>"Delete"</DropdownItemLabel>
+                            </DropdownItem>
+                        </DropdownMenu>
                     </Dropdown>
                 "#</code>
             </CodeExampleSource>
@@ -72,39 +102,54 @@ pub fn overview() -> impl Renderable {
         <Head level=H3 id="showing-icons" anchor=true>
             "Showing Icons"
         </Head>
-        <p>"Use the "<code>icon</code>" property to add an icon before an item's label."</p>
+        <p>"Put a "<code>DropdownItemIcon</code>" before the label to add an icon to an item."</p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Dropdown trigger=(rsx! { <TriggerButton label="Edit"/> })>
-                    <DropdownItem value="copy" icon=(rsx! { (fontawesome::solid::Copy) })>
-                        "Copy"
-                    </DropdownItem>
-                    <DropdownItem value="rename" icon=(rsx! { (fontawesome::solid::PenToSquare) })>
-                        "Rename"
-                    </DropdownItem>
-                    <DropdownItem value="bookmark" icon=(rsx! { (fontawesome::solid::Bookmark) })>
-                        "Bookmark"
-                    </DropdownItem>
-                    <DropdownItem value="delete" variant=Danger icon=(rsx! { (fontawesome::solid::XmarkCircle) })>
-                        "Delete"
-                    </DropdownItem>
+                <Dropdown>
+                    <TriggerButton label="Edit"/>
+                    <DropdownMenu>
+                        <DropdownItem value="copy">
+                            <DropdownItemIcon>(fontawesome::solid::Copy)</DropdownItemIcon>
+                            <DropdownItemLabel>"Copy"</DropdownItemLabel>
+                        </DropdownItem>
+                        <DropdownItem value="rename">
+                            <DropdownItemIcon>(fontawesome::solid::PenToSquare)</DropdownItemIcon>
+                            <DropdownItemLabel>"Rename"</DropdownItemLabel>
+                        </DropdownItem>
+                        <DropdownItem value="bookmark">
+                            <DropdownItemIcon>(fontawesome::solid::Bookmark)</DropdownItemIcon>
+                            <DropdownItemLabel>"Bookmark"</DropdownItemLabel>
+                        </DropdownItem>
+                        <DropdownItem value="delete" variant=Danger>
+                            <DropdownItemIcon>(fontawesome::solid::XmarkCircle)</DropdownItemIcon>
+                            <DropdownItemLabel>"Delete"</DropdownItemLabel>
+                        </DropdownItem>
+                    </DropdownMenu>
                 </Dropdown>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Dropdown trigger=(rsx! { <TriggerButton label="Edit"/> })>
-                        <DropdownItem value="copy" icon=(rsx! { (fontawesome::solid::Copy) })>
-                            "Copy"
-                        </DropdownItem>
-                        <DropdownItem value="rename" icon=(rsx! { (fontawesome::solid::PenToSquare) })>
-                            "Rename"
-                        </DropdownItem>
-                        <DropdownItem value="bookmark" icon=(rsx! { (fontawesome::solid::Bookmark) })>
-                            "Bookmark"
-                        </DropdownItem>
-                        <DropdownItem value="delete" variant=Danger icon=(rsx! { (fontawesome::solid::XmarkCircle) })>
-                            "Delete"
-                        </DropdownItem>
+                    <Dropdown>
+                        <Button appearance=Filled>
+                            "Edit"
+                            <span class=(END, " ", ICON)>
+                                (fontawesome_ext::regular::ChevronDown)
+                            </span>
+                        </Button>
+                        <DropdownMenu>
+                            <DropdownItem value="copy">
+                                <DropdownItemIcon>(fontawesome::solid::Copy)</DropdownItemIcon>
+                                <DropdownItemLabel>"Copy"</DropdownItemLabel>
+                            </DropdownItem>
+                            <DropdownItem value="rename">
+                                <DropdownItemIcon>(fontawesome::solid::PenToSquare)</DropdownItemIcon>
+                                <DropdownItemLabel>"Rename"</DropdownItemLabel>
+                            </DropdownItem>
+                            <DropdownItem value="delete" variant=Danger>
+                                <DropdownItemIcon>(fontawesome::solid::XmarkCircle)</DropdownItemIcon>
+                                <DropdownItemLabel>"Delete"</DropdownItemLabel>
+                            </DropdownItem>
+                        </DropdownMenu>
                     </Dropdown>
                 "#</code>
             </CodeExampleSource>
@@ -117,24 +162,48 @@ pub fn overview() -> impl Renderable {
         <p>"Use any heading to label a group of items, and a "<code>Divider</code>" to separate them."</p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Dropdown trigger=(rsx! { <TriggerButton label="Device"/> })>
-                    <h3>"Type"</h3>
-                    <DropdownItem value="phone">"Phone"</DropdownItem>
-                    <DropdownItem value="tablet">"Tablet"</DropdownItem>
-                    <DropdownItem value="desktop">"Desktop"</DropdownItem>
-                    <Divider/>
-                    <DropdownItem value="more">"More options…"</DropdownItem>
+                <Dropdown>
+                    <TriggerButton label="Device"/>
+                    <DropdownMenu>
+                        <h3>"Type"</h3>
+                        <DropdownItem value="phone">
+                            <DropdownItemLabel>"Phone"</DropdownItemLabel>
+                        </DropdownItem>
+                        <DropdownItem value="tablet">
+                            <DropdownItemLabel>"Tablet"</DropdownItemLabel>
+                        </DropdownItem>
+                        <DropdownItem value="desktop">
+                            <DropdownItemLabel>"Desktop"</DropdownItemLabel>
+                        </DropdownItem>
+                        <Divider/>
+                        <DropdownItem value="more">
+                            <DropdownItemLabel>"More options…"</DropdownItemLabel>
+                        </DropdownItem>
+                    </DropdownMenu>
                 </Dropdown>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Dropdown trigger=(rsx! { <TriggerButton label="Device"/> })>
-                        <h3>"Type"</h3>
-                        <DropdownItem value="phone">"Phone"</DropdownItem>
-                        <DropdownItem value="tablet">"Tablet"</DropdownItem>
-                        <DropdownItem value="desktop">"Desktop"</DropdownItem>
-                        <Divider/>
-                        <DropdownItem value="more">"More options…"</DropdownItem>
+                    <Dropdown>
+                        <Button appearance=Filled>
+                            "Device"
+                            <span class=(END, " ", ICON)>
+                                (fontawesome_ext::regular::ChevronDown)
+                            </span>
+                        </Button>
+                        <DropdownMenu>
+                            <h3>"Type"</h3>
+                            <DropdownItem value="phone">
+                                <DropdownItemLabel>"Phone"</DropdownItemLabel>
+                            </DropdownItem>
+                            <DropdownItem value="tablet">
+                                <DropdownItemLabel>"Tablet"</DropdownItemLabel>
+                            </DropdownItem>
+                            <Divider/>
+                            <DropdownItem value="more">
+                                <DropdownItemLabel>"More options…"</DropdownItemLabel>
+                            </DropdownItem>
+                        </DropdownMenu>
                     </Dropdown>
                 "#</code>
             </CodeExampleSource>
@@ -144,29 +213,62 @@ pub fn overview() -> impl Renderable {
         <Head level=H3 id="showing-details" anchor=true>
             "Showing Details"
         </Head>
-        <p>"Use the "<code>details</code>" property to show secondary content after the label, "
+        <p>"Put a "<code>DropdownItemDetails</code>" after the label to show secondary content, "
             "such as a keyboard shortcut."
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Dropdown trigger=(rsx! { <TriggerButton label="Message"/> })>
-                    <DropdownItem value="reply" details=(rsx! { "⌘R" })>"Reply"</DropdownItem>
-                    <DropdownItem value="forward" details=(rsx! { "⌘F" })>"Forward"</DropdownItem>
-                    <DropdownItem value="move" details=(rsx! { "⌘M" })>"Move"</DropdownItem>
-                    <Divider/>
-                    <DropdownItem value="archive" details=(rsx! { "⌘A" })>"Archive"</DropdownItem>
-                    <DropdownItem value="delete" variant=Danger details=(rsx! { "Del" })>"Delete"</DropdownItem>
+                <Dropdown>
+                    <TriggerButton label="Message"/>
+                    <DropdownMenu>
+                        <DropdownItem value="reply">
+                            <DropdownItemLabel>"Reply"</DropdownItemLabel>
+                            <DropdownItemDetails>"⌘R"</DropdownItemDetails>
+                        </DropdownItem>
+                        <DropdownItem value="forward">
+                            <DropdownItemLabel>"Forward"</DropdownItemLabel>
+                            <DropdownItemDetails>"⌘F"</DropdownItemDetails>
+                        </DropdownItem>
+                        <DropdownItem value="move">
+                            <DropdownItemLabel>"Move"</DropdownItemLabel>
+                            <DropdownItemDetails>"⌘M"</DropdownItemDetails>
+                        </DropdownItem>
+                        <Divider/>
+                        <DropdownItem value="archive">
+                            <DropdownItemLabel>"Archive"</DropdownItemLabel>
+                            <DropdownItemDetails>"⌘A"</DropdownItemDetails>
+                        </DropdownItem>
+                        <DropdownItem value="delete" variant=Danger>
+                            <DropdownItemLabel>"Delete"</DropdownItemLabel>
+                            <DropdownItemDetails>"Del"</DropdownItemDetails>
+                        </DropdownItem>
+                    </DropdownMenu>
                 </Dropdown>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Dropdown trigger=(rsx! { <TriggerButton label="Message"/> })>
-                        <DropdownItem value="reply" details=(rsx! { "⌘R" })>"Reply"</DropdownItem>
-                        <DropdownItem value="forward" details=(rsx! { "⌘F" })>"Forward"</DropdownItem>
-                        <DropdownItem value="move" details=(rsx! { "⌘M" })>"Move"</DropdownItem>
-                        <Divider/>
-                        <DropdownItem value="archive" details=(rsx! { "⌘A" })>"Archive"</DropdownItem>
-                        <DropdownItem value="delete" variant=Danger details=(rsx! { "Del" })>"Delete"</DropdownItem>
+                    <Dropdown>
+                        <Button appearance=Filled>
+                            "Message"
+                            <span class=(END, " ", ICON)>
+                                (fontawesome_ext::regular::ChevronDown)
+                            </span>
+                        </Button>
+                        <DropdownMenu>
+                            <DropdownItem value="reply">
+                                <DropdownItemLabel>"Reply"</DropdownItemLabel>
+                                <DropdownItemDetails>"⌘R"</DropdownItemDetails>
+                            </DropdownItem>
+                            <DropdownItem value="forward">
+                                <DropdownItemLabel>"Forward"</DropdownItemLabel>
+                                <DropdownItemDetails>"⌘F"</DropdownItemDetails>
+                            </DropdownItem>
+                            <Divider/>
+                            <DropdownItem value="delete" variant=Danger>
+                                <DropdownItemLabel>"Delete"</DropdownItemLabel>
+                                <DropdownItemDetails>"Del"</DropdownItemDetails>
+                            </DropdownItem>
+                        </DropdownMenu>
                     </Dropdown>
                 "#</code>
             </CodeExampleSource>
@@ -183,24 +285,44 @@ pub fn overview() -> impl Renderable {
         <CodeExample>
             <CodeExamplePreview resize=true>
                 <div class="dropdown-checkable-demo">
-                    <Dropdown trigger=(rsx! { <TriggerButton label="View"/> })>
-                        <DropdownItem checkbox=true checked=true value="canvas">"Show canvas"</DropdownItem>
-                        <DropdownItem checkbox=true checked=true value="grid">"Show grid"</DropdownItem>
-                        <DropdownItem checkbox=true value="source">"Show source"</DropdownItem>
-                        <Divider/>
-                        <DropdownItem value="preferences">"Preferences…"</DropdownItem>
+                    <Dropdown>
+                        <TriggerButton label="View"/>
+                        <DropdownMenu>
+                            <DropdownItem checkbox=true checked=true value="canvas">
+                                <DropdownItemLabel>"Show canvas"</DropdownItemLabel>
+                            </DropdownItem>
+                            <DropdownItem checkbox=true checked=true value="grid">
+                                <DropdownItemLabel>"Show grid"</DropdownItemLabel>
+                            </DropdownItem>
+                            <DropdownItem checkbox=true value="source">
+                                <DropdownItemLabel>"Show source"</DropdownItemLabel>
+                            </DropdownItem>
+                            <Divider/>
+                            <DropdownItem value="preferences">
+                                <DropdownItemLabel>"Preferences…"</DropdownItemLabel>
+                            </DropdownItem>
+                        </DropdownMenu>
                     </Dropdown>
                     <p class="dropdown-demo-output">"Nothing selected yet"</p>
                 </div>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Dropdown trigger=(rsx! { <TriggerButton label="View"/> })>
-                        <DropdownItem checkbox=true checked=true value="canvas">"Show canvas"</DropdownItem>
-                        <DropdownItem checkbox=true checked=true value="grid">"Show grid"</DropdownItem>
-                        <DropdownItem checkbox=true value="source">"Show source"</DropdownItem>
-                        <Divider/>
-                        <DropdownItem value="preferences">"Preferences…"</DropdownItem>
+                    <Dropdown>
+                        <Button appearance=Filled>
+                            "View"
+                            <span class=(END, " ", ICON)>
+                                (fontawesome_ext::regular::ChevronDown)
+                            </span>
+                        </Button>
+                        <DropdownMenu>
+                            <DropdownItem checkbox=true checked=true value="canvas">
+                                <DropdownItemLabel>"Show canvas"</DropdownItemLabel>
+                            </DropdownItem>
+                            <DropdownItem checkbox=true value="source">
+                                <DropdownItemLabel>"Show source"</DropdownItemLabel>
+                            </DropdownItem>
+                        </DropdownMenu>
                     </Dropdown>
 
                     // Keep the menu open while toggling checkable items
@@ -216,36 +338,51 @@ pub fn overview() -> impl Renderable {
         <p>"Set "<code>"variant=Danger"</code>" on an item to flag a destructive action like deleting."</p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Dropdown trigger=(rsx! { <TriggerButton label="Project"/> })>
-                    <DropdownItem value="share" icon=(rsx! { (fontawesome::solid::Copy) })>"Share"</DropdownItem>
-                    <DropdownItem value="preferences" icon=(rsx! { (fontawesome::solid::Gear) })>
-                        "Preferences"
-                    </DropdownItem>
-                    <Divider/>
-                    <h3>"Danger zone"</h3>
-                    <DropdownItem value="archive" icon=(rsx! { (fontawesome::solid::Bookmark) })>
-                        "Archive"
-                    </DropdownItem>
-                    <DropdownItem value="delete" variant=Danger icon=(rsx! { (fontawesome::solid::XmarkCircle) })>
-                        "Delete"
-                    </DropdownItem>
+                <Dropdown>
+                    <TriggerButton label="Project"/>
+                    <DropdownMenu>
+                        <DropdownItem value="share">
+                            <DropdownItemIcon>(fontawesome::solid::Copy)</DropdownItemIcon>
+                            <DropdownItemLabel>"Share"</DropdownItemLabel>
+                        </DropdownItem>
+                        <DropdownItem value="preferences">
+                            <DropdownItemIcon>(fontawesome::solid::Gear)</DropdownItemIcon>
+                            <DropdownItemLabel>"Preferences"</DropdownItemLabel>
+                        </DropdownItem>
+                        <Divider/>
+                        <h3>"Danger zone"</h3>
+                        <DropdownItem value="archive">
+                            <DropdownItemIcon>(fontawesome::solid::Bookmark)</DropdownItemIcon>
+                            <DropdownItemLabel>"Archive"</DropdownItemLabel>
+                        </DropdownItem>
+                        <DropdownItem value="delete" variant=Danger>
+                            <DropdownItemIcon>(fontawesome::solid::XmarkCircle)</DropdownItemIcon>
+                            <DropdownItemLabel>"Delete"</DropdownItemLabel>
+                        </DropdownItem>
+                    </DropdownMenu>
                 </Dropdown>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Dropdown trigger=(rsx! { <TriggerButton label="Project"/> })>
-                        <DropdownItem value="share" icon=(rsx! { (fontawesome::solid::Copy) })>"Share"</DropdownItem>
-                        <DropdownItem value="preferences" icon=(rsx! { (fontawesome::solid::Gear) })>
-                            "Preferences"
-                        </DropdownItem>
-                        <Divider/>
-                        <h3>"Danger zone"</h3>
-                        <DropdownItem value="archive" icon=(rsx! { (fontawesome::solid::Bookmark) })>
-                            "Archive"
-                        </DropdownItem>
-                        <DropdownItem value="delete" variant=Danger icon=(rsx! { (fontawesome::solid::XmarkCircle) })>
-                            "Delete"
-                        </DropdownItem>
+                    <Dropdown>
+                        <Button appearance=Filled>
+                            "Project"
+                            <span class=(END, " ", ICON)>
+                                (fontawesome_ext::regular::ChevronDown)
+                            </span>
+                        </Button>
+                        <DropdownMenu>
+                            <DropdownItem value="share">
+                                <DropdownItemIcon>(fontawesome::solid::Copy)</DropdownItemIcon>
+                                <DropdownItemLabel>"Share"</DropdownItemLabel>
+                            </DropdownItem>
+                            <Divider/>
+                            <h3>"Danger zone"</h3>
+                            <DropdownItem value="delete" variant=Danger>
+                                <DropdownItemIcon>(fontawesome::solid::XmarkCircle)</DropdownItemIcon>
+                                <DropdownItemLabel>"Delete"</DropdownItemLabel>
+                            </DropdownItem>
+                        </DropdownMenu>
                     </Dropdown>
                 "#</code>
             </CodeExampleSource>
@@ -255,50 +392,87 @@ pub fn overview() -> impl Renderable {
         <Head level=H3 id="submenus" anchor=true>
             "Submenus"
         </Head>
-        <p>"To nest a menu, pass the nested items to an item's "<code>submenu</code>" property. A submenu opens on "
-            "hover, on "<code>"→"</code>" and on activation; "<code>"←"</code>" and "<code>Escape</code>
-            " collapse it again. An item that opens a submenu doesn't emit "<code>"wg-select"</code>" itself."
+        <p>"To nest a menu, put a "<code>DropdownSubmenu</code>" with the nested items last into an item and set "
+            <code>"submenu=true"</code>" on it — the flag is what announces the item as a submenu trigger to "
+            "assistive technology. A submenu opens on hover, on "<code>"→"</code>" and on activation; "
+            <code>"←"</code>" and "<code>Escape</code>" collapse it again. An item that opens a submenu doesn't "
+            "emit "<code>"wg-select"</code>" itself."
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
                 <div class="dropdown-select-demo">
-                    <Dropdown trigger=(rsx! { <TriggerButton label="File"/> })>
-                        <DropdownItem value="new">"New"</DropdownItem>
-                        <DropdownItem value="open">"Open"</DropdownItem>
-                        <Divider/>
-                        <DropdownItem submenu=(rsx! {
-                            <DropdownItem value="pdf">"PDF"</DropdownItem>
-                            <DropdownItem value="docx">"Word document"</DropdownItem>
-                            <DropdownItem value="xlsx">"Excel spreadsheet"</DropdownItem>
-                            <DropdownItem value="csv">"CSV"</DropdownItem>
-                        })>
-                            "Export"
-                        </DropdownItem>
-                        <DropdownItem submenu=(rsx! {
-                            <DropdownItem checkbox=true value="compress">"Compress files"</DropdownItem>
-                            <DropdownItem checkbox=true checked=true value="metadata">"Include metadata"</DropdownItem>
-                            <DropdownItem checkbox=true value="password">"Password protect"</DropdownItem>
-                        })>
-                            "Options"
-                        </DropdownItem>
+                    <Dropdown>
+                        <TriggerButton label="File"/>
+                        <DropdownMenu>
+                            <DropdownItem value="new">
+                                <DropdownItemLabel>"New"</DropdownItemLabel>
+                            </DropdownItem>
+                            <DropdownItem value="open">
+                                <DropdownItemLabel>"Open"</DropdownItemLabel>
+                            </DropdownItem>
+                            <Divider/>
+                            <DropdownItem submenu=true>
+                                <DropdownItemLabel>"Export"</DropdownItemLabel>
+                                <DropdownSubmenu>
+                                    <DropdownItem value="pdf">
+                                        <DropdownItemLabel>"PDF"</DropdownItemLabel>
+                                    </DropdownItem>
+                                    <DropdownItem value="docx">
+                                        <DropdownItemLabel>"Word document"</DropdownItemLabel>
+                                    </DropdownItem>
+                                    <DropdownItem value="xlsx">
+                                        <DropdownItemLabel>"Excel spreadsheet"</DropdownItemLabel>
+                                    </DropdownItem>
+                                    <DropdownItem value="csv">
+                                        <DropdownItemLabel>"CSV"</DropdownItemLabel>
+                                    </DropdownItem>
+                                </DropdownSubmenu>
+                            </DropdownItem>
+                            <DropdownItem submenu=true>
+                                <DropdownItemLabel>"Options"</DropdownItemLabel>
+                                <DropdownSubmenu>
+                                    <DropdownItem checkbox=true value="compress">
+                                        <DropdownItemLabel>"Compress files"</DropdownItemLabel>
+                                    </DropdownItem>
+                                    <DropdownItem checkbox=true checked=true value="metadata">
+                                        <DropdownItemLabel>"Include metadata"</DropdownItemLabel>
+                                    </DropdownItem>
+                                    <DropdownItem checkbox=true value="password">
+                                        <DropdownItemLabel>"Password protect"</DropdownItemLabel>
+                                    </DropdownItem>
+                                </DropdownSubmenu>
+                            </DropdownItem>
+                        </DropdownMenu>
                     </Dropdown>
                     <p class="dropdown-demo-output">"Nothing selected yet"</p>
                 </div>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Dropdown trigger=(rsx! { <TriggerButton label="File"/> })>
-                        <DropdownItem value="new">"New"</DropdownItem>
-                        <DropdownItem value="open">"Open"</DropdownItem>
-                        <Divider/>
-                        <DropdownItem submenu=(rsx! {
-                            <DropdownItem value="pdf">"PDF"</DropdownItem>
-                            <DropdownItem value="docx">"Word document"</DropdownItem>
-                            <DropdownItem value="xlsx">"Excel spreadsheet"</DropdownItem>
-                            <DropdownItem value="csv">"CSV"</DropdownItem>
-                        })>
-                            "Export"
-                        </DropdownItem>
+                    <Dropdown>
+                        <Button appearance=Filled>
+                            "File"
+                            <span class=(END, " ", ICON)>
+                                (fontawesome_ext::regular::ChevronDown)
+                            </span>
+                        </Button>
+                        <DropdownMenu>
+                            <DropdownItem value="new">
+                                <DropdownItemLabel>"New"</DropdownItemLabel>
+                            </DropdownItem>
+                            <Divider/>
+                            <DropdownItem submenu=true>
+                                <DropdownItemLabel>"Export"</DropdownItemLabel>
+                                <DropdownSubmenu>
+                                    <DropdownItem value="pdf">
+                                        <DropdownItemLabel>"PDF"</DropdownItemLabel>
+                                    </DropdownItem>
+                                    <DropdownItem value="docx">
+                                        <DropdownItemLabel>"Word document"</DropdownItemLabel>
+                                    </DropdownItem>
+                                </DropdownSubmenu>
+                            </DropdownItem>
+                        </DropdownMenu>
                     </Dropdown>
                 "#</code>
             </CodeExampleSource>
@@ -311,20 +485,41 @@ pub fn overview() -> impl Renderable {
         <p>"Add the "<code>disabled</code>" property to any item to make it unselectable."</p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Dropdown trigger=(rsx! { <TriggerButton label="Payment method"/> })>
-                    <DropdownItem value="cash">"Cash"</DropdownItem>
-                    <DropdownItem value="check" disabled=true>"Personal check"</DropdownItem>
-                    <DropdownItem value="credit">"Credit card"</DropdownItem>
-                    <DropdownItem value="gift-card">"Gift card"</DropdownItem>
+                <Dropdown>
+                    <TriggerButton label="Payment method"/>
+                    <DropdownMenu>
+                        <DropdownItem value="cash">
+                            <DropdownItemLabel>"Cash"</DropdownItemLabel>
+                        </DropdownItem>
+                        <DropdownItem value="check" disabled=true>
+                            <DropdownItemLabel>"Personal check"</DropdownItemLabel>
+                        </DropdownItem>
+                        <DropdownItem value="credit">
+                            <DropdownItemLabel>"Credit card"</DropdownItemLabel>
+                        </DropdownItem>
+                        <DropdownItem value="gift-card">
+                            <DropdownItemLabel>"Gift card"</DropdownItemLabel>
+                        </DropdownItem>
+                    </DropdownMenu>
                 </Dropdown>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Dropdown trigger=(rsx! { <TriggerButton label="Payment method"/> })>
-                        <DropdownItem value="cash">"Cash"</DropdownItem>
-                        <DropdownItem value="check" disabled=true>"Personal check"</DropdownItem>
-                        <DropdownItem value="credit">"Credit card"</DropdownItem>
-                        <DropdownItem value="gift-card">"Gift card"</DropdownItem>
+                    <Dropdown>
+                        <Button appearance=Filled>
+                            "Payment method"
+                            <span class=(END, " ", ICON)>
+                                (fontawesome_ext::regular::ChevronDown)
+                            </span>
+                        </Button>
+                        <DropdownMenu>
+                            <DropdownItem value="cash">
+                                <DropdownItemLabel>"Cash"</DropdownItemLabel>
+                            </DropdownItem>
+                            <DropdownItem value="check" disabled=true>
+                                <DropdownItemLabel>"Personal check"</DropdownItemLabel>
+                            </DropdownItem>
+                        </DropdownMenu>
                     </Dropdown>
                 "#</code>
             </CodeExampleSource>
@@ -341,22 +536,44 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Dropdown placement=RightStart trigger=(rsx! { <TriggerButton label="File formats"/> })>
-                    <DropdownItem value="pdf">"PDF document"</DropdownItem>
-                    <DropdownItem value="docx">"Word document"</DropdownItem>
-                    <DropdownItem value="xlsx">"Excel spreadsheet"</DropdownItem>
-                    <DropdownItem value="txt">"Plain text"</DropdownItem>
-                    <DropdownItem value="json">"JSON file"</DropdownItem>
+                <Dropdown placement=RightStart>
+                    <TriggerButton label="File formats"/>
+                    <DropdownMenu>
+                        <DropdownItem value="pdf">
+                            <DropdownItemLabel>"PDF document"</DropdownItemLabel>
+                        </DropdownItem>
+                        <DropdownItem value="docx">
+                            <DropdownItemLabel>"Word document"</DropdownItemLabel>
+                        </DropdownItem>
+                        <DropdownItem value="xlsx">
+                            <DropdownItemLabel>"Excel spreadsheet"</DropdownItemLabel>
+                        </DropdownItem>
+                        <DropdownItem value="txt">
+                            <DropdownItemLabel>"Plain text"</DropdownItemLabel>
+                        </DropdownItem>
+                        <DropdownItem value="json">
+                            <DropdownItemLabel>"JSON file"</DropdownItemLabel>
+                        </DropdownItem>
+                    </DropdownMenu>
                 </Dropdown>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Dropdown placement=RightStart trigger=(rsx! { <TriggerButton label="File formats"/> })>
-                        <DropdownItem value="pdf">"PDF document"</DropdownItem>
-                        <DropdownItem value="docx">"Word document"</DropdownItem>
-                        <DropdownItem value="xlsx">"Excel spreadsheet"</DropdownItem>
-                        <DropdownItem value="txt">"Plain text"</DropdownItem>
-                        <DropdownItem value="json">"JSON file"</DropdownItem>
+                    <Dropdown placement=RightStart>
+                        <Button appearance=Filled>
+                            "File formats"
+                            <span class=(END, " ", ICON)>
+                                (fontawesome_ext::regular::ChevronDown)
+                            </span>
+                        </Button>
+                        <DropdownMenu>
+                            <DropdownItem value="pdf">
+                                <DropdownItemLabel>"PDF document"</DropdownItemLabel>
+                            </DropdownItem>
+                            <DropdownItem value="docx">
+                                <DropdownItemLabel>"Word document"</DropdownItemLabel>
+                            </DropdownItem>
+                        </DropdownMenu>
                     </Dropdown>
                 "#</code>
             </CodeExampleSource>
@@ -369,18 +586,38 @@ pub fn overview() -> impl Renderable {
         <p>"Set the "<code>distance</code>" property to change the gap between the menu and the trigger, in pixels."</p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Dropdown distance=30 trigger=(rsx! { <TriggerButton label="Edit"/> })>
-                    <DropdownItem value="cut">"Cut"</DropdownItem>
-                    <DropdownItem value="copy">"Copy"</DropdownItem>
-                    <DropdownItem value="paste">"Paste"</DropdownItem>
+                <Dropdown distance=30>
+                    <TriggerButton label="Edit"/>
+                    <DropdownMenu>
+                        <DropdownItem value="cut">
+                            <DropdownItemLabel>"Cut"</DropdownItemLabel>
+                        </DropdownItem>
+                        <DropdownItem value="copy">
+                            <DropdownItemLabel>"Copy"</DropdownItemLabel>
+                        </DropdownItem>
+                        <DropdownItem value="paste">
+                            <DropdownItemLabel>"Paste"</DropdownItemLabel>
+                        </DropdownItem>
+                    </DropdownMenu>
                 </Dropdown>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Dropdown distance=30 trigger=(rsx! { <TriggerButton label="Edit"/> })>
-                        <DropdownItem value="cut">"Cut"</DropdownItem>
-                        <DropdownItem value="copy">"Copy"</DropdownItem>
-                        <DropdownItem value="paste">"Paste"</DropdownItem>
+                    <Dropdown distance=30>
+                        <Button appearance=Filled>
+                            "Edit"
+                            <span class=(END, " ", ICON)>
+                                (fontawesome_ext::regular::ChevronDown)
+                            </span>
+                        </Button>
+                        <DropdownMenu>
+                            <DropdownItem value="cut">
+                                <DropdownItemLabel>"Cut"</DropdownItemLabel>
+                            </DropdownItem>
+                            <DropdownItem value="copy">
+                                <DropdownItemLabel>"Copy"</DropdownItemLabel>
+                            </DropdownItem>
+                        </DropdownMenu>
                     </Dropdown>
                 "#</code>
             </CodeExampleSource>
@@ -393,18 +630,38 @@ pub fn overview() -> impl Renderable {
         <p>"Set the "<code>skidding</code>" property to slide the menu along the trigger, in pixels."</p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Dropdown skidding=30 trigger=(rsx! { <TriggerButton label="Edit"/> })>
-                    <DropdownItem value="cut">"Cut"</DropdownItem>
-                    <DropdownItem value="copy">"Copy"</DropdownItem>
-                    <DropdownItem value="paste">"Paste"</DropdownItem>
+                <Dropdown skidding=30>
+                    <TriggerButton label="Edit"/>
+                    <DropdownMenu>
+                        <DropdownItem value="cut">
+                            <DropdownItemLabel>"Cut"</DropdownItemLabel>
+                        </DropdownItem>
+                        <DropdownItem value="copy">
+                            <DropdownItemLabel>"Copy"</DropdownItemLabel>
+                        </DropdownItem>
+                        <DropdownItem value="paste">
+                            <DropdownItemLabel>"Paste"</DropdownItemLabel>
+                        </DropdownItem>
+                    </DropdownMenu>
                 </Dropdown>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Dropdown skidding=30 trigger=(rsx! { <TriggerButton label="Edit"/> })>
-                        <DropdownItem value="cut">"Cut"</DropdownItem>
-                        <DropdownItem value="copy">"Copy"</DropdownItem>
-                        <DropdownItem value="paste">"Paste"</DropdownItem>
+                    <Dropdown skidding=30>
+                        <Button appearance=Filled>
+                            "Edit"
+                            <span class=(END, " ", ICON)>
+                                (fontawesome_ext::regular::ChevronDown)
+                            </span>
+                        </Button>
+                        <DropdownMenu>
+                            <DropdownItem value="cut">
+                                <DropdownItemLabel>"Cut"</DropdownItemLabel>
+                            </DropdownItem>
+                            <DropdownItem value="copy">
+                                <DropdownItemLabel>"Copy"</DropdownItemLabel>
+                            </DropdownItem>
+                        </DropdownMenu>
                     </Dropdown>
                 "#</code>
             </CodeExampleSource>
@@ -420,25 +677,43 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Dropdown size=Small trigger=(rsx! {
+                <Dropdown size=Small>
                     <Button appearance=Filled class=SIZE_SMALL>
                         "Small"
                         <span class=(END, " ", ICON)>
                             (fontawesome_ext::regular::ChevronDown)
                         </span>
                     </Button>
-                })>
-                    <DropdownItem value="option-1">"Option 1"</DropdownItem>
-                    <DropdownItem value="option-2">"Option 2"</DropdownItem>
-                    <DropdownItem value="option-3">"Option 3"</DropdownItem>
+                    <DropdownMenu>
+                        <DropdownItem value="option-1">
+                            <DropdownItemLabel>"Option 1"</DropdownItemLabel>
+                        </DropdownItem>
+                        <DropdownItem value="option-2">
+                            <DropdownItemLabel>"Option 2"</DropdownItemLabel>
+                        </DropdownItem>
+                        <DropdownItem value="option-3">
+                            <DropdownItemLabel>"Option 3"</DropdownItemLabel>
+                        </DropdownItem>
+                    </DropdownMenu>
                 </Dropdown>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Dropdown size=Small trigger=(rsx! { <Button appearance=Filled class=SIZE_SMALL>"Small"</Button> })>
-                        <DropdownItem value="option-1">"Option 1"</DropdownItem>
-                        <DropdownItem value="option-2">"Option 2"</DropdownItem>
-                        <DropdownItem value="option-3">"Option 3"</DropdownItem>
+                    <Dropdown size=Small>
+                        <Button appearance=Filled class=SIZE_SMALL>
+                            "Small"
+                            <span class=(END, " ", ICON)>
+                                (fontawesome_ext::regular::ChevronDown)
+                            </span>
+                        </Button>
+                        <DropdownMenu>
+                            <DropdownItem value="option-1">
+                                <DropdownItemLabel>"Option 1"</DropdownItemLabel>
+                            </DropdownItem>
+                            <DropdownItem value="option-2">
+                                <DropdownItemLabel>"Option 2"</DropdownItemLabel>
+                            </DropdownItem>
+                        </DropdownMenu>
                     </Dropdown>
                 "#</code>
             </CodeExampleSource>
@@ -455,26 +730,43 @@ pub fn overview() -> impl Renderable {
         <CodeExample>
             <CodeExamplePreview resize=true>
                 <div class="dropdown-select-demo">
-                    <Dropdown trigger=(rsx! { <TriggerButton label="View"/> })>
-                        <DropdownItem value="zoom-in" icon=(rsx! { (fontawesome::solid::House) })>
-                            "Zoom in"
-                        </DropdownItem>
-                        <DropdownItem value="zoom-out" icon=(rsx! { (fontawesome::solid::House) })>
-                            "Zoom out"
-                        </DropdownItem>
-                        <Divider/>
-                        <DropdownItem value="actual">"Actual size"</DropdownItem>
+                    <Dropdown>
+                        <TriggerButton label="View"/>
+                        <DropdownMenu>
+                            <DropdownItem value="zoom-in">
+                                <DropdownItemIcon>(fontawesome::solid::House)</DropdownItemIcon>
+                                <DropdownItemLabel>"Zoom in"</DropdownItemLabel>
+                            </DropdownItem>
+                            <DropdownItem value="zoom-out">
+                                <DropdownItemIcon>(fontawesome::solid::House)</DropdownItemIcon>
+                                <DropdownItemLabel>"Zoom out"</DropdownItemLabel>
+                            </DropdownItem>
+                            <Divider/>
+                            <DropdownItem value="actual">
+                                <DropdownItemLabel>"Actual size"</DropdownItemLabel>
+                            </DropdownItem>
+                        </DropdownMenu>
                     </Dropdown>
                     <p class="dropdown-demo-output">"Nothing selected yet"</p>
                 </div>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Dropdown trigger=(rsx! { <TriggerButton label="View"/> })>
-                        <DropdownItem value="zoom-in">"Zoom in"</DropdownItem>
-                        <DropdownItem value="zoom-out">"Zoom out"</DropdownItem>
-                        <Divider/>
-                        <DropdownItem value="actual">"Actual size"</DropdownItem>
+                    <Dropdown>
+                        <Button appearance=Filled>
+                            "View"
+                            <span class=(END, " ", ICON)>
+                                (fontawesome_ext::regular::ChevronDown)
+                            </span>
+                        </Button>
+                        <DropdownMenu>
+                            <DropdownItem value="zoom-in">
+                                <DropdownItemLabel>"Zoom in"</DropdownItemLabel>
+                            </DropdownItem>
+                            <DropdownItem value="zoom-out">
+                                <DropdownItemLabel>"Zoom out"</DropdownItemLabel>
+                            </DropdownItem>
+                        </DropdownMenu>
                     </Dropdown>
 
                     // Report the selection

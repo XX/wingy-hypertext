@@ -193,7 +193,7 @@
 
 /* Danger variant */
 .dropdown-item.danger,
-.dropdown-item.danger .dropdown-item-details {
+.dropdown-item.danger > .dropdown-item-details {
   color: var(--wa-color-danger-on-quiet);
 }
 
@@ -215,21 +215,21 @@
   padding-inline-start: 2em;
 }
 
-.dropdown-item.submenu-adjacent:not(.has-submenu) .dropdown-item-details {
-  padding-inline-end: 0;
-}
-
-.dropdown-item.has-submenu {
+/* An item opens a submenu when it holds one: the markup is the state, so no
+ * class mirrors it. */
+.dropdown-item:has(> .dropdown-submenu) {
   /* Leave room for the absolutely positioned submenu indicator */
   padding-inline-end: 2.75em;
 }
 
-.dropdown-item.has-submenu.submenu-adjacent .dropdown-item-details {
+.dropdown-item.submenu-adjacent:has(> .dropdown-submenu) > .dropdown-item-details {
   padding-inline-end: 1.75em;
 }
 
-/* Checkmark */
-.dropdown-item .check {
+/* Checkmark. The parts of an item are addressed as direct children: a submenu
+ * nests items into their parent item, so a descendant selector would leak into
+ * the level below. */
+.dropdown-item > .check {
   display: flex;
   align-items: center;
   visibility: hidden;
@@ -238,12 +238,12 @@
   font-size: var(--wa-font-size-smaller);
 }
 
-.dropdown-item.checked .check {
+.dropdown-item.checked > .check {
   visibility: visible;
 }
 
 /* Icon, label and details */
-.dropdown-item .dropdown-item-icon:not(:empty) {
+.dropdown-item > .dropdown-item-icon:not(:empty) {
   display: flex;
   flex: 0 0 auto;
   align-items: center;
@@ -251,12 +251,12 @@
   font-size: var(--wa-font-size-smaller);
 }
 
-.dropdown-item .dropdown-item-label {
+.dropdown-item > .dropdown-item-label {
   flex: 1 1 auto;
   min-width: 0;
 }
 
-.dropdown-item .dropdown-item-details {
+.dropdown-item > .dropdown-item-details {
   display: flex;
   flex: 0 0 auto;
   align-items: center;
@@ -266,14 +266,14 @@
   font-size: var(--wa-font-size-smaller);
 }
 
-.dropdown-item.danger:not(.disabled):hover .dropdown-item-details,
-.dropdown-item.danger.submenu-open .dropdown-item-details,
-.dropdown-item.danger:focus-visible .dropdown-item-details {
+.dropdown-item.danger:not(.disabled):hover > .dropdown-item-details,
+.dropdown-item.danger.submenu-open > .dropdown-item-details,
+.dropdown-item.danger:focus-visible > .dropdown-item-details {
   color: inherit;
 }
 
 /* Submenu indicator */
-.dropdown-item .submenu-icon {
+.dropdown-item > .submenu-icon {
   display: flex;
   position: absolute;
   align-items: center;
@@ -283,6 +283,6 @@
 }
 
 /* Flip the chevron when RTL */
-.dropdown-item:dir(rtl) .submenu-icon {
+.dropdown-item:dir(rtl) > .submenu-icon {
   transform: scaleX(-1);
 }

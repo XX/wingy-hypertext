@@ -108,6 +108,8 @@ pub fn props(input: DeriveInput) -> syn::Result<TokenStream> {
             let mut is_impl_from = false;
             let mut is_into = false;
             let mut is_convert = false;
+            let mut is_self = false;
+            let mut is_not_self = false;
 
             if let Some(prop_attr) = field.attrs.iter().find(|attr| attr.path().is_ident("prop")) {
                 prop_attr.parse_nested_meta(|meta| {
@@ -131,12 +133,36 @@ pub fn props(input: DeriveInput) -> syn::Result<TokenStream> {
                         return Ok(());
                     }
 
+                    if meta.path.is_ident("self") {
+                        is_self = true;
+                        return Ok(());
+                    }
+
+                    if meta.path.is_ident("not_self") {
+                        is_not_self = true;
+                        return Ok(());
+                    }
+
                     Err(meta.error("unexpected param for `#[prop(...)]`"))
                 })?;
             }
 
             if !is_skip {
-                let (is_optional, ty) = extract_option_type(ty);
+                let (is_optional, inner_ty) = extract_option_type(ty);
+
+                if (is_self || is_optional) && !is_not_self {
+                    let method_name = format_ident!("self_{name}");
+
+                    methods.push(quote! {
+                        #[must_use]
+                        #vis fn #method_name(mut self, #name: #ty) -> Self {
+                            self.#name = #name;
+                            self
+                        }
+                    });
+                }
+
+                let ty = inner_ty;
                 let value = if is_into { quote!(#name.into()) } else { quote!(#name) };
                 let value_ty = if is_into {
                     quote!(impl ::std::convert::Into<#ty>)
@@ -174,7 +200,7 @@ pub fn props(input: DeriveInput) -> syn::Result<TokenStream> {
                             field.ident.as_ref().map(|ident| {
                                 if ident == name {
                                     if is_optional {
-                                        quote!(#name: Some(#name))
+                                        quote!(#name: #name.into())
                                     } else {
                                         quote!(#name)
                                     }

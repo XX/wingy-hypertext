@@ -92,7 +92,8 @@ fn is_submenu_open(item: &Element) -> bool {
 
 fn item_label(item: &Element) -> String {
     item.get_attribute("data-label").unwrap_or_else(|| {
-        item.query_selector(".dropdown-item-label")
+        // Only the item's own label: a submenu nests items carrying labels too.
+        item.query_selector(":scope > .dropdown-item-label")
             .ok()
             .flatten()
             .and_then(|label| label.text_content())

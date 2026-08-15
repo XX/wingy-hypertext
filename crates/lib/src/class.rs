@@ -59,7 +59,6 @@ pub const GAP_XL: &str = "wa-gap-xl";
 pub const GAP_2XL: &str = "wa-gap-2xl";
 pub const GAP_3XL: &str = "wa-gap-3xl";
 pub const GRID: &str = "wa-grid";
-pub const HAS_SUBMENU: &str = "has-submenu";
 pub const HEAD: &str = "head";
 pub const HEADING_5XL: &str = "wa-heading-5xl";
 pub const HEADING_4XL: &str = "wa-heading-4xl";

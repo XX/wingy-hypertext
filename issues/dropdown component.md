@@ -248,3 +248,61 @@
   приглушённый цвет.
 
 ---
+
+---
+
+Перепиши стили Dropdown под использование ".dropdown-item:has(> .dropdown-submenu)" и внеси другие необходимые
+правки в связи с изменением структуры самого компонента, где содержимое будет передаваться в self.children извне
+(examples тоже поправь).
+
+---
+
+● Компонент переведён на композицию через детей, класс `has-submenu` убран.
+
+  Разметка. Слоты `trigger`, `icon`, `details`, `submenu` заменены компонентами-частями, каждая из которых
+  рендерит свой span/div и принимает `attributes` + детей: `DropdownTrigger`, `DropdownMenu`,
+  `DropdownItemIcon`, `DropdownItemLabel`, `DropdownItemDetails`, `DropdownSubmenu` (последний рендерит и
+  индикатор `.submenu-icon`, и само подменю, поэтому ставится последним ребёнком элемента). `Dropdown`,
+  `DropdownItem` и части стали негенерическими — `DynRenderable` в модуле больше не нужен. Итоговый HTML
+  не изменился.
+
+  CSS (`webassets/style/components/dropdown.css`):
+  - `.dropdown-item.has-submenu` → `.dropdown-item:has(> .dropdown-submenu)`, состояние берётся из разметки;
+  - правило `.dropdown-item.submenu-adjacent:not(.has-submenu) .dropdown-item-details { padding-inline-end: 0 }`
+    удалено как мёртвое: `padding-inline-end` у `.dropdown-item-details` больше нигде не задавался, сброс в 0
+    ничего не переопределял;
+  - части элемента (`.check`, `.dropdown-item-icon`, `.dropdown-item-label`, `.dropdown-item-details`,
+    `.submenu-icon`) адресуются прямыми детьми: подменю вкладывает элементы внутрь родительского элемента,
+    и потомковые селекторы протекали на уровень ниже (`.dropdown-item.checked .check` показывал галочку у
+    вложенных элементов, `.danger .dropdown-item-details` красил их details). Специфичность не изменилась.
+  - константа `HAS_SUBMENU` удалена из `crates/lib/src/class.rs`.
+
+  ARIA. `aria-haspopup`/`aria-expanded` рендерятся по новому булеву свойству `submenu` элемента: подменю
+  теперь ребёнок, и при рендере элемент о нём не знает. На стили флаг не влияет — CSS смотрит на само подменю.
+
+  `crates/web`: `item_label` берёт подпись из `:scope > .dropdown-item-label` — раньше подпись элемента всегда
+  шла первой в document order, теперь она необязательна, и без `:scope >` typeahead мог подхватить подпись
+  вложенного элемента подменю. Остальная логика не затронута: `submenu_of` и `sync_adjacent_items` и так
+  определяли подменю структурно.
+
+  Тесты и галерея переписаны под новую композицию (`crates/lib/src/tests/dropdown.rs` — 11 тестов, добавлен
+  `empty_menu`: без `DropdownMenu` меню не рендерится вовсе; `examples/client/src/component/dropdown.rs` —
+  и превью, и показываемые сниппеты, и текст про свойства `icon`/`details`/`submenu`).
+
+  Проверки: `cargo +nightly fmt --check`, `cargo clippy --all-targets -- -D warnings`, `cargo test`
+  (87 passed), `cargo check -p example-client --target wasm32-unknown-unknown`, `cargo make client` — всё
+  зелёное. В браузере не проверял.
+
+---
+
+Убери использование DropdownTrigger в примерах, но сам компонент оставь.
+
+---
+
+● В галерее триггер теперь передаётся первым ребёнком напрямую (`<Dropdown><TriggerButton …/><DropdownMenu>…`),
+  без обёртки — и в превью, и в показываемых сниппетах; вводный абзац описывает триггер как первого ребёнка.
+  Компонент `DropdownTrigger` остаётся в библиотеке как явный маркер слота. Разметка не изменилась: обёртка
+  рендерила только своих детей, а `crates/web` ищет якорь структурно — `:scope > .popup >
+  :not(.popup-body):not(.popup-hover-bridge)`.
+
+  Проверки: fmt, clippy, `cargo test` (87 passed), `cargo make client` — зелёные.

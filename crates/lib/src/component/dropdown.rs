@@ -4,16 +4,17 @@ use derive_more::{AsMut, AsRef};
 use hypertext::prelude::{AriaAttributes, GlobalAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable, rsx};
 use iconic::{fontawesome, fontawesome_ext};
-use wingy_hypertext_macros::{DynRenderable, Props, const_str};
+use wingy_hypertext_macros::{Props, const_str};
 
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::{
     CHECK, CHECKBOX_ADJACENT, CHECKED, DISABLED, DROPDOWN, DROPDOWN_ITEM, DROPDOWN_ITEM_DETAILS, DROPDOWN_ITEM_ICON,
-    DROPDOWN_ITEM_LABEL, DROPDOWN_MENU, DROPDOWN_SUBMENU, HAS_SUBMENU, SIZE_EXTRA_LARGE, SIZE_EXTRA_SMALL, SIZE_LARGE,
-    SIZE_MEDIUM, SIZE_SMALL, SUBMENU_ADJACENT, SUBMENU_ICON,
+    DROPDOWN_ITEM_LABEL, DROPDOWN_MENU, DROPDOWN_SUBMENU, SIZE_EXTRA_LARGE, SIZE_EXTRA_SMALL, SIZE_LARGE, SIZE_MEDIUM,
+    SIZE_SMALL, SUBMENU_ADJACENT, SUBMENU_ICON,
 };
 use crate::convert;
-use crate::helper::popup::{self, Popup, PopupBody, PopupPlacement};
+use crate::helper::popup::AutoSize::Vertical;
+use crate::helper::popup::{Popup, PopupBody, PopupPlacement};
 use crate::variant::Variant;
 
 /// The dropdown's size, applied as the corresponding `size-*` class. Dropdowns
@@ -42,10 +43,22 @@ impl DropdownSize {
 }
 
 /// A list of options displayed in a menu next to a trigger element, mirroring
-/// Web Awesome's `wa-dropdown`: the `trigger` prop holds the element that opens
-/// the menu (a [`Button`](crate::component::button::Button), for example) and
-/// the children are the [`DropdownItem`]s of the menu, optionally interleaved
-/// with headings (group labels) and [`Divider`](crate::layout::divider::Divider)s.
+/// Web Awesome's `wa-dropdown`. Everything is composed through the children:
+/// a [`DropdownTrigger`] holding the element that opens the menu (a
+/// [`Button`](crate::component::button::Button), for example), followed by a
+/// [`DropdownMenu`] holding the [`DropdownItem`]s, optionally interleaved with
+/// headings (group labels) and [`Divider`](crate::layout::divider::Divider)s:
+///
+/// ```ignore
+/// rsx! {
+///     <Dropdown>
+///         <DropdownTrigger><Button>"Options"</Button></DropdownTrigger>
+///         <DropdownMenu>
+///             <DropdownItem value="edit"><DropdownItemLabel>"Edit"</DropdownItemLabel></DropdownItem>
+///         </DropdownMenu>
+///     </Dropdown>
+/// }
+/// ```
 ///
 /// The menu is positioned with the [`Popup`] helper, and the interactive
 /// behavior (opening, selection, submenus, keyboard navigation with
@@ -56,10 +69,10 @@ impl DropdownSize {
 /// Selecting an item dispatches a cancelable bubbling `wg-select` event on the
 /// dropdown; canceling it keeps the menu open. Opening and closing dispatch
 /// `wg-show`/`wg-hide` and `wg-after-show`/`wg-after-hide`.
-#[derive(AsRef, AsMut, Props, DynRenderable)]
+#[derive(AsRef, AsMut, Props)]
 #[const_str(CLASS = DROPDOWN)]
 #[props(builder)]
-pub struct Dropdown<'a, T: Renderable = ()> {
+pub struct Dropdown<'a> {
     /// The placement of the menu in reference to the trigger. The menu flips
     /// to a more optimal location when the preferred placement doesn't have
     /// enough room.
@@ -81,15 +94,10 @@ pub struct Dropdown<'a, T: Renderable = ()> {
     #[as_mut]
     pub attributes: CommonAttrs<'a>,
 
-    /// The element that triggers the dropdown, such as a `Button`. It is used
-    /// as the menu's anchor, so it must render exactly one element.
-    #[prop(convert)]
-    pub trigger: Option<T>,
-
     pub children: Option<&'a dyn Renderable>,
 }
 
-impl<'a, T: Renderable> Default for Dropdown<'a, T> {
+impl<'a> Default for Dropdown<'a> {
     fn default() -> Self {
         Self {
             placement: PopupPlacement::BottomStart,
@@ -98,63 +106,96 @@ impl<'a, T: Renderable> Default for Dropdown<'a, T> {
             skidding: None,
             size: None,
             attributes: CommonAttrs::default(),
-            trigger: None,
             children: None,
         }
     }
 }
 
-impl<'a, T: Renderable> Dropdown<'a, T> {
-    fn render_to(&self, buffer: &mut Buffer, trigger: Option<&dyn Renderable>) {
+impl<'a> Renderable for Dropdown<'a> {
+    fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
         let class_line =
             self.class_line_with(&[Self::CLASS, self.size.map(DropdownSize::into_str).unwrap_or_default()]);
         let style_line = self.style_line_with(&[]);
-
         let open = self.open.then_some("");
-
-        // The trigger is the popup's anchor, the menu goes into the popup body.
-        let content = rsx! {
-            (trigger)
-            <PopupBody>
-                <div class=DROPDOWN_MENU role="menu" tabindex="-1" aria-orientation="vertical" hidden>
-                    (self.children)
-                </div>
-            </PopupBody>
-        };
-
-        // The popup needs no class of its own: it is the only child of the
-        // dropdown host, so `.dropdown > .popup` addresses it unambiguously.
-        // The optional `distance`/`skidding` don't survive a builder setter
-        // (which would wrap them into `Some` again), so they are assigned directly.
-        let mut menu_popup = Popup::builder()
-            .placement(self.placement)
-            .flip(true)
-            .shift(true)
-            .shift_padding(10)
-            .auto_size(popup::AutoSize::Vertical)
-            .auto_size_padding(10)
-            .bare(true)
-            .children(&content);
-        menu_popup.distance = self.distance;
-        menu_popup.skidding = self.skidding;
 
         rsx! {
             <div id=[id] class=[&class_line] style=[&style_line] data-open=[open] (self.get_attrs())>
-                (menu_popup)
+                <Popup
+                    placement=(self.placement)
+                    flip=true
+                    shift=true
+                    shift_padding=10
+                    auto_size=Vertical
+                    auto_size_padding=10
+                    bare=true
+                    self_distance=(self.distance)
+                    self_skidding=(self.skidding)
+                >
+                    // The trigger is the popup's anchor, the menu goes into the popup body.
+                    (self.children)
+                </Popup>
             </div>
         }
         .render_to(buffer);
     }
 }
 
-/// A single entry of a [`Dropdown`] menu, mirroring Web Awesome's
-/// `wa-dropdown-item`: a plain action, a checkable item (`checkbox`), or a
-/// submenu trigger (the `submenu` prop).
-#[derive(AsRef, AsMut, Props, DynRenderable)]
+/// The element that triggers the dropdown, such as a `Button`. It is used
+/// as the menu's anchor, so it must render exactly one element.
+#[derive(Default, AsRef, AsMut, Props)]
+#[props(builder)]
+pub struct DropdownTrigger<'a> {
+    pub children: Option<&'a dyn Renderable>,
+}
+
+impl<'a> Renderable for DropdownTrigger<'a> {
+    fn render_to(&self, buffer: &mut Buffer) {
+        rsx! {
+            (self.children)
+        }
+        .render_to(buffer);
+    }
+}
+
+/// The menu of a [`Dropdown`], rendered into the body of the popup that
+/// anchors it to the trigger. Its children are the [`DropdownItem`]s.
+#[derive(Default, AsRef, AsMut, Props)]
+#[const_str(CLASS = DROPDOWN_MENU)]
+#[props(builder)]
+pub struct DropdownMenu<'a> {
+    #[as_ref]
+    #[as_mut]
+    pub attributes: CommonAttrs<'a>,
+
+    pub children: Option<&'a dyn Renderable>,
+}
+
+impl<'a> Renderable for DropdownMenu<'a> {
+    fn render_to(&self, buffer: &mut Buffer) {
+        rsx! {
+            <PopupBody attributes=(self.attributes.clone())>
+                <div class=DROPDOWN_MENU role="menu" tabindex="-1" aria-orientation="vertical" hidden>
+                    (self.children)
+                </div>
+            </PopupBody>
+        }
+        .render_to(buffer);
+    }
+}
+
+/// A single entry of a [`DropdownMenu`]: a plain action, a checkable item
+/// (`checkbox`), or a submenu trigger.
+///
+/// The content is composed from the children: an optional
+/// [`DropdownItemIcon`], a [`DropdownItemLabel`], an optional
+/// [`DropdownItemDetails`] and, for a submenu trigger, a [`DropdownSubmenu`]
+/// last. The checkmark of a checkable item is rendered by the item itself,
+/// before the children.
+#[derive(AsRef, AsMut, Props)]
 #[const_str(CLASS = DROPDOWN_ITEM)]
 #[props(builder)]
-pub struct DropdownItem<'a, I: Renderable = (), D: Renderable = (), S: Renderable = ()> {
+pub struct DropdownItem<'a> {
     /// `Danger` flags a destructive action; every other variant renders as a
     /// regular item.
     #[prop(impl_from)]
@@ -162,6 +203,12 @@ pub struct DropdownItem<'a, I: Renderable = (), D: Renderable = (), S: Renderabl
 
     /// Makes the item a checkbox, rendering a checkmark when `checked`.
     pub checkbox: bool,
+
+    /// Announces the item as a submenu trigger (`aria-haspopup`/`aria-expanded`).
+    /// Set it on every item holding a [`DropdownSubmenu`]: the submenu is a
+    /// child, so the item cannot detect it while rendering. The styling doesn't
+    /// depend on this flag — the CSS matches the submenu itself.
+    pub submenu: bool,
 
     pub checked: bool,
 
@@ -191,26 +238,15 @@ pub struct DropdownItem<'a, I: Renderable = (), D: Renderable = (), S: Renderabl
     #[as_mut]
     pub attributes: CommonAttrs<'a>,
 
-    /// An optional icon displayed before the label.
-    #[prop(convert)]
-    pub icon: Option<I>,
-
-    /// Additional content displayed after the label, such as a keyboard shortcut.
-    #[prop(convert)]
-    pub details: Option<D>,
-
-    /// Nested [`DropdownItem`]s, turning this item into a submenu trigger.
-    #[prop(convert)]
-    pub submenu: Option<S>,
-
     pub children: Option<&'a dyn Renderable>,
 }
 
-impl<'a, I: Renderable, D: Renderable, S: Renderable> Default for DropdownItem<'a, I, D, S> {
+impl<'a> Default for DropdownItem<'a> {
     fn default() -> Self {
         Self {
             variant: Variant::Neutral,
             checkbox: false,
+            submenu: false,
             checked: false,
             disabled: false,
             checkbox_adjacent: false,
@@ -218,28 +254,18 @@ impl<'a, I: Renderable, D: Renderable, S: Renderable> Default for DropdownItem<'
             value: None,
             label: None,
             attributes: CommonAttrs::default(),
-            icon: None,
-            details: None,
-            submenu: None,
             children: None,
         }
     }
 }
 
-impl<'a, I: Renderable, D: Renderable, S: Renderable> DropdownItem<'a, I, D, S> {
-    fn render_to(
-        &self,
-        buffer: &mut Buffer,
-        icon: Option<&dyn Renderable>,
-        details: Option<&dyn Renderable>,
-        submenu: Option<&dyn Renderable>,
-    ) {
+impl<'a> Renderable for DropdownItem<'a> {
+    fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
             if self.checked { CHECKED } else { "" },
             if self.disabled { DISABLED } else { "" },
-            if submenu.is_some() { HAS_SUBMENU } else { "" },
             if self.checkbox_adjacent { CHECKBOX_ADJACENT } else { "" },
             if self.submenu_adjacent { SUBMENU_ADJACENT } else { "" },
             self.variant.into_str(),
@@ -248,8 +274,8 @@ impl<'a, I: Renderable, D: Renderable, S: Renderable> DropdownItem<'a, I, D, S> 
 
         let role = if self.checkbox { "menuitemcheckbox" } else { "menuitem" };
         let checked = self.checkbox.then(|| convert::bool_to_str(self.checked));
-        let has_popup = submenu.is_some().then_some("menu");
-        let expanded = submenu.is_some().then_some("false");
+        let has_popup = self.submenu.then_some("menu");
+        let expanded = self.submenu.then_some("false");
 
         rsx! {
             <div
@@ -271,21 +297,132 @@ impl<'a, I: Renderable, D: Renderable, S: Renderable> DropdownItem<'a, I, D, S> 
                         (fontawesome::solid::Check)
                     </span>
                 }
-                @if let Some(icon) = icon {
-                    <span class=DROPDOWN_ITEM_ICON>(icon)</span>
-                }
-                <span class=DROPDOWN_ITEM_LABEL>(self.children)</span>
-                @if let Some(details) = details {
-                    <span class=DROPDOWN_ITEM_DETAILS>(details)</span>
-                }
-                @if let Some(submenu) = submenu {
-                    <span class=SUBMENU_ICON aria-hidden="true">
-                        (fontawesome_ext::regular::ChevronRight)
-                    </span>
-                    <div class=DROPDOWN_SUBMENU role="menu" tabindex="-1" aria-orientation="vertical" hidden>
-                        (submenu)
-                    </div>
-                }
+                (self.children)
+            </div>
+        }
+        .render_to(buffer);
+    }
+}
+
+/// An icon displayed before the label of a [`DropdownItem`].
+#[derive(Default, AsRef, AsMut, Props)]
+#[const_str(CLASS = DROPDOWN_ITEM_ICON)]
+#[props(builder)]
+pub struct DropdownItemIcon<'a> {
+    #[as_ref]
+    #[as_mut]
+    pub attributes: CommonAttrs<'a>,
+
+    pub children: Option<&'a dyn Renderable>,
+}
+
+impl<'a> Renderable for DropdownItemIcon<'a> {
+    fn render_to(&self, buffer: &mut Buffer) {
+        let id = self.id();
+        let class_line = self.class_line_with(&[Self::CLASS]);
+        let style_line = self.style_line_with(&[]);
+
+        rsx! {
+            <span id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
+                (self.children)
+            </span>
+        }
+        .render_to(buffer);
+    }
+}
+
+/// The label of a [`DropdownItem`], taking the space the icon, the details and
+/// the submenu indicator leave. It is also what type-to-select matches against,
+/// unless the item carries an explicit `label`.
+#[derive(Default, AsRef, AsMut, Props)]
+#[const_str(CLASS = DROPDOWN_ITEM_LABEL)]
+#[props(builder)]
+pub struct DropdownItemLabel<'a> {
+    #[as_ref]
+    #[as_mut]
+    pub attributes: CommonAttrs<'a>,
+
+    pub children: Option<&'a dyn Renderable>,
+}
+
+impl<'a> Renderable for DropdownItemLabel<'a> {
+    fn render_to(&self, buffer: &mut Buffer) {
+        let id = self.id();
+        let class_line = self.class_line_with(&[Self::CLASS]);
+        let style_line = self.style_line_with(&[]);
+
+        rsx! {
+            <span id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
+                (self.children)
+            </span>
+        }
+        .render_to(buffer);
+    }
+}
+
+/// Secondary content displayed after the label of a [`DropdownItem`], such as a
+/// keyboard shortcut.
+#[derive(Default, AsRef, AsMut, Props)]
+#[const_str(CLASS = DROPDOWN_ITEM_DETAILS)]
+#[props(builder)]
+pub struct DropdownItemDetails<'a> {
+    #[as_ref]
+    #[as_mut]
+    pub attributes: CommonAttrs<'a>,
+
+    pub children: Option<&'a dyn Renderable>,
+}
+
+impl<'a> Renderable for DropdownItemDetails<'a> {
+    fn render_to(&self, buffer: &mut Buffer) {
+        let id = self.id();
+        let class_line = self.class_line_with(&[Self::CLASS]);
+        let style_line = self.style_line_with(&[]);
+
+        rsx! {
+            <span id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
+                (self.children)
+            </span>
+        }
+        .render_to(buffer);
+    }
+}
+
+/// A menu nested into a [`DropdownItem`], turning it into a submenu trigger.
+/// It renders the submenu indicator next to the item's content and the nested
+/// menu itself, so it must be the last child of the item; the item needs
+/// `submenu=true` for the matching ARIA attributes.
+#[derive(Default, AsRef, AsMut, Props)]
+#[const_str(CLASS = DROPDOWN_SUBMENU)]
+#[props(builder)]
+pub struct DropdownSubmenu<'a> {
+    #[as_ref]
+    #[as_mut]
+    pub attributes: CommonAttrs<'a>,
+
+    pub children: Option<&'a dyn Renderable>,
+}
+
+impl<'a> Renderable for DropdownSubmenu<'a> {
+    fn render_to(&self, buffer: &mut Buffer) {
+        let id = self.id();
+        let class_line = self.class_line_with(&[Self::CLASS]);
+        let style_line = self.style_line_with(&[]);
+
+        rsx! {
+            <span class=SUBMENU_ICON aria-hidden="true">
+                (fontawesome_ext::regular::ChevronRight)
+            </span>
+            <div id=[id]
+                class=[&class_line]
+                style=[&style_line]
+                role="menu"
+                tabindex="-1"
+                aria-orientation="vertical"
+                hidden
+                (self.get_attrs())
+            >
+                (self.children)
             </div>
         }
         .render_to(buffer);
