@@ -42,17 +42,17 @@ impl DropdownSize {
     }
 }
 
-/// A list of options displayed in a menu next to a trigger element, mirroring
-/// Web Awesome's `wa-dropdown`. Everything is composed through the children:
-/// a [`DropdownTrigger`] holding the element that opens the menu (a
-/// [`Button`](crate::component::button::Button), for example), followed by a
-/// [`DropdownMenu`] holding the [`DropdownItem`]s, optionally interleaved with
-/// headings (group labels) and [`Divider`](crate::layout::divider::Divider)s:
+/// A list of options displayed in a menu next to a trigger element. Everything
+/// is composed through the children: a trigger — the first child, any element
+/// that opens the menu (a [`Button`](crate::component::button::Button), for
+/// example), followed by a [`DropdownMenu`] holding the [`DropdownItem`]s,
+/// optionally interleaved with headings (group labels) and
+/// [`Divider`](crate::layout::divider::Divider)s:
 ///
 /// ```ignore
 /// rsx! {
 ///     <Dropdown>
-///         <DropdownTrigger><Button>"Options"</Button></DropdownTrigger>
+///         <Button>"Options"</Button>
 ///         <DropdownMenu>
 ///             <DropdownItem value="edit"><DropdownItemLabel>"Edit"</DropdownItemLabel></DropdownItem>
 ///         </DropdownMenu>

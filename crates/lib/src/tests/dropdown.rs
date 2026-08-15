@@ -10,42 +10,21 @@ use crate::component::dropdown::{
 use crate::helper::popup::PopupPlacement::TopEnd;
 use crate::variant::Variant::Danger;
 
-/// The positioning options every dropdown menu is rendered with, after the
-/// placement and the optional distance and skidding.
+// The positioning options every dropdown menu is rendered with, after the
+// placement and the optional distance and skidding.
 const POPUP_OPTIONS: &str =
     r#"data-flip="" data-shift="" data-shift-padding="10" data-auto-size="vertical" data-auto-size-padding="10""#;
 
-/// The dropdown host (`host_attrs`) wrapping the popup that carries the trigger
-/// and the menu, both of which are composed in as children.
+// The dropdown host (`host_attrs`) wrapping the popup that carries the trigger
+// and the menu, both of which are composed in as children.
 fn dropdown(host_attrs: &str, popup_attrs: &str, content: &str) -> String {
-    format!(
-        concat!(
-            r#"<div {host_attrs}>"#,
-            r#"<div class="popup" {popup_attrs} {options}>{content}</div>"#,
-            r#"</div>"#,
-        ),
-        host_attrs = host_attrs,
-        popup_attrs = popup_attrs,
-        options = POPUP_OPTIONS,
-        content = content,
-    )
+    format!(r#"<div {host_attrs}><div class="popup" {popup_attrs} {POPUP_OPTIONS}>{content}</div></div>"#)
 }
 
 fn menu(items: &str) -> String {
     format!(
-        concat!(
-            r#"<div class="popup-body">"#,
-            r#"<div class="dropdown-menu" role="menu" tabindex="-1" aria-orientation="vertical" hidden>{items}</div>"#,
-            r#"</div>"#,
-        ),
-        items = items,
+        r#"<div class="popup-body"><div class="dropdown-menu" role="menu" tabindex="-1" aria-orientation="vertical" hidden>{items}</div></div>"#,
     )
-}
-
-/// The checkmark and the submenu indicator are rendered from the `iconic`
-/// crate; build them dynamically so the tests don't hardcode the SVG.
-fn icon(icon: impl hypertext::Renderable) -> String {
-    rsx! { (icon) }.render().into_inner()
 }
 
 #[test]
@@ -136,7 +115,7 @@ fn empty_menu() {
 
 #[test]
 fn item_states() {
-    let check = icon(fontawesome::solid::Check);
+    let check = fontawesome::solid::Check.render().into_inner();
     let expected = format!(
         concat!(
             r#"<div class="dropdown-item checked neutral" role="menuitemcheckbox" tabindex="-1""#,
@@ -181,7 +160,7 @@ fn item_disabled_and_danger() {
 
 #[test]
 fn item_icon_and_details() {
-    let house = icon(fontawesome::solid::House);
+    let house = fontawesome::solid::House.render().into_inner();
     let expected = format!(
         concat!(
             r#"<div class="dropdown-item neutral" role="menuitem" tabindex="-1" data-value="home">"#,
@@ -204,7 +183,7 @@ fn item_icon_and_details() {
 
 #[test]
 fn item_submenu() {
-    let chevron = icon(fontawesome_ext::regular::ChevronRight);
+    let chevron = fontawesome_ext::regular::ChevronRight.render().into_inner();
     let expected = format!(
         concat!(
             r#"<div class="dropdown-item neutral" role="menuitem" tabindex="-1""#,
