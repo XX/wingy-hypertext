@@ -38,6 +38,3 @@ web-sys = "0.3"
 wingy-hypertext = { path = "crates/lib" }
 wingy-hypertext-macros = { path = "crates/macros" }
 wingy-hypertext-web = { path = "crates/web" }
-
-[patch.crates-io]
-wasm-dom = { path = "../../wasm-dom/" }
