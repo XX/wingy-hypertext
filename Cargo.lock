@@ -854,8 +854,6 @@ dependencies = [
 [[package]]
 name = "wasm-dom"
 version = "2.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "32e503064896967ec5d6eb73dd0c964c4a0ff5f65c94e35ad0b464d12bd41cd9"
 dependencies = [
  "futures",
  "js-sys",

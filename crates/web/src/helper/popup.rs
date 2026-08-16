@@ -6,6 +6,8 @@
 //! `.popup-body` child (`position: fixed`, so all math is in viewport
 //! coordinates).
 
+use std::borrow::Cow;
+
 use wasm_dom as dom;
 use wasm_dom::event::EventListener;
 use wasm_dom::existing::access::{CastToElement, CastToHtmlElement};
@@ -142,11 +144,11 @@ fn parse_placement(placement: &str) -> (Side, Align) {
     (side, align)
 }
 
-pub fn placement_str(side: Side, align: Align) -> String {
+pub fn placement_str(side: Side, align: Align) -> Cow<'static, str> {
     match align {
-        Align::Start => format!("{}-start", side.as_str()),
-        Align::End => format!("{}-end", side.as_str()),
-        Align::Center => side.as_str().to_string(),
+        Align::Start => Cow::Owned(format!("{}-start", side.as_str())),
+        Align::End => Cow::Owned(format!("{}-end", side.as_str())),
+        Align::Center => Cow::Borrowed(side.as_str()),
     }
 }
 

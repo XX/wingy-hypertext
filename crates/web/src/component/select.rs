@@ -17,10 +17,9 @@ use wingy_hypertext::component::tag::Tag;
 
 use crate::helper::popup;
 use crate::util::animate::animate_with_class;
+pub use crate::util::class::{is_disabled, is_multiple, is_open, is_selected};
 use crate::util::convert::bool_to_str;
-
-/// How long the type-to-select buffer lives without new keystrokes.
-const TYPEAHEAD_TIMEOUT_MILLIS: f64 = 1000.0;
+use crate::util::typeahead::{TypeaheadKey, typeahead_buffer, update_typeahead_buffer};
 
 fn display_input(select: &Element) -> Option<HtmlInputElement> {
     select.query_selector(".display-input").ok()??.dyn_into().ok()
@@ -56,22 +55,6 @@ fn options(select: &Element) -> Vec<Element> {
 
 fn current_option(select: &Element) -> Option<Element> {
     select.query_selector(".option.current").ok()?
-}
-
-fn is_open(select: &Element) -> bool {
-    select.class_list().contains("open")
-}
-
-fn is_disabled(select: &Element) -> bool {
-    select.class_list().contains("disabled")
-}
-
-fn is_multiple(select: &Element) -> bool {
-    select.class_list().contains("multiple")
-}
-
-fn is_selected(option: &Element) -> bool {
-    option.class_list().contains("selected")
 }
 
 fn option_label(option: &Element) -> String {
@@ -175,7 +158,7 @@ fn rebuild_tags(select: &Element, selected: &[Element]) -> Option<()> {
 /// to match the currently selected options. Must be called whenever the
 /// selection changes.
 pub fn selection_changed(select: &Element) -> Option<()> {
-    let selected: Vec<Element> = options(select).into_iter().filter(is_selected_ref).collect();
+    let selected: Vec<Element> = options(select).into_iter().filter(is_selected).collect();
     let values: Vec<String> = selected.iter().map(option_value).collect();
 
     if is_multiple(select) {
@@ -215,10 +198,6 @@ pub fn selection_changed(select: &Element) -> Option<()> {
     }
 
     Some(())
-}
-
-fn is_selected_ref(option: &Element) -> bool {
-    is_selected(option)
 }
 
 fn dispatch_form_events(select: &Element) {
@@ -422,19 +401,6 @@ fn handle_label_click(event: &Event) -> Option<()> {
     Some(())
 }
 
-fn typeahead_buffer(select: &Element) -> String {
-    let last = select
-        .get_attribute("data-typeahead-time")
-        .and_then(|value| value.parse::<f64>().ok())
-        .unwrap_or(0.0);
-
-    if js_sys::Date::now() - last > TYPEAHEAD_TIMEOUT_MILLIS {
-        String::new()
-    } else {
-        select.get_attribute("data-typeahead").unwrap_or_default()
-    }
-}
-
 fn handle_select_keydown(event: &Event) -> Option<()> {
     let keyboard: &KeyboardEvent = event.dyn_ref()?;
     let target = event.target()?.maybe_into_element()?;
@@ -512,7 +478,7 @@ fn handle_select_keydown(event: &Event) -> Option<()> {
     }
 
     // All other "printable" keys trigger type to select
-    if key.chars().count() == 1 || key == "Backspace" {
+    if let Some(key) = TypeaheadKey::new(&key) {
         // Don't block important key combos like CMD+R
         if keyboard.meta_key() || keyboard.ctrl_key() || keyboard.alt_key() {
             return Some(());
@@ -520,7 +486,7 @@ fn handle_select_keydown(event: &Event) -> Option<()> {
 
         // Open, unless the key that triggered is backspace
         if !open {
-            if key == "Backspace" {
+            if let TypeaheadKey::Backspace = key {
                 return Some(());
             }
             toggle_select(&select, true);
@@ -529,16 +495,7 @@ fn handle_select_keydown(event: &Event) -> Option<()> {
         event.prevent_default();
         event.stop_propagation();
 
-        let mut buffer = typeahead_buffer(&select);
-        if key == "Backspace" {
-            buffer.pop();
-        } else {
-            buffer.push_str(&key.to_lowercase());
-        }
-        select.set_attribute("data-typeahead", &buffer).ok();
-        select
-            .set_attribute("data-typeahead-time", &js_sys::Date::now().to_string())
-            .ok();
+        let buffer = update_typeahead_buffer(&select, key);
 
         for option in &options {
             if option_label(option).to_lowercase().starts_with(&buffer) {
