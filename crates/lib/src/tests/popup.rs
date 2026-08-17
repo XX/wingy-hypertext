@@ -2,11 +2,11 @@ use hypertext::prelude::hypertext_elements;
 use hypertext::{RenderableExt, rsx};
 
 use crate::helper::popup::PopupPlacement::*;
-use crate::helper::popup::{AutoSize, Popup, SyncSize};
+use crate::helper::popup::{AutoSize, Popup, PopupBody, SyncSize};
 
 #[test]
 fn default() {
-    let popup_markup = r#"<div class="popup" data-placement="top"><div class="popup-body"></div></div>"#;
+    let popup_markup = r#"<div class="popup" data-placement="top"></div>"#;
 
     let popup = Popup::builder();
     assert_eq!(popup.render().as_inner(), popup_markup);
@@ -20,8 +20,11 @@ fn active_with_anchor() {
     let popup_markup = r#"<div class="popup active" data-placement="bottom-start"><span>Anchor</span><div class="popup-body"><span>Content</span></div></div>"#;
 
     let popup = rsx! {
-        <Popup placement=BottomStart active=true anchor=(rsx! { <span>"Anchor"</span> })>
-            <span>"Content"</span>
+        <Popup placement=BottomStart active=true>
+            <span>"Anchor"</span>
+            <PopupBody>
+                <span>"Content"</span>
+            </PopupBody>
         </Popup>
     };
     assert_eq!(popup.render().as_inner(), popup_markup);
@@ -55,7 +58,11 @@ fn positioning_attributes() {
 fn arrow_and_external_anchor() {
     let popup_markup = r#"<div class="popup" data-placement="top" data-anchor="external-anchor"><div class="popup-body">Content<div class="arrow" role="presentation"></div></div></div>"#;
 
-    let popup = rsx! { <Popup anchor_id="external-anchor" arrow=true>"Content"</Popup> };
+    let popup = rsx! {
+        <Popup anchor_id="external-anchor">
+            <PopupBody arrow=true>"Content"</PopupBody>
+        </Popup>
+    };
     assert_eq!(popup.render().as_inner(), popup_markup);
 }
 
@@ -63,6 +70,7 @@ fn arrow_and_external_anchor() {
 fn hover_bridge() {
     let popup_markup = r#"<div class="popup" data-placement="top"><span class="popup-hover-bridge"></span><div class="popup-body"></div></div>"#;
 
-    let popup = Popup::builder().hover_bridge(true);
+    let popup_body = PopupBody::builder().hover_bridge(true);
+    let popup = Popup::builder().children(&popup_body);
     assert_eq!(popup.render().as_inner(), popup_markup);
 }

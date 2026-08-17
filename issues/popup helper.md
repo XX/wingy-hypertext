@@ -113,3 +113,66 @@
 
   Все ссылки обновлены: тесты (crate::helpers::popup), web-логика Select, обвязка интерактивного примера в init()/reinit(), doc-комментарии. Из layouts.rs всех трёх крейтов объявления popup удалены; разметка,
   классы и поведение не менялись.
+
+---
+
+Измени описания и примеры использования вспомогательного компонента Popup с учётом его изменённой структуры: теперь явно нужно указывать anchor и подкомпонент PopupBody. Примеры использования есть в тестах popup.
+
+---
+
+● Готово. Описания и примеры Popup приведены к новой структуре (явный anchor + PopupBody).
+
+  Документация
+
+  crates/lib/src/helper/popup.rs
+  - Док Popup описывает композицию из детей и содержит два примера: якорь внутри попапа (PopupAnchor + PopupBody) и внешний якорь по anchor_id, когда попап несёт только тело (как у Tooltip). Добавлено
+  пояснение, что позиционируется только тело, поэтому arrow/hover_bridge — свойства PopupBody, а компоненты со своим телом (DropdownMenu, листбокс Select) рендерят PopupBody сами.
+  - anchor_id: убрана ссылка на несуществующий проп anchor — теперь «оставьте пустым, если якорь рендерится первым ребёнком».
+  - Появились доки у PopupBody (позиционируемый элемент; без него попап ничего не позиционирует) и уточнён док PopupAnchor (рендерится как есть, только маркирует роль, ставится перед телом, можно опустить).
+  - Поля: arrow (последний ребёнок тела, выравнивается Popup::arrow_placement/arrow_padding), hover_bridge (рендерится перед телом, соседом внутри попапа), arrow_placement.
+
+  crates/web/src/helper/popup.rs — поправлен путь модуля (helper::popup) и описано, как определяется якорь (data-anchor либо ребёнок хоста, не являющийся частью попапа — отсюда и работает PopupAnchor).
+
+  Примеры галереи
+
+  examples/client/src/helper/popup.rs — все 11 демо-попапов (overview, Placement, Distance & Skidding, Arrows, Sync, Flip, Shift, Auto-Size) перестроены на <PopupAnchor> + <PopupBody>, показываемые в
+  CodeExampleSource сниппеты приведены в соответствие. Добавлен абзац о композиции, в разделе Arrows текст переписан: arrow задаётся на PopupBody, а выравнивание — arrow_placement/arrow_padding самого попапа.
+
+  Заодно — чтобы сборка соответствовала новой структуре
+
+  - Dropdown и Select: убран уже несуществующий bare=true (тело им приносят DropdownMenu и PopupBody листбокса).
+  - Tooltip: содержимое обёрнуто в <PopupBody arrow=(self.arrow) hover_bridge=true> — итоговая разметка не изменилась, тесты тултипа прошли без правок.
+  - Новый тест anchor_component в crates/lib/src/tests/popup.rs: обёртка PopupAnchor даёт ту же разметку, что и прямая передача элемента.
+
+  Проверки
+
+  cargo +nightly fmt --check, cargo clippy --all-targets -- -D warnings, cargo test (97 passed, +1 новый), cargo make client, cargo doc (новых предупреждений нет — остались только два прежних [Escape]). В
+  браузере: страница Popup — 10/10 проверок (у каждого попапа есть якорь и position: fixed-тело рядом с ним, placement разрешается как запрошено, контролы demo по-прежнему управляют distance/arrow/active),
+  Tooltip — прежние 46 проверок, Dropdown и Select — меню и листбокс открываются и остаются привязанными к триггеру (2/2).
+
+---
+
+PopupAnchor не несёт никакой полезной функции, убери его и исправь примеры и описания.
+
+---
+
+● PopupAnchor удалён.
+  
+  Что изменилось
+  
+  - crates/lib/src/helper/popup.rs — структура PopupAnchor и её Renderable убраны. В доке Popup якорь описан как «первый ребёнок — любой одиночный элемент», пример стал <Popup  
+  …><button>"Anchor"</button><PopupBody arrow=true>…</PopupBody></Popup>. Второй пример (внешний якорь по anchor_id + только тело, как у Tooltip) не изменился. В доке PopupBody убрана ссылка на удалённый
+  компонент.
+  - crates/web/src/helper/popup.rs — из описания того, как определяется якорь, убрано упоминание PopupAnchor: остался только сам механизм (data-anchor либо ребёнок хоста, не являющийся
+  .popup-body/.popup-hover-bridge).
+  - examples/client/src/helper/popup.rs — во всех 11 демо и в показываемых сниппетах обёртка снята: якорь передаётся напрямую ((anchor()) в живых примерах, <span class="anchor"></span> в коде). Вводный абзац
+  переписан без упоминания обёртки. 
+  - crates/lib/src/tests/popup.rs — тест anchor_component, проверявший обёртку, удалён вместе с ней (остальные тесты, где якорь — обычный элемент, уже покрывают композицию).
+  
+  Проверки
+  
+  cargo +nightly fmt --check, cargo clippy --all-targets -- -D warnings, cargo test (96 passed), cargo make client, cargo doc (новых предупреждений нет). В браузере после пересборки: страница Popup — 10/10 (у
+  каждого из 11 попапов распознан якорь, тело позиционируется рядом, placement разрешается как запрошено, контролы demo работают), Dropdown/Select — 2/2, Tooltip — 27/27.
+
+---
+

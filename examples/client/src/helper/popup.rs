@@ -14,7 +14,7 @@ use wingy_hypertext::component::input::InputType::Number;
 use wingy_hypertext::component::select::{Select, SelectOption};
 use wingy_hypertext::component::switch::Switch;
 use wingy_hypertext::helper::popup::PopupPlacement::*;
-use wingy_hypertext::helper::popup::{AutoSize, Popup, SyncSize};
+use wingy_hypertext::helper::popup::{AutoSize, Popup, PopupBody, SyncSize};
 use wingy_hypertext::layout::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
 use wingy_hypertext::layout::divider::Divider;
 use wingy_hypertext_web::helper::popup::set_popup_active;
@@ -37,17 +37,22 @@ pub fn overview() -> impl Renderable {
             <code>"listen_popups"</code>" and "<code>"init_popups"</code>
             "; the popups in the sections below are statically "<code>active</code>" for demonstration."
         </p>
+        <p>"A popup is composed out of its children: the anchor comes first — any single element — followed by "
+            "the "<code>PopupBody</code>" with the content that gets positioned next to it. Only the body is "
+            "positioned, so the "<code>arrow</code>" and the "<code>hover_bridge</code>" (an invisible element "
+            "filling the gap between the anchor and the body, so the pointer never technically leaves them) are "
+            "properties of the body rather than of the popup. An anchor living outside of the popup is referenced "
+            "by "<code>anchor_id</code>" instead, and then the popup carries the body alone — that's how "
+            <code>Tooltip</code>" uses it."
+        </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
                 <div class="popup-overview">
-                    <Popup
-                        placement=Top
-                        arrow=true
-                        active=true
-                        style="--arrow-color: var(--wa-color-brand-fill-loud)"
-                        anchor=(anchor())
-                    >
-                        <div style=BOX_STYLE></div>
+                    <Popup placement=Top active=true style="--arrow-color: var(--wa-color-brand-fill-loud)">
+                        (anchor())
+                        <PopupBody arrow=true>
+                            <div style=BOX_STYLE></div>
+                        </PopupBody>
                     </Popup>
                     <Divider/>
                     <div class=(CLUSTER, " ", GAP_L) style="align-items: end;">
@@ -75,8 +80,11 @@ pub fn overview() -> impl Renderable {
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
                     <div class="popup-overview">
-                        <Popup placement=Top arrow=true active=true anchor=(rsx! { <span class="anchor"></span> })>
-                            <div class="box"></div>
+                        <Popup placement=Top active=true>
+                            <span class="anchor"></span>
+                            <PopupBody arrow=true>
+                                <div class="box"></div>
+                            </PopupBody>
                         </Popup>
                         <Divider/>
                         <div class=(CLUSTER, " ", GAP_L)>
@@ -92,7 +100,7 @@ pub fn overview() -> impl Renderable {
                     </div>
 
                     // The controls are wired to the popup with a delegated listener,
-                    // see `listen_popup_overview` in examples/client/src/helpers/popup.rs
+                    // see `listen_popup_overview` in examples/client/src/helper/popup.rs
                 "#</code>
             </CodeExampleSource>
             <CodeExampleButton>"Code"</CodeExampleButton>
@@ -110,21 +118,33 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Popup placement=TopStart active=true anchor=(anchor())>
-                    <div style=BOX_STYLE>"top-start"</div>
+                <Popup placement=TopStart active=true>
+                    (anchor())
+                    <PopupBody>
+                        <div style=BOX_STYLE>"top-start"</div>
+                    </PopupBody>
                 </Popup>
-                <Popup placement=Right active=true anchor=(anchor())>
-                    <div style=BOX_STYLE>"right"</div>
+                <Popup placement=Right active=true>
+                    (anchor())
+                    <PopupBody>
+                        <div style=BOX_STYLE>"right"</div>
+                    </PopupBody>
                 </Popup>
-                <Popup placement=BottomEnd active=true anchor=(anchor())>
-                    <div style=BOX_STYLE>"bottom-end"</div>
+                <Popup placement=BottomEnd active=true>
+                    (anchor())
+                    <PopupBody>
+                        <div style=BOX_STYLE>"bottom-end"</div>
+                    </PopupBody>
                 </Popup>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Popup placement=TopStart active=true anchor=(...)>...</Popup>
-                    <Popup placement=Right active=true anchor=(...)>...</Popup>
-                    <Popup placement=BottomEnd active=true anchor=(...)>...</Popup>
+                    <Popup placement=TopStart active=true>
+                        <span class="anchor"></span>
+                        <PopupBody><div class="box">"top-start"</div></PopupBody>
+                    </Popup>
+                    <Popup placement=Right active=true>...</Popup>
+                    <Popup placement=BottomEnd active=true>...</Popup>
                 "#</code>
             </CodeExampleSource>
             <CodeExampleButton>"Code"</CodeExampleButton>
@@ -138,17 +158,26 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Popup placement=Top distance=24 active=true anchor=(anchor())>
-                    <div style=BOX_STYLE>"distance"</div>
+                <Popup placement=Top distance=24 active=true>
+                    (anchor())
+                    <PopupBody>
+                        <div style=BOX_STYLE>"distance"</div>
+                    </PopupBody>
                 </Popup>
-                <Popup placement=Top skidding=40 active=true anchor=(anchor())>
-                    <div style=BOX_STYLE>"skidding"</div>
+                <Popup placement=Top skidding=40 active=true>
+                    (anchor())
+                    <PopupBody>
+                        <div style=BOX_STYLE>"skidding"</div>
+                    </PopupBody>
                 </Popup>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Popup placement=Top distance=24 active=true anchor=(...)>...</Popup>
-                    <Popup placement=Top skidding=40 active=true anchor=(...)>...</Popup>
+                    <Popup placement=Top distance=24 active=true>
+                        <span class="anchor"></span>
+                        <PopupBody><div class="box">"distance"</div></PopupBody>
+                    </Popup>
+                    <Popup placement=Top skidding=40 active=true>...</Popup>
                 "#</code>
             </CodeExampleSource>
             <CodeExampleButton>"Code"</CodeExampleButton>
@@ -157,34 +186,28 @@ pub fn overview() -> impl Renderable {
         <Head level=H3 id="arrows" anchor=true>
             "Arrows"
         </Head>
-        <p>"Add an arrow to your popup with the "<code>arrow</code>" attribute. Customize its size and color with the "
-            <code>"--arrow-size"</code>" and "<code>"--arrow-color"</code>" custom properties, and align it with "
-            <code>arrow_placement</code>"."
+        <p>"Add an arrow to your popup with the "<code>arrow</code>" attribute of the "<code>PopupBody</code>
+            " — the arrow belongs to the positioned element, and it is rendered as its last child. Customize its "
+            "size and color with the "<code>"--arrow-size"</code>" and "<code>"--arrow-color"</code>
+            " custom properties, and align it with the popup's own "<code>arrow_placement</code>" and "
+            <code>arrow_padding</code>" attributes."
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Popup
-                    placement=Top
-                    distance=8
-                    arrow=true
-                    active=true
-                    style="--arrow-color: var(--wa-color-brand-fill-loud)"
-                    anchor=(anchor())
-                >
-                    <div style=BOX_STYLE></div>
+                <Popup placement=Top distance=8 active=true style="--arrow-color: var(--wa-color-brand-fill-loud)">
+                    (anchor())
+                    <PopupBody arrow=true>
+                        <div style=BOX_STYLE></div>
+                    </PopupBody>
                 </Popup>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Popup
-                        placement=Top
-                        distance=8
-                        arrow=true
-                        active=true
-                        style="--arrow-color: var(--wa-color-brand-fill-loud)"
-                        anchor=(...)
-                    >
-                        ...
+                    <Popup placement=Top distance=8 active=true style="--arrow-color: var(--wa-color-brand-fill-loud)">
+                        <span class="anchor"></span>
+                        <PopupBody arrow=true>
+                            <div class="box"></div>
+                        </PopupBody>
                     </Popup>
                 "#</code>
             </CodeExampleSource>
@@ -199,13 +222,19 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Popup placement=Bottom distance=8 sync=(SyncSize::Width) active=true anchor=(anchor())>
-                    <div style="height: 50px; background: var(--wa-color-brand-fill-loud); border-radius: var(--wa-border-radius-m);"></div>
+                <Popup placement=Bottom distance=8 sync=(SyncSize::Width) active=true>
+                    (anchor())
+                    <PopupBody>
+                        <div style="height: 50px; background: var(--wa-color-brand-fill-loud); border-radius: var(--wa-border-radius-m);"></div>
+                    </PopupBody>
                 </Popup>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Popup placement=Bottom distance=8 sync=(SyncSize::Width) active=true anchor=(...)>...</Popup>
+                    <Popup placement=Bottom distance=8 sync=(SyncSize::Width) active=true>
+                        <span class="anchor"></span>
+                        <PopupBody><div class="box"></div></PopupBody>
+                    </Popup>
                 "#</code>
             </CodeExampleSource>
             <CodeExampleButton>"Code"</CodeExampleButton>
@@ -220,13 +249,19 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Popup placement=Top distance=8 flip=true active=true anchor=(anchor())>
-                    <div style=BOX_STYLE></div>
+                <Popup placement=Top distance=8 flip=true active=true>
+                    (anchor())
+                    <PopupBody>
+                        <div style=BOX_STYLE></div>
+                    </PopupBody>
                 </Popup>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Popup placement=Top distance=8 flip=true active=true anchor=(...)>...</Popup>
+                    <Popup placement=Top distance=8 flip=true active=true>
+                        <span class="anchor"></span>
+                        <PopupBody><div class="box"></div></PopupBody>
+                    </Popup>
                 "#</code>
             </CodeExampleSource>
             <CodeExampleButton>"Code"</CodeExampleButton>
@@ -241,13 +276,19 @@ pub fn overview() -> impl Renderable {
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
-                <Popup placement=Bottom distance=8 shift=true shift_padding=8 active=true anchor=(anchor())>
-                    <div style="width: 300px; height: 50px; background: var(--wa-color-brand-fill-loud); border-radius: var(--wa-border-radius-m);"></div>
+                <Popup placement=Bottom distance=8 shift=true shift_padding=8 active=true>
+                    (anchor())
+                    <PopupBody>
+                        <div style="width: 300px; height: 50px; background: var(--wa-color-brand-fill-loud); border-radius: var(--wa-border-radius-m);"></div>
+                    </PopupBody>
                 </Popup>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
-                    <Popup placement=Bottom distance=8 shift=true shift_padding=8 active=true anchor=(...)>...</Popup>
+                    <Popup placement=Bottom distance=8 shift=true shift_padding=8 active=true>
+                        <span class="anchor"></span>
+                        <PopupBody><div class="box"></div></PopupBody>
+                    </Popup>
                 "#</code>
             </CodeExampleSource>
             <CodeExampleButton>"Code"</CodeExampleButton>
@@ -270,9 +311,11 @@ pub fn overview() -> impl Renderable {
                     auto_size=(AutoSize::Vertical)
                     auto_size_padding=10
                     active=true
-                    anchor=(anchor())
                 >
-                    <div style="width: 100px; height: 400px; max-height: var(--auto-size-available-height); overflow: auto; background: var(--wa-color-brand-fill-loud); border-radius: var(--wa-border-radius-m);"></div>
+                    (anchor())
+                    <PopupBody>
+                        <div style="width: 100px; height: 400px; max-height: var(--auto-size-available-height); overflow: auto; background: var(--wa-color-brand-fill-loud); border-radius: var(--wa-border-radius-m);"></div>
+                    </PopupBody>
                 </Popup>
             </CodeExamplePreview>
             <CodeExampleSource copy_button=true>
@@ -284,9 +327,11 @@ pub fn overview() -> impl Renderable {
                         auto_size=(AutoSize::Vertical)
                         auto_size_padding=10
                         active=true
-                        anchor=(...)
                     >
-                        <div style="max-height: var(--auto-size-available-height); overflow: auto; ...">...</div>
+                        <span class="anchor"></span>
+                        <PopupBody>
+                            <div style="max-height: var(--auto-size-available-height); overflow: auto; ...">...</div>
+                        </PopupBody>
                     </Popup>
                 "#</code>
             </CodeExampleSource>

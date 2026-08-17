@@ -128,11 +128,10 @@ impl<'a> Renderable for Dropdown<'a> {
                     shift_padding=10
                     auto_size=Vertical
                     auto_size_padding=10
-                    bare=true
                     self_distance=(self.distance)
                     self_skidding=(self.skidding)
                 >
-                    // The trigger is the popup's anchor, the menu goes into the popup body.
+                    // The trigger is the popup's anchor, the menu brings the popup body.
                     (self.children)
                 </Popup>
             </div>

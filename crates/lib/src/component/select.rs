@@ -119,7 +119,6 @@ impl<'a> Renderable for Select<'a> {
                     sync=(popup::SyncSize::Width)
                     auto_size=(popup::AutoSize::Vertical)
                     auto_size_padding=10
-                    bare=true
                 >
                     <div class=COMBOBOX>
                         <input

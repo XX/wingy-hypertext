@@ -1,10 +1,14 @@
-//! A Rust port of the `wa-popup` positioning behavior: a floating-ui subset
-//! (offset, flip with best-fit fallback, shift, size syncing, auto-size,
-//! arrow) plus repositioning on scroll and resize. The configuration is read
+//! A popup positioning behavior: a floating-ui subset (offset, flip with
+//! best-fit fallback, shift, size syncing, auto-size, arrow) plus
+//! repositioning on scroll and resize. The configuration is read
 //! from `data-*` attributes on the `.popup` host element rendered by
-//! `wingy_hypertext::helpers::popup`, and the positioned container is the
+//! `wingy_hypertext::helper::popup`, and the positioned container is the
 //! `.popup-body` child (`position: fixed`, so all math is in viewport
 //! coordinates).
+//!
+//! The anchor is either the element `data-anchor` points at or the child of the
+//! host that is not a part of the popup itself — `.popup-body` and
+//! `.popup-hover-bridge` are.
 
 use std::borrow::Cow;
 

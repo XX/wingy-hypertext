@@ -8,7 +8,7 @@ use wingy_hypertext_macros::{Props, const_str};
 
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::{DISABLED, TOOLTIP, TOOLTIP_BODY};
-use crate::helper::popup::{Popup, PopupPlacement};
+use crate::helper::popup::{Popup, PopupBody, PopupPlacement};
 
 /// The gap between the tooltip and its anchor, matching `wa-tooltip`.
 const DEFAULT_DISTANCE: i32 = 8;
@@ -224,12 +224,14 @@ impl<'a> Renderable for Tooltip<'a> {
                     flip=true
                     shift=true
                     shift_padding=SHIFT_PADDING
-                    arrow=(self.arrow)
-                    hover_bridge=true
                 >
-                    <div class=TOOLTIP_BODY>
-                        (self.children)
-                    </div>
+                    // The anchor lives outside of the tooltip, so the popup only
+                    // carries its body: the tooltip's content and the arrow.
+                    <PopupBody arrow=(self.arrow) hover_bridge=true>
+                        <div class=TOOLTIP_BODY>
+                            (self.children)
+                        </div>
+                    </PopupBody>
                 </Popup>
             </div>
         }

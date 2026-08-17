@@ -4,7 +4,7 @@ use derive_more::{AsMut, AsRef};
 use hypertext::prelude::{AriaAttributes, GlobalAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable, rsx};
 use strum::{AsRefStr, IntoStaticStr};
-use wingy_hypertext_macros::{DynRenderable, Props, const_str};
+use wingy_hypertext_macros::{Props, const_str};
 
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
 use crate::class::{ACTIVE, ARROW, POPUP, POPUP_BODY, POPUP_HOVER_BRIDGE};
@@ -59,21 +59,52 @@ pub enum ArrowPlacement {
     Center,
 }
 
-/// A positioning primitive mirroring Web Awesome's `wa-popup`: anchors one
-/// element to another and keeps them positioned together as the page scrolls
-/// or resizes. The positioning logic (a floating-ui subset: offset, flip,
-/// shift, sync, auto-size, arrow) is implemented in `wingy-hypertext-web`
-/// (`helpers::popup`) and must be wired up on the client with
-/// `init_popups`/`listen_popups`; the configuration is carried by `data-*`
-/// attributes on the host element.
+/// A positioning primitive: anchors one element to another and keeps them
+/// positioned together as the page scrolls or resizes. The positioning logic
+/// (a floating-ui subset: offset, flip, shift, sync, auto-size, arrow) is
+/// implemented in `wingy-hypertext-web` (`helper::popup`) and must be
+/// wired up on the client with `init_popups`/`listen_popups`; the configuration
+/// is carried by `data-*` attributes on the host element.
 ///
-/// Like `wa-popup`, this is a low-level building block for popovers,
-/// dropdowns, and tooltips — it provides positioning only, no styles and no
-/// accessible experience by itself.
-#[derive(Default, AsRef, AsMut, Props, DynRenderable)]
+/// Everything is composed out of the children: the anchor comes first — any
+/// single element — followed by the [`PopupBody`] holding the content that
+/// gets positioned next to it:
+///
+/// ```ignore
+/// rsx! {
+///     <Popup placement=BottomStart active=true>
+///         <button>"Anchor"</button>
+///         <PopupBody arrow=true>"Content"</PopupBody>
+///     </Popup>
+/// }
+/// ```
+///
+/// The anchor may also live outside of the popup, referenced by
+/// [`anchor_id`](Self::anchor_id); the popup then only carries the body, which
+/// is what [`Tooltip`](crate::component::tooltip::Tooltip) does:
+///
+/// ```ignore
+/// rsx! {
+///     <button id="the-anchor">"Anchor"</button>
+///     <Popup anchor_id="the-anchor" active=true>
+///         <PopupBody arrow=true>"Content"</PopupBody>
+///     </Popup>
+/// }
+/// ```
+///
+/// Only the body is positioned, so everything else — the arrow and the hover
+/// bridge — is a prop of [`PopupBody`] rather than of the popup itself.
+/// Components that come with a body of their own render it themselves: the
+/// [`DropdownMenu`](crate::component::dropdown::DropdownMenu) and the
+/// [`Select`](crate::component::select::Select) listbox are `PopupBody`s, so
+/// their popups take them as plain children.
+///
+/// This is a low-level building block for popovers, dropdowns, and tooltips —
+/// it provides positioning only, no styles and no accessible experience by itself.
+#[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = POPUP)]
 #[props(builder)]
-pub struct Popup<'a, A: Renderable = ()> {
+pub struct Popup<'a> {
     #[prop(impl_from)]
     pub placement: PopupPlacement,
 
@@ -105,20 +136,13 @@ pub struct Popup<'a, A: Renderable = ()> {
     /// Syncs the popup's width or height to that of the anchor element.
     pub sync: Option<SyncSize>,
 
-    /// Attaches an arrow to the popup, customizable with the `--arrow-size`
-    /// and `--arrow-color` custom properties.
-    pub arrow: bool,
-
+    /// How to align the arrow of the [`PopupBody`], if it has one.
     pub arrow_placement: Option<ArrowPlacement>,
 
     pub arrow_padding: Option<i32>,
 
-    /// Fills the gap between the anchor and the popup with an invisible element
-    /// so the pointer never technically leaves them (useful for hover-driven popups).
-    pub hover_bridge: bool,
-
-    /// The `id` of an anchor element living outside of the popup. Alternatively,
-    /// pass the anchor element itself via the `anchor` prop.
+    /// The `id` of an anchor element living outside of the popup. Leave it
+    /// unset when the anchor is rendered as the popup's first child.
     #[prop(into)]
     pub anchor_id: Option<Cow<'static, str>>,
 
@@ -126,18 +150,11 @@ pub struct Popup<'a, A: Renderable = ()> {
     #[as_mut]
     pub attributes: CommonAttrs<'a>,
 
-    pub bare: bool,
-
-    /// The element the popup will be anchored to; rendered as the first child
-    /// of the popup host.
-    #[prop(convert)]
-    pub anchor: Option<A>,
-
     pub children: Option<&'a dyn Renderable>,
 }
 
-impl<'a, A: Renderable> Popup<'a, A> {
-    fn render_to(&self, buffer: &mut Buffer, anchor: Option<&dyn Renderable>) {
+impl<'a> Renderable for Popup<'a> {
+    fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
         let class_line = self.class_line_with(&[Self::CLASS, if self.active { ACTIVE } else { "" }]);
         let style_line = self.style_line_with(&[]);
@@ -165,30 +182,31 @@ impl<'a, A: Renderable> Popup<'a, A> {
                 data-arrow-padding=[self.arrow_padding]
                 (self.get_attrs())
             >
-                (anchor)
-                @if self.hover_bridge {
-                    <span class=POPUP_HOVER_BRIDGE></span>
-                }
-                @if self.bare {
-                    (self.children)
-                } @else {
-                    <PopupBody arrow=(self.arrow)>
-                        (self.children)
-                    </PopupBody>
-                }
+                (self.children)
             </div>
         }
         .render_to(buffer);
     }
 }
 
+/// The content a [`Popup`] positions next to its anchor: this is the element
+/// the positioning logic moves around (`position: fixed`), so a popup without
+/// a body positions nothing. It goes after the anchor, and it is also what
+/// brings the arrow and the hover bridge.
 #[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = POPUP_BODY)]
 #[props(builder)]
 pub struct PopupBody<'a> {
-    /// Attaches an arrow to the popup, customizable with the `--arrow-size`
-    /// and `--arrow-color` custom properties.
+    /// Attaches an arrow to the popup, rendered as the body's last child and
+    /// customizable with the `--arrow-size` and `--arrow-color` custom
+    /// properties. It is aligned against the anchor by
+    /// [`Popup::arrow_placement`] and [`Popup::arrow_padding`].
     pub arrow: bool,
+
+    /// Fills the gap between the anchor and the popup with an invisible element
+    /// so the pointer never technically leaves them (useful for hover-driven
+    /// popups). It is rendered before the body, as its sibling inside the popup.
+    pub hover_bridge: bool,
 
     #[as_ref]
     #[as_mut]
@@ -204,6 +222,9 @@ impl<'a> Renderable for PopupBody<'a> {
         let style_line = self.style_line_with(&[]);
 
         rsx! {
+            @if self.hover_bridge {
+                <span class=POPUP_HOVER_BRIDGE></span>
+            }
             <div id=[id] class=[&class_line] style=[&style_line]>
                 (self.children)
                 @if self.arrow {
