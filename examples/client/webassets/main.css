@@ -31,6 +31,28 @@
   font-size: var(--wa-font-size-smaller);
 }
 
+/* Tooltip demos: the grid of anchors showing every placement */
+.tooltip-placement-example {
+  width: 250px;
+  margin: 1rem;
+}
+
+.tooltip-placement-example .button {
+  width: 2.5rem;
+}
+
+.tooltip-placement-example-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-block-end: 0.5rem;
+}
+
+.tooltip-placement-example-row:nth-child(1),
+.tooltip-placement-example-row:nth-child(5) {
+  justify-content: center;
+}
+
 .code-example-source pre {
   color-scheme: dark;
   color: white;

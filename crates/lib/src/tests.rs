@@ -13,3 +13,4 @@ pub mod popup;
 pub mod select;
 pub mod switch;
 pub mod tag;
+pub mod tooltip;

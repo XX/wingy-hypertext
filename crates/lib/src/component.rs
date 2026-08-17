@@ -8,3 +8,4 @@ pub mod input;
 pub mod select;
 pub mod switch;
 pub mod tag;
+pub mod tooltip;

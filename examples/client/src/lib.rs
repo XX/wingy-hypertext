@@ -21,6 +21,7 @@ use wingy_hypertext_web::component::callout::listen_close_callout;
 use wingy_hypertext_web::component::dropdown::{init_dropdowns, listen_dropdowns};
 use wingy_hypertext_web::component::select::{init_selects, listen_selects};
 use wingy_hypertext_web::component::tag::listen_remove_tags;
+use wingy_hypertext_web::component::tooltip::{init_tooltips, listen_tooltips};
 use wingy_hypertext_web::helper::animation::init_animations;
 use wingy_hypertext_web::helper::popup::{init_popups, listen_popups};
 use wingy_hypertext_web::layout::drawer::{init_drawers, listen_drawers};
@@ -44,6 +45,7 @@ pub fn init() {
     listen_close_callout();
     listen_dropdowns();
     listen_selects();
+    listen_tooltips();
     listen_popups();
     listen_remove_tags();
     listen_drawers();
@@ -52,6 +54,7 @@ pub fn init() {
     listen_removable_demo();
     layout::drawer::listen_drawer_overview();
     component::dropdown::listen_dropdown_overview();
+    component::tooltip::listen_tooltip_overview();
 }
 
 /// Re-initialization run after every htmx settle.
@@ -62,6 +65,7 @@ pub fn reinit() {
     init_dropdowns();
     init_selects();
     init_popups();
+    init_tooltips();
     init_animations();
     init_drawers();
     helper::animation::init_animation_overview();
@@ -92,6 +96,7 @@ fn main_section(route_path: &str) -> impl Renderable {
             "select" => (component::select::overview()),
             "switch" => (component::switch::overview()),
             "tag" => (component::tag::overview()),
+            "tooltip" => (component::tooltip::overview()),
             _ => {},
         }
     }
@@ -241,6 +246,16 @@ pub fn render_root(url_path: &str) -> String {
                             hx-push-url="true"
                         >
                             <span>"Tag"</span>
+                        </a>
+                        <a
+                            class=FLANK
+                            href="/tooltip"
+                            hx-get="/tooltip"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Tooltip"</span>
                         </a>
                     </nav>
                     <nav class=(PAGE_MENU_NAV, " ", BORDER_END)>
