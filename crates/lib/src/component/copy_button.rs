@@ -54,7 +54,7 @@ impl<'a> Renderable for CopyButton<'a> {
             };
             @let from = format!(r#"{{"from":"{}"}}"#, self.from.as_deref().unwrap_or(""));
 
-            <Button attributes=(self.attributes.clone()) classes appearance=Plain disabled=(self.disabled) action="copy" args=from>
+            <Button attributes=(self.attributes.clone()) classes appearance=Plain disabled=(self.disabled) action="copy" action_args=from>
                 (content)
             </Button>
         }

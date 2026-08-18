@@ -46,8 +46,8 @@ pub fn dispatch_action(event: Event) -> Option<()> {
     let element = event.target()?.maybe_into_element()?.closest("[data-action]").ok()??;
 
     let name = element.get_attribute("data-action").unwrap_or_default();
-    let args_raw = element.get_attribute("data-args");
-    let args = JSON::parse(args_raw.as_deref().unwrap_or("{}")).expect_throw("cannot parse `data-args` as JSON");
+    let args_raw = element.get_attribute("data-action-args");
+    let args = JSON::parse(args_raw.as_deref().unwrap_or("{}")).expect_throw("cannot parse `data-action-args` as JSON");
 
     run_action(&name, &args, &ActionCtx { event, element })
 }

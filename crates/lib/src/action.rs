@@ -9,11 +9,11 @@ pub trait ActionSetters<'a> {
         self
     }
 
-    fn args(mut self, args: impl Into<Cow<'a, str>>) -> Self
+    fn action_args(mut self, args: impl Into<Cow<'a, str>>) -> Self
     where
         Self: Sized,
     {
-        self.set_args(args);
+        self.set_action_args(args);
         self
     }
 
@@ -23,15 +23,15 @@ pub trait ActionSetters<'a> {
         self.action_mut().action = Some(action.into());
     }
 
-    fn set_args(&mut self, args: impl Into<Cow<'a, str>>) {
-        self.action_mut().args = Some(args.into());
+    fn set_action_args(&mut self, args: impl Into<Cow<'a, str>>) {
+        self.action_mut().action_args = Some(args.into());
     }
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Action<'a> {
     pub action: Option<Cow<'a, str>>,
-    pub args: Option<Cow<'a, str>>,
+    pub action_args: Option<Cow<'a, str>>,
 }
 
 impl<'a> Action<'a> {

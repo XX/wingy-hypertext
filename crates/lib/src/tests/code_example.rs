@@ -100,7 +100,7 @@ fn attributes() {
                 </div>
                 <div id="source" class="code-example-source code">
                     <pre id="source-code-block">
-                        <button class="button neutral plain copy-button wa-dark" data-action="copy" data-args="{{&quot;from&quot;:&quot;source-code-block&quot;}}">
+                        <button class="button neutral plain copy-button wa-dark" data-action="copy" data-action-args="{{&quot;from&quot;:&quot;source-code-block&quot;}}">
                             <span class="icon copy-button-copy">{}</span>
                             <span class="icon copy-button-success" hidden>{}</span>
                             <span class="icon copy-button-error" hidden>{}</span>

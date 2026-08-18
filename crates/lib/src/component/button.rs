@@ -68,7 +68,7 @@ impl<'a> Renderable for Button<'a> {
                     download=[&self.link.download]
                     rel=[&self.link.rel]
                     data-action=[&self.action_data.action]
-                    data-args=[&self.action_data.args]
+                    data-action-args=[&self.action_data.action_args]
                     htmx=[self.htmx]
                     (self.get_attrs())
                 >
@@ -85,7 +85,7 @@ impl<'a> Renderable for Button<'a> {
                     style=[&style_line]
                     disabled=[disabled]
                     data-action=[&self.action_data.action]
-                    data-args=[&self.action_data.args]
+                    data-action-args=[&self.action_data.action_args]
                     htmx=[self.htmx]
                     (self.get_attrs())
                 >
