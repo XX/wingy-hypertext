@@ -82,7 +82,7 @@ impl<'a> Renderable for CodeExamplePreview<'a> {
 #[props(builder)]
 pub struct CodeExampleSource<'a> {
     #[prop(into)]
-    pub code_block_id: Option<Cow<'static, str>>,
+    pub code_block_id: Option<Cow<'a, str>>,
 
     pub copy_button: bool,
 

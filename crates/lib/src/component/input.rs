@@ -61,19 +61,19 @@ pub struct Input<'a> {
     pub required: bool,
 
     #[prop(into)]
-    pub name: Option<Cow<'static, str>>,
+    pub name: Option<Cow<'a, str>>,
 
     #[prop(into)]
-    pub value: Option<Cow<'static, str>>,
+    pub value: Option<Cow<'a, str>>,
 
     #[prop(into)]
-    pub placeholder: Option<Cow<'static, str>>,
+    pub placeholder: Option<Cow<'a, str>>,
 
     #[prop(into)]
-    pub label: Option<Cow<'static, str>>,
+    pub label: Option<Cow<'a, str>>,
 
     #[prop(into)]
-    pub hint: Option<Cow<'static, str>>,
+    pub hint: Option<Cow<'a, str>>,
 
     #[as_ref]
     #[as_mut]
@@ -150,13 +150,13 @@ pub struct TextField<'a> {
     pub required: bool,
 
     #[prop(into)]
-    pub name: Option<Cow<'static, str>>,
+    pub name: Option<Cow<'a, str>>,
 
     #[prop(into)]
-    pub value: Option<Cow<'static, str>>,
+    pub value: Option<Cow<'a, str>>,
 
     #[prop(into)]
-    pub placeholder: Option<Cow<'static, str>>,
+    pub placeholder: Option<Cow<'a, str>>,
 
     #[as_ref]
     #[as_mut]

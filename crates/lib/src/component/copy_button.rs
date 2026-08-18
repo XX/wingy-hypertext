@@ -19,7 +19,7 @@ pub struct CopyButton<'a> {
     pub disabled: bool,
 
     #[prop(into)]
-    pub from: Option<Cow<'static, str>>,
+    pub from: Option<Cow<'a, str>>,
 
     #[as_ref]
     #[as_mut]

@@ -66,16 +66,16 @@ pub struct Select<'a> {
     pub with_clear: bool,
 
     #[prop(into)]
-    pub name: Option<Cow<'static, str>>,
+    pub name: Option<Cow<'a, str>>,
 
     #[prop(into)]
-    pub placeholder: Option<Cow<'static, str>>,
+    pub placeholder: Option<Cow<'a, str>>,
 
     #[prop(into)]
-    pub label: Option<Cow<'static, str>>,
+    pub label: Option<Cow<'a, str>>,
 
     #[prop(into)]
-    pub hint: Option<Cow<'static, str>>,
+    pub hint: Option<Cow<'a, str>>,
 
     #[as_ref]
     #[as_mut]
@@ -185,12 +185,12 @@ impl<'a> Renderable for Select<'a> {
 #[props(builder)]
 pub struct SelectOption<'a> {
     #[prop(into)]
-    pub value: Option<Cow<'static, str>>,
+    pub value: Option<Cow<'a, str>>,
 
     /// The option's plain text label. Usually derived from the option's content,
     /// but can be provided manually for cases involving complex content.
     #[prop(into)]
-    pub label: Option<Cow<'static, str>>,
+    pub label: Option<Cow<'a, str>>,
 
     pub disabled: bool,
 

@@ -143,7 +143,7 @@ pub struct Tooltip<'a> {
 
     /// The `id` of the element the tooltip describes (`for` in `wa-tooltip`).
     #[prop(into)]
-    pub anchor_id: Option<Cow<'static, str>>,
+    pub anchor_id: Option<Cow<'a, str>>,
 
     /// Renders the tooltip already open: `init_tooltips` shows it on the client.
     pub open: bool,

@@ -144,7 +144,7 @@ pub struct Popup<'a> {
     /// The `id` of an anchor element living outside of the popup. Leave it
     /// unset when the anchor is rendered as the popup's first child.
     #[prop(into)]
-    pub anchor_id: Option<Cow<'static, str>>,
+    pub anchor_id: Option<Cow<'a, str>>,
 
     #[as_ref]
     #[as_mut]

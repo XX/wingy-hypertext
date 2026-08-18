@@ -110,12 +110,12 @@ pub fn overview() -> impl Renderable {
                     <div class=(CLUSTER, " ", GAP_L) style="align-items: end;">
                         <Select label="Animation" name="animation" style="min-width: 12em;">
                             @for name in animation_names() {
-                                <SelectOption value=(name.clone()) selected=(name == "bounce")>(name.clone())</SelectOption>
+                                <SelectOption value=(name.as_str()) selected=(name == "bounce")>(name.as_str())</SelectOption>
                             }
                         </Select>
                         <Select label="Easing" name="easing" style="min-width: 12em;">
                             @for name in easing_names() {
-                                <SelectOption value=(name.clone()) selected=(name == "easeInOut")>(name.clone())</SelectOption>
+                                <SelectOption value=(name.as_str()) selected=(name == "easeInOut")>(name.as_str())</SelectOption>
                             }
                         </Select>
                         <Input input_type=Number label="Playback Rate" name="playback-rate" value="1" style="width: 8em;"/>
@@ -132,12 +132,12 @@ pub fn overview() -> impl Renderable {
                         <div class=(CLUSTER, " ", GAP_L)>
                             <Select label="Animation" name="animation">
                                 @for name in animation_names() {
-                                    <SelectOption value=(name.clone()) selected=(name == "bounce")>(name.clone())</SelectOption>
+                                    <SelectOption value=(name.as_str()) selected=(name == "bounce")>(name.as_str())</SelectOption>
                                 }
                             </Select>
                             <Select label="Easing" name="easing">
                                 @for name in easing_names() {
-                                    <SelectOption value=(name.clone()) selected=(name == "easeInOut")>(name.clone())</SelectOption>
+                                    <SelectOption value=(name.as_str()) selected=(name == "easeInOut")>(name.as_str())</SelectOption>
                                 }
                             </Select>
                             <Input input_type=Number label="Playback Rate" name="playback-rate" value="1"/>

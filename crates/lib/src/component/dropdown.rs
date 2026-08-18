@@ -225,13 +225,13 @@ pub struct DropdownItem<'a> {
     /// An optional value, useful for determining which item was selected when
     /// listening to the dropdown's `wg-select` event.
     #[prop(into)]
-    pub value: Option<Cow<'static, str>>,
+    pub value: Option<Cow<'a, str>>,
 
     /// The item's plain text label. Usually derived from the item's content,
     /// but can be provided manually for cases involving complex content; it is
     /// what type-to-select matches against.
     #[prop(into)]
-    pub label: Option<Cow<'static, str>>,
+    pub label: Option<Cow<'a, str>>,
 
     #[as_ref]
     #[as_mut]

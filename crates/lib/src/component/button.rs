@@ -29,11 +29,11 @@ pub struct Button<'a> {
 
     #[as_ref]
     #[as_mut]
-    pub link: Link,
+    pub link: Link<'a>,
 
     #[as_ref]
     #[as_mut]
-    pub action_data: Action,
+    pub action_data: Action<'a>,
 
     #[as_ref]
     #[as_mut]
@@ -41,7 +41,7 @@ pub struct Button<'a> {
 
     #[as_ref]
     #[as_mut]
-    pub htmx: Htmx,
+    pub htmx: Htmx<'a>,
 
     pub children: Option<&'a dyn Renderable>,
 }

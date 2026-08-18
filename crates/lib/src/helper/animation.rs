@@ -51,7 +51,7 @@ pub enum Fill {
 pub struct Animation<'a> {
     /// The name of the built-in animation to use. For custom animations, use `keyframes`.
     #[prop(into)]
-    pub name: Option<Cow<'static, str>>,
+    pub name: Option<Cow<'a, str>>,
 
     /// Plays the animation. When omitted, the animation will be paused.
     pub play: bool,
@@ -69,7 +69,7 @@ pub struct Animation<'a> {
     /// easing name (e.g. `easeInOutCubic`) or a custom easing function such as
     /// `cubic-bezier(0, 1, .76, 1.14)`.
     #[prop(into)]
-    pub easing: Option<Cow<'static, str>>,
+    pub easing: Option<Cow<'a, str>>,
 
     /// The number of milliseconds to delay after the active period of an animation sequence.
     pub end_delay: Option<i32>,
@@ -86,7 +86,7 @@ pub struct Animation<'a> {
     /// The keyframes to use for the animation, as a JSON array of keyframe
     /// objects. If this is set, `name` will be ignored.
     #[prop(into)]
-    pub keyframes: Option<Cow<'static, str>>,
+    pub keyframes: Option<Cow<'a, str>>,
 
     /// Sets the animation's playback rate. The default is `1`; a negative
     /// value can be used to reverse the animation. This value can be changed

@@ -30,15 +30,15 @@ pub struct Switch<'a> {
 
     /// The name of the switch, submitted as a name/value pair with form data.
     #[prop(into)]
-    pub name: Option<Cow<'static, str>>,
+    pub name: Option<Cow<'a, str>>,
 
     /// The value of the switch, submitted as a name/value pair with form data.
     /// Defaults to the native checkbox value `on` when not set.
     #[prop(into)]
-    pub value: Option<Cow<'static, str>>,
+    pub value: Option<Cow<'a, str>>,
 
     #[prop(into)]
-    pub hint: Option<Cow<'static, str>>,
+    pub hint: Option<Cow<'a, str>>,
 
     #[as_ref]
     #[as_mut]
@@ -98,10 +98,10 @@ pub struct Toggle<'a> {
     pub required: bool,
 
     #[prop(into)]
-    pub name: Option<Cow<'static, str>>,
+    pub name: Option<Cow<'a, str>>,
 
     #[prop(into)]
-    pub value: Option<Cow<'static, str>>,
+    pub value: Option<Cow<'a, str>>,
 
     #[as_ref]
     #[as_mut]

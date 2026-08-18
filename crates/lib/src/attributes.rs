@@ -4,7 +4,7 @@ use std::ops::Deref;
 use hypertext::Renderable;
 use hypertext::context::AttributeValue;
 
-pub type NamedAttribute<'a> = hypertext::NamedAttribute<Cow<'static, str>, &'a dyn Renderable<AttributeValue>>;
+pub type NamedAttribute<'a> = hypertext::NamedAttribute<Cow<'a, str>, &'a dyn Renderable<AttributeValue>>;
 
 #[macro_export]
 macro_rules! attrs {
@@ -14,7 +14,7 @@ macro_rules! attrs {
 }
 
 pub trait CommonAttributeSetters<'a> {
-    fn id(mut self, id: impl Into<Cow<'static, str>>) -> Self
+    fn id(mut self, id: impl Into<Cow<'a, str>>) -> Self
     where
         Self: Sized,
     {
@@ -22,7 +22,7 @@ pub trait CommonAttributeSetters<'a> {
         self
     }
 
-    fn class(mut self, class: impl Into<Cow<'static, str>>) -> Self
+    fn class(mut self, class: impl Into<Cow<'a, str>>) -> Self
     where
         Self: Sized,
     {
@@ -30,7 +30,7 @@ pub trait CommonAttributeSetters<'a> {
         self
     }
 
-    fn classes(mut self, classes: impl Into<Vec<Cow<'static, str>>>) -> Self
+    fn classes(mut self, classes: impl Into<Vec<Cow<'a, str>>>) -> Self
     where
         Self: Sized,
     {
@@ -38,7 +38,7 @@ pub trait CommonAttributeSetters<'a> {
         self
     }
 
-    fn style(mut self, style: impl Into<Cow<'static, str>>) -> Self
+    fn style(mut self, style: impl Into<Cow<'a, str>>) -> Self
     where
         Self: Sized,
     {
@@ -64,15 +64,15 @@ pub trait CommonAttributeSetters<'a> {
 
     fn common_attrs_mut(&mut self) -> &mut CommonAttrs<'a>;
 
-    fn set_id(&mut self, id: impl Into<Cow<'static, str>>) {
+    fn set_id(&mut self, id: impl Into<Cow<'a, str>>) {
         self.common_attrs_mut().id = id.into();
     }
 
-    fn set_classes(&mut self, classes: Vec<Cow<'static, str>>) {
+    fn set_classes(&mut self, classes: Vec<Cow<'a, str>>) {
         self.common_attrs_mut().classes = classes;
     }
 
-    fn set_styles(&mut self, styles: Vec<Cow<'static, str>>) {
+    fn set_styles(&mut self, styles: Vec<Cow<'a, str>>) {
         self.common_attrs_mut().styles = styles;
     }
 
@@ -80,11 +80,11 @@ pub trait CommonAttributeSetters<'a> {
         self.common_attrs_mut().attrs = attrs;
     }
 
-    fn add_class(&mut self, class: impl Into<Cow<'static, str>>) {
+    fn add_class(&mut self, class: impl Into<Cow<'a, str>>) {
         self.common_attrs_mut().classes.push(class.into());
     }
 
-    fn add_style(&mut self, style: impl Into<Cow<'static, str>>) {
+    fn add_style(&mut self, style: impl Into<Cow<'a, str>>) {
         self.common_attrs_mut().styles.push(style.into());
     }
 
@@ -108,15 +108,15 @@ pub trait CommonAttributeGetters<'a> {
 
     fn common_attrs_ref(&self) -> &CommonAttrs<'a>;
 
-    fn get_id(&'a self) -> &'a Cow<'static, str> {
+    fn get_id(&'a self) -> &'a Cow<'a, str> {
         &self.common_attrs_ref().id
     }
 
-    fn get_classes(&'a self) -> &'a [Cow<'static, str>] {
+    fn get_classes(&'a self) -> &'a [Cow<'a, str>] {
         &self.common_attrs_ref().classes
     }
 
-    fn get_styles(&'a self) -> &'a [Cow<'static, str>] {
+    fn get_styles(&'a self) -> &'a [Cow<'a, str>] {
         &self.common_attrs_ref().styles
     }
 
@@ -132,7 +132,7 @@ pub trait CommonAttributeGetters<'a> {
         &self.common_attrs_ref().attrs
     }
 
-    fn get_attr(&self, name: Cow<'static, str>) -> Option<&'a dyn Renderable<AttributeValue>> {
+    fn get_attr(&self, name: Cow<'a, str>) -> Option<&'a dyn Renderable<AttributeValue>> {
         self.common_attrs_ref().attrs.iter().find_map(|attr| {
             if attr.name() == name {
                 attr.value().copied()
@@ -145,9 +145,9 @@ pub trait CommonAttributeGetters<'a> {
 
 #[derive(Clone, Default)]
 pub struct CommonAttrs<'a> {
-    pub id: Cow<'static, str>,
-    pub classes: Vec<Cow<'static, str>>,
-    pub styles: Vec<Cow<'static, str>>,
+    pub id: Cow<'a, str>,
+    pub classes: Vec<Cow<'a, str>>,
+    pub styles: Vec<Cow<'a, str>>,
     pub attrs: Vec<NamedAttribute<'a>>,
 }
 
@@ -183,7 +183,7 @@ impl<'a, T: AsRef<CommonAttrs<'a>>> CommonAttributeGetters<'a> for T {
 
 // Non-generic on purpose: a single compiled copy serves every component type, instead of one
 // instantiation per component type and argument array length in the final binary.
-fn join_not_empty(first: &[&str], rest: &[Cow<'static, str>], separator: &str) -> Option<String> {
+fn join_not_empty(first: &[&str], rest: &[Cow<'_, str>], separator: &str) -> Option<String> {
     let mut line = String::new();
     for part in first.iter().copied().chain(rest.iter().map(Deref::deref)) {
         if part.is_empty() {

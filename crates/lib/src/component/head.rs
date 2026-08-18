@@ -16,7 +16,7 @@ use crate::link::{Link, LinkSetters};
 pub struct Anchor<'a> {
     #[as_ref]
     #[as_mut]
-    pub link: Link,
+    pub link: Link<'a>,
 
     #[as_ref]
     #[as_mut]

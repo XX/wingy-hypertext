@@ -9,11 +9,11 @@ macro_rules! htmx_attrs {
         }
 
         #[derive(Clone, Debug, Default, PartialEq, Eq)]
-        pub struct Htmx {
-            attrs: Vec<(HtmxAttr, Cow<'static, str>)>,
+        pub struct Htmx<'a> {
+            attrs: Vec<(HtmxAttr, Cow<'a, str>)>,
         }
 
-        impl Htmx {
+        impl<'a> Htmx<'a> {
             pub fn new() -> Self {
                 Self::default()
             }
@@ -25,7 +25,7 @@ macro_rules! htmx_attrs {
                     .map(|(_, value)| value.as_ref())
             }
 
-            fn set_attr(&mut self, attr: HtmxAttr, value: Cow<'static, str>) {
+            fn set_attr(&mut self, attr: HtmxAttr, value: Cow<'a, str>) {
                 if let Some(slot) = self.attrs.iter_mut().find(|(key, _)| *key == attr) {
                     slot.1 = value;
                 } else {
@@ -40,12 +40,12 @@ macro_rules! htmx_attrs {
             )+
         }
 
-        pub trait HtmxSetters {
-            fn htmx_mut(&mut self) -> &mut Htmx;
+        pub trait HtmxSetters<'a> {
+            fn htmx_mut(&mut self) -> &mut Htmx<'a>;
 
             $(
                 #[must_use]
-                fn $method(mut self, value: impl Into<Cow<'static, str>>) -> Self
+                fn $method(mut self, value: impl Into<Cow<'a, str>>) -> Self
                 where
                     Self: Sized,
                 {
@@ -55,14 +55,14 @@ macro_rules! htmx_attrs {
             )+
         }
 
-        impl HtmxSetters for Htmx {
-            fn htmx_mut(&mut self) -> &mut Htmx {
+        impl<'a> HtmxSetters<'a> for Htmx<'a> {
+            fn htmx_mut(&mut self) -> &mut Htmx<'a> {
                 self
             }
         }
 
-        impl<T: AsMut<Htmx>> HtmxSetters for T {
-            fn htmx_mut(&mut self) -> &mut Htmx {
+        impl<'a, T: AsMut<Htmx<'a>>> HtmxSetters<'a> for T {
+            fn htmx_mut(&mut self) -> &mut Htmx<'a> {
                 self.as_mut()
             }
         }

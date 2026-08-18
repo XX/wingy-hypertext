@@ -3,8 +3,8 @@ use std::borrow::Cow;
 use hypertext::context::AttributeValue;
 use hypertext::{Buffer, Renderable};
 
-pub trait LinkSetters {
-    fn href(mut self, href: impl Into<Cow<'static, str>>) -> Self
+pub trait LinkSetters<'a> {
+    fn href(mut self, href: impl Into<Cow<'a, str>>) -> Self
     where
         Self: Sized,
     {
@@ -20,7 +20,7 @@ pub trait LinkSetters {
         self
     }
 
-    fn download(mut self, download: impl Into<Cow<'static, str>>) -> Self
+    fn download(mut self, download: impl Into<Cow<'a, str>>) -> Self
     where
         Self: Sized,
     {
@@ -28,7 +28,7 @@ pub trait LinkSetters {
         self
     }
 
-    fn rel(mut self, rel: impl Into<Cow<'static, str>>) -> Self
+    fn rel(mut self, rel: impl Into<Cow<'a, str>>) -> Self
     where
         Self: Sized,
     {
@@ -36,9 +36,9 @@ pub trait LinkSetters {
         self
     }
 
-    fn link_mut(&mut self) -> &mut Link;
+    fn link_mut(&mut self) -> &mut Link<'a>;
 
-    fn set_href(&mut self, href: impl Into<Cow<'static, str>>) {
+    fn set_href(&mut self, href: impl Into<Cow<'a, str>>) {
         self.link_mut().href = Some(href.into());
     }
 
@@ -46,11 +46,11 @@ pub trait LinkSetters {
         self.link_mut().target = Some(target);
     }
 
-    fn set_download(&mut self, download: impl Into<Cow<'static, str>>) {
+    fn set_download(&mut self, download: impl Into<Cow<'a, str>>) {
         self.link_mut().download = Some(download.into());
     }
 
-    fn set_rel(&mut self, rel: impl Into<Cow<'static, str>>) {
+    fn set_rel(&mut self, rel: impl Into<Cow<'a, str>>) {
         self.link_mut().rel = Some(rel.into());
     }
 }
@@ -81,27 +81,27 @@ impl Renderable<AttributeValue> for Target {
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
-pub struct Link {
-    pub href: Option<Cow<'static, str>>,
+pub struct Link<'a> {
+    pub href: Option<Cow<'a, str>>,
     pub target: Option<Target>,
-    pub download: Option<Cow<'static, str>>,
-    pub rel: Option<Cow<'static, str>>,
+    pub download: Option<Cow<'a, str>>,
+    pub rel: Option<Cow<'a, str>>,
 }
 
-impl Link {
+impl<'a> Link<'a> {
     pub fn new() -> Self {
         Self::default()
     }
 }
 
-impl LinkSetters for Link {
-    fn link_mut(&mut self) -> &mut Link {
+impl<'a> LinkSetters<'a> for Link<'a> {
+    fn link_mut(&mut self) -> &mut Link<'a> {
         self
     }
 }
 
-impl<T: AsMut<Link>> LinkSetters for T {
-    fn link_mut(&mut self) -> &mut Link {
+impl<'a, T: AsMut<Link<'a>>> LinkSetters<'a> for T {
+    fn link_mut(&mut self) -> &mut Link<'a> {
         self.as_mut()
     }
 }
