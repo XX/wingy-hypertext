@@ -30,22 +30,6 @@ pub struct CopyButton<'a> {
 
 impl<'a> Renderable for CopyButton<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let content = rsx! {
-            @if let Some(children) = self.children {
-                (children)
-            } @else {
-                <span class=(ICON, " ", COPY_BUTTON_COPY)>
-                    (fontawesome::regular::Copy)
-                </span>
-                <span class=(ICON, " ", COPY_BUTTON_SUCCESS) hidden>
-                    (fontawesome::solid::Check)
-                </span>
-                <span class=(ICON, " ", COPY_BUTTON_ERROR) hidden>
-                    (fontawesome::solid::Xmark)
-                </span>
-            }
-        };
-
         rsx! {
             @let classes = {
                 let mut classes = self.attributes.classes.clone();
@@ -55,7 +39,19 @@ impl<'a> Renderable for CopyButton<'a> {
             @let from = format!(r#"{{"from":"{}"}}"#, self.from.as_deref().unwrap_or(""));
 
             <Button attributes=(self.attributes.clone()) classes appearance=Plain disabled=(self.disabled) action="copy" action_args=from>
-                (content)
+                @if let Some(children) = self.children {
+                    (children)
+                } @else {
+                    <span class=(ICON, " ", COPY_BUTTON_COPY)>
+                        (fontawesome::regular::Copy)
+                    </span>
+                    <span class=(ICON, " ", COPY_BUTTON_SUCCESS) hidden>
+                        (fontawesome::solid::Check)
+                    </span>
+                    <span class=(ICON, " ", COPY_BUTTON_ERROR) hidden>
+                        (fontawesome::solid::Xmark)
+                    </span>
+                }
             </Button>
         }
         .render_to(buffer);
