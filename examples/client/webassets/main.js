@@ -2,10 +2,14 @@ import init, * as wasm from "./dist/client.js";
 import highlight from "./vendor/highlight/highlight.js";
 import html from './vendor/highlight/languages/xml.js';
 import rust from './vendor/highlight/languages/rust.js';
-import init_htmx_request_interception from './vendor/htmx/client_patch.js';
+import define_client_router_ext from './vendor/htmx/client-router.ext.js';
 
 await init();
-init_htmx_request_interception(wasm);
+
+function router(path, event) {
+    return wasm.request(path);
+}
+define_client_router_ext(htmx, "/api", router);
 
 let root_html = wasm.render_root(window.location.pathname);
 let html_fragment = document.createRange().createContextualFragment(root_html);
