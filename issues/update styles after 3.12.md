@@ -1,0 +1,204 @@
+Просмотри свежую версию Webawesome в tmp/webawesome и проанализируй, какие понадобятся обновления стилей в webassets/style и какие изменения они потребуют в коде, чтобы привести его в соответствие с новой версией Webawesome. При этом обновление не должно ломать собственные разработки данного проекта, выведи также список подобных спорных мест, если они имеются.
+
+---
+
+● Сверка с Web Awesome 3.12.0 выполнена.
+
+## Что с чем сравнивалось
+
+`tmp/webawesome` — это `v3.12.0` + 12 коммитов ветки `next` (`git describe` → `v3.12.0-12-gf1981f73d`).
+Точка последней синхронизации проекта — примерно `0ed6b6640` (2026-07-10): именно от неё расходятся
+`webassets/style/common/**`, и она совпадает с датами файлов (`button.css`, `input.css`, `switch.css` — 11–12 июля).
+
+Важно для оценки объёма работ: `webassets/style/common/**` — почти дословная копия `src/styles/**`
+(отличий всего четыре, и три из них намеренные), а вот `components/`, `layouts/`, `helpers/` — не копии,
+а самостоятельные адаптации под light DOM. Поэтому «обновление до 3.12» — это не мёрдж, а точечный перенос
+конкретных фиксов.
+
+Всего upstream за этот период тронул стили в 19 файлах; из них к проекту относятся 9.
+
+## 1. Прямая синхронизация — безопасно, только CSS
+
+1. **`common/utilities/visually-hidden.css`** (upstream #2765): добавить `top: 0px !important; left: 0px !important;`
+   в блок `.wa-visually-hidden:not(:focus-within), …`. Класс реально используется — `crates/lib/src/component/head.rs:43`.
+2. **`common/utilities/variants.css`** (#2678): в селектор `:where(:root), .wa-neutral` добавить `.wa-invert`,
+   чтобы нативные элементы подхватывали инвертированные цвета.
+3. **`common/native.css`** (#2729): перенести `font-size: var(--wa-font-size-smaller)` с общего правила `th`
+   внутрь вложенного `&:not([scope='row']):not(:has(+ td))` — иначе `<th scope="row">` мельче соседних ячеек
+   и его текст выпадает из вертикального выравнивания (падинги там em-относительные).
+
+Изменений в Rust/JS не требуют.
+
+## 2. Требуют правки CSS, код проверен и менять не нужно
+
+4. **`components/switch.css`** (#2749): фокус-ринг переехал с ползунка на дорожку.
+   `.switch-toggle .control:focus-visible:not(:disabled) ~ .track .thumb` → `… ~ .track`.
+   Разметка (`switch.rs:135–136`, `.track > .thumb`) для этого уже подходит.
+5. **`components/tooltip.css`** (#2638): стрелка рисуется не бордером, а внутренней тенью — в Safari
+   `clip-path` вдоль бордера даёт светлый шов. Заменить
+   `border-right/border-bottom: var(--wa-tooltip-border-width) var(--wa-tooltip-border-style) var(--wa-tooltip-border-color)`
+   на `box-shadow: inset calc(-1 * var(--wa-tooltip-border-width)) calc(-1 * var(--wa-tooltip-border-width)) 0 0 var(--wa-tooltip-border-color)`.
+   Геометрия стрелки в `helpers/popup.css` (clip-path, `--arrow-base-offset`) совпадает с upstream, так что
+   фикс переносится один в один. Побочный эффект тот же, что у upstream: `--wa-tooltip-border-style` перестаёт
+   влиять на стрелку (во всех темах там `solid`, визуально ничего не меняется).
+6. **`layouts/page.css`** (#2690): upstream добавил хедеру `background-color: var(--wa-color-surface-default)` —
+   **у нас это уже есть**, делать нечего.
+7. **`utils/icon.css`** (#2677): upstream убрал `fill: currentColor` из правила `svg`, потому что CSS-правило
+   перебивает presentation-атрибуты SVG. У нас его и не было, а `iconic` проставляет `fill` атрибутом на каждом
+   `path` (`iconic/src/hypertext.rs:14`) — по этому пункту мы уже совпадаем с 3.12.
+   **Но** рядом обнаружился свой баг: правило `svg { height: 1em; overflow: visible; width: auto; }`
+   не отскоплено и применяется ко всем `<svg>` на странице. Должно быть `.icon svg`.
+
+## 3. Новая функциональность 3.12 — можно подтянуть, но это не стилевая задача
+
+8. **`DropdownItem` со ссылками** (#2733: `href`/`target`/`rel`/`download`). CSS-часть тривиальна
+   (upstream добавил `#link { display: none }`), но основная работа в Rust и WASM: подмешать `Link`
+   в `DropdownItem` (у него сейчас только `CommonAttrs`), отрендерить скрытый `<a>`, а в `crates/web`
+   научить обработчик выбора кликать по нему с учётом модификаторов. Отдельная задача, не «обновление стилей».
+9. **`Button` в состоянии loading** (#2694): upstream заменил `visibility: hidden` на `opacity: 0` +
+   `pointer-events: none`, чтобы label оставался в дереве доступности, и добавил `aria-busy`.
+   У нас в `button.css` нет ни `loading`, ни спиннера, ни каретки, ни позиционирования бейджа — фиксировать
+   нечего. Учесть, когда `loading` будет реализован.
+10. **Drawer: `<header>`/`<footer>` → `<div>`** (#2737). Не стилевой, но из той же версии: внутри `<dialog>`
+    эти теги создают дублирующиеся landmark'и `banner`/`contentinfo`. У нас `drawer.rs:109` и `:181` рендерят
+    ровно их, а `drawer.css` селекторы классовые (`.drawer-header`, `.drawer-footer`) — правка чисто в Rust,
+    стили не задеваются вообще.
+
+## 4. Спорные места — механическое обновление сломает наши наработки
+
+**A. Кнопка очистки в `select.css` (#2748) — главный конфликт.**
+Upstream сделал клик-таргет во всю высоту контрола: `align-self: stretch; inline-size: 1.5em;
+margin-inline-start: calc(var(--wa-form-control-padding-inline) - 0.125em); margin-inline-end: -0.125em`.
+У нас там намеренно `width: 1em; height: 1em` с комментарием — это локальный фикс «прыжка» высоты комбобокса,
+который возникает потому, что в light DOM служебная кнопка ловит `height: var(--wa-form-control-height)`
+из региона Buttons в `native.css` (ровно то, что описано в `issues/isolate internal buttons.md`).
+Плюс наш `.combobox` — это `min-height` + переносимые теги в режиме `multiple`: `align-self: stretch`
+растянет кнопку на всю многострочную высоту, чего в upstream не бывает.
+**Порядок работ:** сначала `issues/isolate internal buttons.md`, потом перенос геометрии; наоборот — вернём старые баги.
+
+**B. `input.css`: `:focus-within` → `:has(input:focus, textarea:focus)` (#2750).**
+Смысл апстримного изменения — не окольцовывать поле, когда фокус на внутренней кнопке (clear/password-toggle).
+У нас этих кнопок нет: `Input` рендерит label + `.text-field` (только `<input class="control">`) + hint + children,
+внутри поля фокусироваться нечему, и оба селектора сейчас эквивалентны. Менять можно (дёшево и не ломает),
+но по-настоящему это понадобится вместе с реализацией кнопок. Отмечу: наш базовый прозрачный outline с
+комментарием про «вспышку тёмного кольца» уже совпадает по смыслу с апстримным #2625 — этот фикс мы взяли раньше.
+
+**C. `common/component/variants.css` и `size.css` разошлись принципиально.**
+У нас `.neutral/.brand/.success/.warning/.danger` вместо `.wa-*`, плюс мёртвые в light DOM `:host([data-variant=…])`;
+в `size.css` — свои `.size-extra-small … .size-extra-large` с `!important` рядом с апстримными `.wa-size-*`.
+Любой механический ресинк из `*.styles.ts` это снесёт. Новый `.wa-invert` из 3.12 сюда добавлять смысла нет
+(нет инвертирующего компонента) — только в `utilities/variants.css`, п.2.
+Заодно риск, не связанный с 3.12: имена `.neutral`, `.brand`, `.danger` слишком общие для глобальной таблицы стилей.
+
+**D. Намеренные расхождения, которые обязаны пережить любой ресинк:**
+`layers.css` и `themes/default.css` — `.page` вместо `wa-page`; `utilities/prose.css` — `.callout` вместо `wa-callout`.
+Это и есть три из четырёх отличий `common/` от upstream (четвёртое — п.3, наш отставший `th`).
+Ставлю пометку, потому что diff-мёрдж «в лоб» затрёт их молча.
+
+**E. `layers.css` — два мёртвых правила, вскрылись при сверке.**
+- `.page :is(*, *:after, *:before) { scroll-margin-top: var(--scroll-margin-top) }` — переменной
+  `--scroll-margin-top` в проекте нет (в `page.css` она называется `--page-scroll-margin-top`, и там же
+  дублируется само правило). Объявление невалидно на этапе вычисления значения.
+- `.page[view='mobile'] .wa-desktop-only` / `.page[view='desktop'] .wa-mobile-only` не срабатывают никогда:
+  атрибут `view` на `.page` нигде не выставляется — в оригинале его пишет JS-компонент `wa-page` по ширине.
+  При этом класс `wa-desktop-only` уже используется: `examples/client/src/lib.rs:142`.
+  Лечится либо выставлением `view` из `crates/web` (resize observer, как в `wa-page`), либо переписыванием
+  на медиазапросы. Заодно убрать `\`` в комментарии — остаток TS-шаблона.
+
+**F. `common/component/form-control.css` и `common/component/visually-hidden.css` — мёртвый код.**
+Ни один `index.css` их не импортирует, а внутри — `::part(...)`, невозможные в light DOM
+(живой аналог `.wa-visually-hidden` лежит в `utilities/`). Апстримный фикс `.has-count` в `form-control`
+(#2720, для счётчика символов textarea) переносить в мёртвый файл смысла нет. Решение — либо перевести
+на классы и подключить, либо удалить.
+
+**G. `button.css`: иконочные кнопки.**
+У нас `.button:has(.icon) { padding: 0 0.75em }`, у upstream — `.is-icon-button { width: var(--wa-form-control-height);
+aspect-ratio: 1; outline-offset: 2px }` (квадратная кнопка) плюс отдельная ветка для каретки.
+В 3.12 не менялось, трогать не нужно, но при следующем ресинке кнопки это первое место конфликта.
+
+## 5. Что из 3.12 не касается проекта
+
+`otp-input`, `pagination`, `toast`/`toast-item`, `data-grid`, `color-picker`, `textarea`, `popover`,
+а также `styles/component/segmented-field.styles.ts` и `host.styles.ts` — соответствующих компонентов в библиотеке нет.
+
+Поведенческие изменения 3.12, не относящиеся к стилям, но которые стоит завести отдельно в `BACKLOG.md`:
+light dismiss и отмена `wa-hide` у Tooltip (#2721), сдвиг подменю при нехватке места по краям и
+`aria-posinset`/`aria-setsize` у Dropdown (#2738, #2708).
+
+## Порядок внедрения
+
+1. Пункты 1–5 и 7 (в п.7 — только скоупинг `svg` → `.icon svg`): чистый CSS, ничего не ломают.
+2. Пункт 10 (drawer `<header>`/`<footer>` → `<div>`): одна правка в Rust, тесты рендера в `tests/drawer.rs` придётся обновить.
+3. Пункт E: починить или снять мёртвые правила `layers.css`.
+4. Пункт A — только после `issues/isolate internal buttons.md`.
+5. Пункты 8, 9, B, C, F, G — отдельными задачами.
+
+---
+
+Выполни шаг 1, как указано в файле задачи (пункты 1-5 и 7).
+
+---
+
+● Шаг 1 выполнен: пункты 1–5 и 7. Пункт 6 подтверждён как «делать нечего».
+
+## Что изменено
+
+- `common/utilities/visually-hidden.css` — `top/left: 0 !important` (#2765). Файл синхронизирован с upstream дословно.
+- `common/utilities/variants.css` — `.wa-invert` добавлен в селектор (#2678). Синхронизирован дословно.
+- `common/native.css` — `font-size` у `th` перенесён внутрь `&:not([scope='row']):not(:has(+ td))` (#2729).
+  Файл отличался от upstream только этим блоком, поэтому взят целиком; итоговый diff — ровно один целевой ханк.
+- `components/switch.css` — фокус-ринг с `~ .track .thumb` на `~ .track` (#2749).
+- `components/tooltip.css` — стрелка через `box-shadow: inset …` вместо `border-right`/`border-bottom` (#2638).
+- `utils/icon.css` — глобальное правило `svg { … }` заскоплено.
+
+Rust не тронут: `cargo test` — 96 тестов проходят.
+
+## Поправка к анализу: `.icon svg` оказалось недостаточно
+
+В анализе (п.7) было сказано «должно быть `.icon svg`». При проверке выяснилось, что этого мало.
+`iconic` отдаёт голый `<svg>` без своего класса или data-атрибута (`iconic/src/hypertext.rs:14`),
+а библиотека рендерит иконку напрямую, без обёртки `.icon`, в шести местах:
+`tag.rs:68` (`.tag-remove`), `select.rs:153/157/230` (`.clear-button`, `.expand-icon`, `.check`),
+`dropdown.rs:296/413` (`.check`, `.submenu-icon`), плюс два слота, куда иконку кладёт вызывающий код:
+`.callout-icon` (`callout.rs:57`) и `.dropdown-item-icon` (`dropdown.rs:325`).
+
+Из них собственные правила `svg` были только у `select.css` и `tag.css`; `.callout-icon`,
+`.dropdown-item-icon`, `.check` и `.submenu-icon` у Dropdown остались бы без размеров.
+Поэтому правило названо списком контейнеров, а не `.icon svg`:
+
+```css
+:is(.icon, .callout-icon, .dropdown-item-icon, .check, .submenu-icon, .expand-icon, .clear-button, .tag-remove) svg
+```
+
+Специфичность при этом не ломает существующие переопределения: `:is()` даёт (0,1,1), а
+`.select .clear-button svg` и `.tag .tag-remove svg` — (0,2,1), то есть по-прежнему выигрывают.
+
+`.dropdown-item-icon` в список попал не сразу — его нашла проверка (см. ниже), а не чтение кода.
+Это аргумент за то, чтобы в будущем всё-таки вешать `.icon` на служебные иконки в самой библиотеке
+(тогда список схлопнется до одного селектора), но это уже правка разметки и снапшот-тестов — отдельной задачей.
+
+## Как проверялось
+
+Headless Chromium через CDP, сборка `cargo make client` + `example-server` на :9080.
+
+1. **Аудит всех `<svg>`**: обход 15 страниц галереи, 987 элементов. Ни одного с неправдоподобным
+   размером (все нулевые — это скрытые состояния `CopyButton` и закрытые попапы). Аудит же и показал
+   единственный непокрытый контейнер — `.dropdown-item-icon`, после чего он был добавлен в список.
+2. **Скрытые слоты иконок** (закрытые меню и листбоксы принудительно раскрыты):
+   `.dropdown-item-icon svg` → 14px, `.check svg` в Dropdown → 12.3×14, `.submenu-icon svg` → 7×14,
+   `.option .check svg` в Select → 11/12/14/18px по размерным вариантам, `.callout-icon svg` → 15…25px,
+   `.tag-remove svg` → 14/16/20px, `.expand-icon svg` → 12/14/16/20px. Везде высота = 1em своего контекста.
+3. **Switch**: фокус на `.control` → `outline: solid 3px` на `.track`, на `.thumb` — `outline-style: none`.
+   Скриншот подтверждает: кольцо обводит весь тумблер.
+4. **Tooltip**: тултип открыт (фокусом на анкоре), стрелка 14×14,
+   `box-shadow: rgb(27,29,38) -1px -1px 0px 0px inset`, `border-right-width: 0px`. Скриншот — стрелка на месте.
+5. **`.wa-visually-hidden`**: `top: 0px`, `left: 0px`, `position: absolute`.
+6. **`.wa-invert`**: на элементе с этим классом `--wa-color-fill-loud`/`on-loud`/`border-loud` совпадают
+   с его же инвертированной нейтральной шкалой, а нативная `<button>` внутри `.wa-invert` красится
+   `#e4e5e9`/`#101219` против `#2f323f`/белого снаружи — ровно то, что чинит #2678.
+7. **`th`**: во вставленной таблице колоночный заголовок 14px, `th[scope=row]` 16px = ячейка 16px.
+
+Браузер и сервер остановлены.
+
+---
+

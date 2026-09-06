@@ -24,7 +24,22 @@
   height: 1em;
 }
 
-svg {
+/* `iconic` emits a bare <svg> with no class of its own, so the sizing rule has to name every
+ * container that hosts a raw icon. `.icon` is the canonical one; the rest are the library's own
+ * icon slots, which render the icon directly (see Callout, Dropdown, Select, Tag). Keeping the
+ * selector list here — rather than a bare `svg` — stops the rule from resizing unrelated SVG
+ * markup on the page. */
+:is(
+    .icon,
+    .callout-icon,
+    .dropdown-item-icon,
+    .check,
+    .submenu-icon,
+    .expand-icon,
+    .clear-button,
+    .tag-remove
+  )
+  svg {
   height: 1em;
   overflow: visible;
   width: auto;

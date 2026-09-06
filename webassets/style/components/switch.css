@@ -61,7 +61,7 @@
 }
 
 /* Focus */
-.switch-toggle .control:focus-visible:not(:disabled) ~ .track .thumb {
+.switch-toggle .control:focus-visible:not(:disabled) ~ .track {
     outline: var(--wa-focus-ring);
     outline-offset: var(--wa-focus-ring-offset);
 }
