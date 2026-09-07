@@ -1,0 +1,22 @@
+/* Compensates the scrollbar's width while page scrolling is locked.
+ *
+ * The upstream utility (common/utilities/scroll-lock.css, kept verbatim) reserves the
+ * space with `scrollbar-gutter` on <html>. That gutter sits outside the root's content
+ * box, and so outside `::backdrop` — a modal's dim stops at the body's edge and the
+ * gutter stays lit, reading as a white stripe down the side of the page.
+ *
+ * So we take the other route upstream already ships for browsers without
+ * `scrollbar-gutter` support: pad the body instead. The content lands in exactly the
+ * same place, the root keeps its full width, and the backdrop covers everything.
+ *
+ * This works by omission rather than by override: `wingy-hypertext-web`
+ * (`util::scroll`) deliberately leaves `--wa-scroll-lock-gutter` unset, so the upstream
+ * `scrollbar-gutter: var(--wa-scroll-lock-gutter) !important` resolves to `auto` and
+ * does nothing. Overriding it here would not work — an `!important` declaration inside
+ * `@layer wa-utilities` beats an unlayered one.
+ *
+ * `padding-right`, not `padding-inline-end`, to match both the upstream fallback and
+ * the `padding-right` that `util::scroll` folds into `--wa-scroll-lock-size`. */
+.wa-scroll-lock body {
+  padding-right: var(--wa-scroll-lock-size);
+}

@@ -1,5 +1,5 @@
-//! A Rust port of the `wa-drawer` behavior: opening and closing the drawer as
-//! a native modal `<dialog>` with slide-in/out animations, declarative
+//! An implementation of the `Drawer` behavior: opening and closing the drawer
+//! as a native modal `<dialog>` with slide-in/out animations, declarative
 //! `data-drawer="open <id>"` / `data-drawer="close"` triggers, [Escape] and
 //! light-dismiss handling, body scroll locking, and the cancelable
 //! `wg-show`/`wg-hide` (plus `wg-after-show`/`wg-after-hide`) lifecycle events.
@@ -13,37 +13,29 @@ use wasm_dom as dom;
 use wasm_dom::event::EventListener;
 use wasm_dom::existing::JsObjectAccess;
 use wasm_dom::existing::access::{CastToElement, CastToHtmlElement};
-use web_sys::{Element, Event, HtmlDialogElement, KeyboardEvent};
+use web_sys::{Element, Event, KeyboardEvent};
 
 use crate::util::animate::animate_with_class;
-use crate::util::event;
+use crate::util::convert::dialog;
+use crate::util::{event, scroll};
 
-fn dialog(drawer: &Element) -> Option<HtmlDialogElement> {
-    drawer.clone().dyn_into::<HtmlDialogElement>().ok()
-}
-
-fn is_open(drawer: &Element) -> bool {
+pub fn is_open(drawer: &Element) -> bool {
     dialog(drawer).map(|dialog| dialog.open()).unwrap_or(false)
 }
 
 /// Locks or unlocks page scrolling depending on whether any drawer is open.
-fn update_body_scroll_lock() {
+pub fn update_body_scroll_lock() {
     let has_open = dom::existing::document()
         .query_selector(".drawer.open")
         .ok()
         .flatten()
         .is_some();
 
-    let body = dom::existing::body();
-    if has_open {
-        body.style().set_property("overflow", "hidden").ok();
-    } else {
-        body.style().remove_property("overflow").ok();
-    }
+    scroll::set_body_scroll_lock(has_open);
 }
 
 /// Shows the drawer, animating it in unless the `wg-show` event is canceled.
-async fn show(drawer: Element) -> Option<()> {
+pub async fn show(drawer: Element) -> Option<()> {
     let dialog = dialog(&drawer)?;
     if dialog.open() {
         return None;
@@ -80,7 +72,7 @@ async fn show(drawer: Element) -> Option<()> {
 /// Requests to close the drawer. Dispatches a cancelable `wg-hide` carrying the
 /// `source` element that triggered the request; when canceled the drawer stays
 /// open and pulses instead.
-async fn request_close(drawer: Element, source: Element) -> Option<()> {
+pub async fn request_close(drawer: Element, source: Element) -> Option<()> {
     let dialog = dialog(&drawer)?;
     if !dialog.open() {
         return None;
@@ -107,13 +99,13 @@ async fn request_close(drawer: Element, source: Element) -> Option<()> {
     Some(())
 }
 
-fn open_drawer(drawer: Element) {
+pub fn open_drawer(drawer: Element) {
     spawn_local(async move {
         show(drawer).await;
     });
 }
 
-fn close_drawer(drawer: Element, source: Element) {
+pub fn close_drawer(drawer: Element, source: Element) {
     spawn_local(async move {
         request_close(drawer, source).await;
     });
@@ -121,7 +113,7 @@ fn close_drawer(drawer: Element, source: Element) {
 
 /// Resolves a `data-drawer` value: `"open <id>"` opens the drawer with that id,
 /// `"close"` closes the enclosing drawer.
-fn handle_drawer_click(event: &Event) -> Option<()> {
+pub fn handle_drawer_click(event: &Event) -> Option<()> {
     let target = event.target()?.maybe_into_element()?;
 
     if let Some(trigger) = target.closest("[data-drawer]").ok().flatten() {
@@ -163,7 +155,7 @@ fn handle_drawer_click(event: &Event) -> Option<()> {
 }
 
 /// [Escape] closes the top-most open drawer.
-fn handle_keydown(event: &Event) -> Option<()> {
+pub fn handle_keydown(event: &Event) -> Option<()> {
     let keyboard: &KeyboardEvent = event.dyn_ref()?;
     if keyboard.key() != "Escape" {
         return None;
@@ -186,13 +178,16 @@ pub fn init_drawers() {
     let Ok(drawers) = dom::existing::document().query_selector_all(".drawer[data-open]") else {
         return;
     };
-    for i in 0..drawers.length() {
-        if let Some(drawer) = drawers.get(i).and_then(|node| node.maybe_into_element())
-            && !is_open(&drawer)
-        {
-            open_drawer(drawer);
+
+    spawn_local(async move {
+        for i in 0..drawers.length() {
+            if let Some(drawer) = drawers.get(i).and_then(|node| node.maybe_into_element())
+                && !is_open(&drawer)
+            {
+                show(drawer).await;
+            }
         }
-    }
+    });
 }
 
 /// Installs the document-level listeners driving declarative open/close and

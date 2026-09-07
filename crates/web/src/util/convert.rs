@@ -1,3 +1,5 @@
+use wasm_dom::JsCast;
+use web_sys::{Element, HtmlDialogElement};
 pub use wingy_hypertext::convert::*;
 
 /// Mimics JavaScript's `parseFloat`: reads a leading (optionally signed) decimal number, defaulting to 0.
@@ -40,4 +42,8 @@ pub fn parse_duration_millis(duration: &str) -> f64 {
     }
 
     parse_float(&duration)
+}
+
+pub fn dialog(element: &Element) -> Option<HtmlDialogElement> {
+    element.clone().dyn_into::<HtmlDialogElement>().ok()
 }

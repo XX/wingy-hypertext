@@ -80,6 +80,11 @@ impl<'a> Renderable for Drawer<'a> {
     }
 }
 
+/// The drawer's header, holding the title and the close button.
+///
+/// Rendered as a `<div>`, not a `<header>`: `<dialog>` doesn't scope the banner
+/// landmark away, so a `<header>` here would expose a second `banner` next to
+/// the page's own.
 #[derive(Default, AsRef, AsMut, Props, DynRenderable)]
 #[const_str(CLASS = DRAWER_HEADER)]
 #[props(builder)]
@@ -106,7 +111,7 @@ impl<'a, A: Renderable> DrawerHeader<'a, A> {
         let style_line = self.style_line_with(&[]);
 
         rsx! {
-            <header id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
+            <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
                 @if self.bare {
                     (self.children)
                 } @else {
@@ -127,7 +132,7 @@ impl<'a, A: Renderable> DrawerHeader<'a, A> {
                         </Button>
                     </div>
                 }
-            </header>
+            </div>
         }
         .render_to(buffer);
     }
@@ -160,6 +165,9 @@ impl<'a> Renderable for DrawerBody<'a> {
 }
 
 /// The drawer's footer, usually one or more buttons representing various options.
+///
+/// Rendered as a `<div>` for the same reason [`DrawerHeader`] is: a `<footer>`
+/// inside a `<dialog>` would duplicate the page's `contentinfo` landmark.
 #[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = DRAWER_FOOTER)]
 #[props(builder)]
@@ -178,9 +186,9 @@ impl<'a> Renderable for DrawerFooter<'a> {
         let style_line = self.style_line_with(&[]);
 
         rsx! {
-            <footer id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
+            <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
                 (self.children)
-            </footer>
+            </div>
         }
         .render_to(buffer);
     }

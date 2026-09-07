@@ -14,10 +14,10 @@ fn header(title: &str) -> String {
     let icon = rsx! { (fontawesome::solid::Xmark) }.render().into_inner();
     format!(
         concat!(
-            r#"<header class="drawer-header"><h2 class="drawer-title">{title}</h2>"#,
+            r#"<div class="drawer-header"><h2 class="drawer-title">{title}</h2>"#,
             r#"<div class="drawer-header-actions">"#,
             r#"<button class="button neutral plain drawer-close" data-drawer="close" aria-label="Close">"#,
-            r#"<span class="icon">{icon}</span></button></div></header>"#,
+            r#"<span class="icon">{icon}</span></button></div></div>"#,
         ),
         title = title,
         icon = icon,
@@ -119,13 +119,13 @@ fn footer_and_header_actions() {
     let icon = fontawesome::solid::Xmark.render().into_inner();
     let expected = format!(
         concat!(
-            r#"<dialog class="drawer start"><header class="drawer-header">"#,
+            r#"<dialog class="drawer start"><div class="drawer-header">"#,
             r#"<h2 class="drawer-title">Drawer</h2><div class="drawer-header-actions">"#,
             r#"<span class="new-window"></span>"#,
             r#"<button class="button neutral plain drawer-close" data-drawer="close" aria-label="Close">"#,
-            r#"<span class="icon">{icon}</span></button></div></header>"#,
+            r#"<span class="icon">{icon}</span></button></div></div>"#,
             r#"<div class="drawer-body">Body</div>"#,
-            r#"<footer class="drawer-footer"><button>Close</button></footer></dialog>"#,
+            r#"<div class="drawer-footer"><button>Close</button></div></dialog>"#,
         ),
         icon = icon,
     );

@@ -21,6 +21,7 @@
 @import url("helpers/popup.css");
 
 @import url("utils/icon.css");
+@import url("utils/scroll_lock.css");
 
 html {
   scroll-behavior: smooth;
