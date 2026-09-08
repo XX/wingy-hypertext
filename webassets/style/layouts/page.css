@@ -3,21 +3,80 @@
   --menu-width: 15rem;
   --aside-width: 15rem;
   --footer-height: 228px;
-  --page-scroll-margin-top: calc(var(--page-header-height, 0px) + 0.5em);
+
+  /* Read by the sticky-header offset rule in common/layers.css. */
+  --scroll-margin-top: calc(var(--page-header-height, 0px) + 0.5em);
 }
 
-@media screen and (max-width: 920px) {
-  .page {
-    --menu-width: auto;
-    --aside-width: auto;
+/* The responsive layout keys off `view` rather than a media query, so the page has
+ * a single breakpoint: the one `init_page` measures on the element itself and
+ * publishes here. `data-mobile-breakpoint` on the page moves it. */
+.page[view='desktop'] {
+  .page-menu {
+    border-inline-end: var(--wa-border-width-s) var(--wa-border-style) var(--wa-color-surface-border);
   }
 }
 
-@media screen and (min-width: 920px) {
-  .page {
-    .page-menu {
-      border-inline-end: var(--wa-border-width-s) var(--wa-border-style) var(--wa-color-surface-border);
-    }
+.page[view='mobile'] {
+  --menu-width: auto;
+  --aside-width: auto;
+
+  .page-navigation-toggle {
+    display: inline-flex;
+  }
+}
+
+/* With the navigation drawer in play the menu column folds away entirely and its
+ * content moves into the drawer; without one it stays put, just narrower. */
+.page[view='mobile']:has(> .page-navigation-drawer) {
+  --menu-width: 0;
+
+  .page-menu {
+    display: none;
+  }
+}
+
+/* Hidden until the page collapses. The rule in common/layers.css already hides
+ * `[data-toggle-nav]` on desktop, but it lives in `@layer wa-base` and everything
+ * here is unlayered, so an unconditional `display` would override it. Driving the
+ * toggle's own visibility from `view` keeps the two from fighting; the layers.css
+ * rule still covers custom toggles the app supplies. */
+.page-navigation-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.75em;
+  height: var(--wa-form-control-height);
+  border: none;
+  border-radius: var(--wa-form-control-border-radius);
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.page-navigation-toggle:focus {
+  outline: none;
+}
+
+.page-navigation-toggle:focus-visible {
+  outline: var(--wa-focus-ring);
+  outline-offset: var(--wa-focus-ring-offset);
+}
+
+@media (hover: hover) {
+  .page-navigation-toggle:hover {
+    background-color: var(--wa-color-neutral-fill-quiet);
+  }
+}
+
+/* The menu content keeps its own borders on desktop; inside the drawer they would
+ * draw a second edge alongside the panel's. */
+.page-navigation-drawer {
+  --size: 18rem;
+
+  .page-menu-nav {
+    border-inline-end: none;
   }
 }
 
@@ -101,10 +160,6 @@
     background-color: var(--wa-color-surface-lowered);
     font-size: var(--wa-font-size-s);
   }
-}
-
-.page :is(*, *:after, *:before) {
-  scroll-margin-top: var(--page-scroll-margin-top);
 }
 
 .wa-flank {

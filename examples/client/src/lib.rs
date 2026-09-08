@@ -13,7 +13,7 @@ use wingy_hypertext::class::{
     STACK, START,
 };
 use wingy_hypertext::component::button::Button;
-use wingy_hypertext::layout::page::{Page, PageBody, PageMenu};
+use wingy_hypertext::layout::page::{Page, PageBody, PageMenu, PageNavigationToggle};
 use wingy_hypertext::link::LinkSetters;
 use wingy_hypertext::link::Target::*;
 use wingy_hypertext::variant::Variant::*;
@@ -133,9 +133,10 @@ fn handle_close(event: &Event) -> Option<()> {
 #[wasm_bindgen]
 pub fn render_root(url_path: &str) -> String {
     rsx! {
-        <Page>
+        <Page navigation=true>
             <header class=SPLIT>
                 <div class=CLUSTER>
+                    <PageNavigationToggle/>
                     <span class=ICON style="color: var(--wa-color-brand-fill-loud); font-size: 1.5em; --rotate-angle: 0deg;">
                         (fontawesome::solid::PuzzlePiece)
                     </span>
