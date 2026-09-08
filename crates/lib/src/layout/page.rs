@@ -35,15 +35,26 @@ fn safe_breakpoint(breakpoint: Option<&str>) -> &str {
     if valid { breakpoint } else { DEFAULT_MOBILE_BREAKPOINT }
 }
 
-/// The stylesheet [`Page`] ships alongside its markup, mirroring the one
+/// The stylesheet [`Page`] ships alongside its markup, standing in for the one
 /// `wa-page` renders into its shadow root.
 ///
-/// Until the client has measured the page, `view` reads `desktop` — which is a
-/// lie on a narrow screen, and a server-rendered page would land there showing
-/// the full desktop grid until the WASM module boots. A media query needs no
-/// JS, so it covers exactly that window. It has to be rendered rather than kept
-/// in `page.css` because the breakpoint is per-page.
+/// It is a container query on the page rather than a media query on the viewport,
+/// so it answers the question the layout actually asks — how wide is *this page* —
+/// and stays right for a page laid out inside a narrower column. That also makes it
+/// the single source of truth: it needs no JS, so it is correct from the first paint
+/// rather than from hydration, and nothing has to agree with it afterwards.
+///
+/// It has to be rendered rather than kept in `page.css` because a container query
+/// condition cannot read a custom property, and the breakpoint is per page.
 fn mobile_stylesheet(breakpoint: &str, navigation: bool) -> String {
+    // Utilities from Web Awesome that mean "the page is narrow", plus the escape
+    // hatch for an app-supplied navigation toggle. Upstream keys these off the
+    // `view` attribute in `layers.css`; here they belong to the same query as
+    // everything else, so there is one breakpoint and no cascade to fight.
+    let common = ".page .wa-desktop-only{display:none!important}\
+                  .page .wa-mobile-only{display:revert!important}\
+                  .page [data-toggle-nav]{display:revert}";
+
     let navigation_rules = if navigation {
         ".page .page-menu{display:none}.page .page-navigation-toggle{display:inline-flex}"
     } else {
@@ -52,11 +63,20 @@ fn mobile_stylesheet(breakpoint: &str, navigation: bool) -> String {
     let menu_width = if navigation { "0" } else { "auto" };
 
     format!(
-        "@media screen and (width < {breakpoint}){{\
-         .page{{--menu-width:{menu_width};--aside-width:auto}}{navigation_rules}}}"
+        "@container page (width < {breakpoint}){{\
+         .page{{--menu-width:{menu_width};--aside-width:auto}}{common}{navigation_rules}}}"
     )
 }
 
+/// The page shell: a header, a body splitting into menu, main and aside, and a
+/// footer.
+///
+/// The responsive layout comes entirely from the container query in
+/// [`mobile_stylesheet`], which the page renders alongside its markup. The `view`
+/// attribute is published for application code and read by `init_page` in
+/// `wingy-hypertext-web`, which needs to know when to move the navigation into the
+/// drawer — but no styling depends on it, so the page is laid out correctly before
+/// any script has run.
 #[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = PAGE)]
 #[props(builder)]
@@ -86,8 +106,8 @@ impl<'a> Renderable for Page<'a> {
         let breakpoint = safe_breakpoint(self.mobile_breakpoint.as_deref());
         let stylesheet = mobile_stylesheet(breakpoint, self.navigation);
 
-        // The client parses the attribute and the media query above uses the same
-        // value, so a rejected breakpoint has to be rejected for both.
+        // The client parses the attribute and the container query above uses the
+        // same value, so a rejected breakpoint has to be rejected for both.
         let breakpoint_attr = self.mobile_breakpoint.is_some().then_some(breakpoint);
 
         let navigation = self.navigation.then(|| {
@@ -104,8 +124,10 @@ impl<'a> Renderable for Page<'a> {
             }
         });
 
-        // `view` is not a standard HTML attribute, so it goes through the
-        // named-attribute escape hatch rather than rsx's typed attributes.
+        // Reflects the layout the page is in. Styling doesn't consult it — the
+        // container query does that — so shipping the wide value is safe even when
+        // the page turns out to be narrow. `view` is not a standard HTML attribute,
+        // so it goes through the named-attribute escape hatch.
         let view = attrs!["view" = &"desktop"];
 
         rsx! {
@@ -130,10 +152,10 @@ impl<'a> Renderable for Page<'a> {
 
 /// The hamburger opening the mobile navigation drawer of a [`Page`].
 ///
-/// Place it in the page header: `layers.css` hides anything carrying
-/// `data-toggle-nav` while the page is in the desktop view, so it appears only
-/// when the navigation has collapsed. Opening is the ordinary declarative drawer
-/// trigger, so no page-specific click handling is involved.
+/// Place it in the page header: it stays hidden until the page collapses, which
+/// the rendered stylesheet decides. Opening is the ordinary declarative drawer
+/// trigger, so no page-specific click handling is involved. An app-supplied toggle
+/// works the same way if it carries `data-toggle-nav`.
 #[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = PAGE_NAVIGATION_TOGGLE)]
 #[props(builder)]

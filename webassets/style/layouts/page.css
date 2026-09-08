@@ -1,4 +1,12 @@
 .page {
+  /* The responsive layout is driven by container queries on the page itself, not by
+   * media queries on the viewport: what matters is how wide the page is, which is
+   * what a page laid out inside a narrower column actually has to respond to. The
+   * queries live in the stylesheet `Page` renders, because the breakpoint is set per
+   * page; everything below is the wide default they override. */
+  container-type: inline-size;
+  container-name: page;
+
   --main-width: 1fr;
   --menu-width: 15rem;
   --aside-width: 15rem;
@@ -6,41 +14,13 @@
 
   /* Read by the sticky-header offset rule in common/layers.css. */
   --scroll-margin-top: calc(var(--page-header-height, 0px) + 0.5em);
-}
 
-/* The responsive layout keys off `view` rather than a media query, so the page has
- * a single breakpoint: the one `init_page` measures on the element itself and
- * publishes here. `data-mobile-breakpoint` on the page moves it. */
-.page[view='desktop'] {
   .page-menu {
     border-inline-end: var(--wa-border-width-s) var(--wa-border-style) var(--wa-color-surface-border);
   }
 }
 
-.page[view='mobile'] {
-  --menu-width: auto;
-  --aside-width: auto;
-
-  .page-navigation-toggle {
-    display: inline-flex;
-  }
-}
-
-/* With the navigation drawer in play the menu column folds away entirely and its
- * content moves into the drawer; without one it stays put, just narrower. */
-.page[view='mobile']:has(> .page-navigation-drawer) {
-  --menu-width: 0;
-
-  .page-menu {
-    display: none;
-  }
-}
-
-/* Hidden until the page collapses. The rule in common/layers.css already hides
- * `[data-toggle-nav]` on desktop, but it lives in `@layer wa-base` and everything
- * here is unlayered, so an unconditional `display` would override it. Driving the
- * toggle's own visibility from `view` keeps the two from fighting; the layers.css
- * rule still covers custom toggles the app supplies. */
+/* Shown only once the page has collapsed, by the rendered stylesheet. */
 .page-navigation-toggle {
   display: none;
   align-items: center;

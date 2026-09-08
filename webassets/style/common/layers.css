@@ -10,12 +10,8 @@
     scroll-margin-top: var(--scroll-margin-top);
   }
 
-  .page[view='desktop'] [data-toggle-nav] {
-    display: none;
-  }
-
-  .page[view='mobile'] .wa-desktop-only,
-  .page[view='desktop'] .wa-mobile-only {
-    display: none !important;
-  }
+  /* Upstream drives `[data-toggle-nav]`, `.wa-desktop-only` and `.wa-mobile-only`
+     from the `view` attribute here. We drive them from the container query in the
+     stylesheet `Page` renders instead, so that they work before hydration and share
+     the page's one breakpoint; the rules are omitted rather than kept dead. */
 }

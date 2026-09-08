@@ -9,7 +9,7 @@ use crate::layout::page::{Page, PageBody, PageMenu, PageNavigationToggle};
 fn empty() {
     let page_markup = r#"
         <div class="page" view="desktop">
-            <style>@media screen and (width < 920px){.page{--menu-width:auto;--aside-width:auto}}</style>
+            <style>@container page (width < 920px){.page{--menu-width:auto;--aside-width:auto}.page .wa-desktop-only{display:none!important}.page .wa-mobile-only{display:revert!important}.page [data-toggle-nav]{display:revert}}</style>
             <header></header>
             <div class="page-body">
                 <div class="page-menu"></div>
@@ -51,14 +51,16 @@ fn navigation() {
     let expected = format!(
         concat!(
             r#"<div class="page" view="desktop" data-mobile-breakpoint="60rem">"#,
-            r#"<style>@media screen and (width < 60rem){{.page{{--menu-width:0;--aside-width:auto}}"#,
+            r#"<style>@container page (width < 60rem){{.page{{--menu-width:0;--aside-width:auto}}"#,
+            r#".page .wa-desktop-only{{display:none!important}}.page .wa-mobile-only{{display:revert!important}}"#,
+            r#".page [data-toggle-nav]{{display:revert}}"#,
             r#".page .page-menu{{display:none}}.page .page-navigation-toggle{{display:inline-flex}}}}</style>"#,
             r#"<header>"#,
             r#"<button class="page-navigation-toggle" type="button" data-toggle-nav="""#,
             r#" data-drawer="open page-navigation" aria-label="Open navigation""#,
             r#" aria-controls="page-navigation"><span class="icon">{bars}</span></button></header>"#,
-            r#"<dialog class="drawer start page-navigation-drawer" data-light-dismiss="""#,
-            r#" id="page-navigation"><div class="drawer-header">"#,
+            r#"<dialog id="page-navigation" class="drawer start page-navigation-drawer""#,
+            r#" data-light-dismiss=""><div class="drawer-header">"#,
             r#"<h2 class="drawer-title">{invisible}</h2><div class="drawer-header-actions">"#,
             r#"<button class="button neutral plain drawer-close" data-drawer="close" aria-label="Close">"#,
             r#"<span class="icon">{xmark}</span></button></div></div>"#,
@@ -86,7 +88,10 @@ fn breakpoint_injection_is_refused() {
         .expect("the page renders a stylesheet");
 
     assert_eq!(
-        style, "@media screen and (width < 920px){.page{--menu-width:auto;--aside-width:auto}}",
+        style,
+        "@container page (width < 920px){.page{--menu-width:auto;--aside-width:auto}\
+         .page .wa-desktop-only{display:none!important}.page .wa-mobile-only{display:revert!important}\
+         .page [data-toggle-nav]{display:revert}}",
         "the hostile breakpoint reached the stylesheet"
     );
     // The attribute drives the client-side breakpoint, so it is refused as well.

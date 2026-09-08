@@ -8,7 +8,8 @@ use crate::layout::drawer;
 use crate::util::convert;
 
 /// The width below which the page switches to its mobile layout, unless
-/// `data-mobile-breakpoint` on the page says otherwise.
+/// `data-mobile-breakpoint` on the page says otherwise. Kept in step with
+/// `wingy_hypertext::layout::page::DEFAULT_MOBILE_BREAKPOINT`.
 const DEFAULT_MOBILE_BREAKPOINT: f64 = 920.0;
 
 const DESKTOP: &str = "desktop";
@@ -91,7 +92,12 @@ pub fn move_navigation(page: &Element, into_drawer: bool) -> Option<()> {
     Some(())
 }
 
-/// Reflects the page's own width into the `view` attribute the layout keys off.
+/// Reflects the page's own width into the `view` attribute, and moves the
+/// navigation to match.
+///
+/// The layout itself is handled by the container query the page renders, so this is
+/// not what makes the page look right — it is what makes the navigation *be* in the
+/// right place, which only script can do.
 pub fn apply_view(page: &Element, width: f64) {
     let view = if width >= mobile_breakpoint(page) {
         DESKTOP
@@ -107,8 +113,8 @@ pub fn apply_view(page: &Element, width: f64) {
     move_navigation(page, view == MOBILE);
 }
 
-/// Watches the page element — not the viewport — so a page laid out narrow inside a
-/// wide window collapses too, matching `wa-page`.
+/// Watches the page element, the same box the container query measures, so the two
+/// switch together.
 pub fn observe_view(page: &Element) -> Option<()> {
     let callback = Closure::<dyn FnMut(js_sys::Array)>::new(move |entries: js_sys::Array| {
         for entry in entries.iter() {
