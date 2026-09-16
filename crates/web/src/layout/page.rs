@@ -1,5 +1,6 @@
-use wasm_bindgen::JsCast;
+use js_sys::Reflect;
 use wasm_bindgen::prelude::Closure;
+use wasm_bindgen::{JsCast, JsValue};
 use wasm_dom as dom;
 use wasm_dom::existing::access::CastToHtmlElement;
 use web_sys::{Element, ResizeObserver, ResizeObserverEntry, ResizeObserverSize};
@@ -105,11 +106,13 @@ pub fn apply_view(page: &Element, width: f64) {
         MOBILE
     };
 
-    if page.get_attribute("view").as_deref() == Some(view) {
-        return;
+    if page.get_attribute("view").as_deref() != Some(view) {
+        page.set_attribute("view", view).ok();
     }
 
-    page.set_attribute("view", view).ok();
+    // Reconciled on every run rather than only on change: a history snapshot htmx
+    // restores can arrive with the navigation on the wrong side of the breakpoint,
+    // and then the attribute already agrees while the DOM does not.
     move_navigation(page, view == MOBILE);
 }
 
@@ -151,12 +154,27 @@ pub fn init_page() -> Option<()> {
     set_page_header_height()
 }
 
-/// Initializes the `.page` element once, guarded by a `data-initialized` marker.
+/// Marks a page as set up.
+///
+/// It is a property on the element object, not an attribute: htmx snapshots the
+/// history element's markup, so an attribute would come back with a restored
+/// snapshot and vouch for a brand-new element that has no observer on it. The old
+/// element — the observed one — is discarded by that same swap, and the page then
+/// stops responding to resizes entirely.
+const INITIALIZED: &str = "wgPageInitialized";
+
+fn is_initialized(page: &Element) -> bool {
+    Reflect::get(page, &JsValue::from_str(INITIALIZED))
+        .map(|marked| marked.is_truthy())
+        .unwrap_or(false)
+}
+
+/// Initializes the `.page` element once per element.
 pub fn init_page_element() -> Option<()> {
     let page = dom::select_element(".page").ok()?;
 
-    if page.get_attribute("data-initialized").is_none() {
-        page.set_attribute("data-initialized", "true").ok()?;
+    if !is_initialized(&page) {
+        Reflect::set(&page, &JsValue::from_str(INITIALIZED), &JsValue::TRUE).ok()?;
         init_page()?;
         observe_view(&page)?;
     }
