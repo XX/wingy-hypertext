@@ -11,6 +11,11 @@ function router(path, event) {
 }
 define_client_router_ext(htmx, "/api", router);
 
+// Restoring a history entry htmx has dropped from its cache would swap a router
+// fragment into the whole body. Reload instead: the server answers any section
+// path with the shell, which boots and renders that section from scratch.
+htmx.config.refreshOnHistoryMiss = true;
+
 let root_html = wasm.render_root(window.location.pathname);
 let html_fragment = document.createRange().createContextualFragment(root_html);
 let root = document.getElementById('root');
