@@ -18,6 +18,12 @@
   --line-length-none: none;
 }
 
+/* Color scheme selector: the trigger shows the icon of the current scheme */
+.wa-dark .only-light,
+:root:not(.wa-dark) .only-dark {
+  display: none;
+}
+
 .main-content {
   max-width: var(--content-width-s);
   padding: var(--wa-space-xl);

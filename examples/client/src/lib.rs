@@ -31,6 +31,7 @@ use wingy_hypertext_web::{
     register_copy_action,
 };
 
+pub mod color_scheme;
 pub mod component;
 pub mod helper;
 pub mod layout;
@@ -39,6 +40,7 @@ pub mod layout;
 #[wasm_bindgen]
 pub fn init() {
     register_copy_action();
+    color_scheme::listen_color_scheme_selector();
     init_code_examples();
     listen_code_examples();
     listen_click_actions();
@@ -144,6 +146,7 @@ pub fn render_root(url_path: &str) -> String {
                     <a href="#">"Example Link"</a>
                 </div>
                 <div class=(CLUSTER, " ", GAP_XS)>
+                    (color_scheme::selector())
                     <Button variant=Brand appearance=Accent class=SIZE_SMALL href="https://github.com/XX/wingy-hypertext" target=Blank>
                         <span class=(START, " ", ICON)>
                             (fontawesome::brand::Github)
