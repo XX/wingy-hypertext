@@ -23,7 +23,7 @@ pub fn overview() -> impl Renderable {
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"<Divider/>"#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H2 id="examples" anchor=true>
@@ -41,7 +41,7 @@ pub fn overview() -> impl Renderable {
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"<Divider style="--width: 4px;"/>"#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="color" anchor=true>
@@ -55,7 +55,7 @@ pub fn overview() -> impl Renderable {
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"<Divider style="--color: var(--wa-color-brand-fill-loud);"/>"#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="spacing" anchor=true>
@@ -81,7 +81,7 @@ pub fn overview() -> impl Renderable {
                     </div>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="orientation" anchor=true>
@@ -112,7 +112,7 @@ pub fn overview() -> impl Renderable {
                     </div>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
         <Callout icon=(fontawesome::solid::CircleInfo)>
             "If your container isn't Flexbox or CSS Grid, you may need to set an explicit height for the divider."

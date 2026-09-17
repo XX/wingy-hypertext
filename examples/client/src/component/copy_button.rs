@@ -16,7 +16,7 @@ pub fn overview() -> impl Renderable {
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"<CopyButton />"#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H2 id="examples" anchor=true>

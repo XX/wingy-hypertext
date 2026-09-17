@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 
 use derive_more::{AsMut, AsRef};
-use hypertext::prelude::{GlobalAttributes, hypertext_elements};
+use hypertext::prelude::{AriaAttributes, GlobalAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable, rsx};
 use iconic::fontawesome_ext;
 use wingy_hypertext_macros::{Props, const_str};
@@ -9,7 +9,8 @@ use wingy_hypertext_macros::{Props, const_str};
 use crate::attributes::{CommonAttributeGetters, CommonAttributeSetters, CommonAttrs};
 use crate::class::{
     CODE_EXAMPLE, CODE_EXAMPLE_BUTTONS, CODE_EXAMPLE_PREVIEW, CODE_EXAMPLE_RESIZER, CODE_EXAMPLE_SOURCE,
-    CODE_EXAMPLE_TOGGLE, DARK, ICON, NO_ANIMATION, OPEN,
+    CODE_EXAMPLE_THEME, CODE_EXAMPLE_THEME_DARK, CODE_EXAMPLE_THEME_LIGHT, CODE_EXAMPLE_TOGGLE, DARK, ICON,
+    NO_ANIMATION, OPEN,
 };
 use crate::component::copy_button::CopyButton;
 
@@ -120,10 +121,18 @@ impl<'a> Renderable for CodeExampleSource<'a> {
     }
 }
 
+/// The button bar of a [`CodeExample`]: the toggle showing and hiding the
+/// source, with the children as its label, and optional extra buttons.
 #[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = CODE_EXAMPLE_BUTTONS)]
 #[props(builder)]
 pub struct CodeExampleButton<'a> {
+    /// Renders a button switching the color scheme of the preview between light
+    /// and dark, independently of the page. Its icon shows the scheme the
+    /// preview is currently displayed in. The behavior is implemented in
+    /// `wingy-hypertext-web` (`layout::code_example`).
+    pub color_scheme: bool,
+
     #[as_ref]
     #[as_mut]
     pub attributes: CommonAttrs<'a>,
@@ -146,6 +155,21 @@ impl<'a> Renderable for CodeExampleButton<'a> {
                         (fontawesome_ext::regular::ChevronDown)
                     </span>
                 </button>
+                @if self.color_scheme {
+                    <button
+                        class=CODE_EXAMPLE_THEME
+                        type="button"
+                        title="Toggle color scheme"
+                        aria-label="Toggle color scheme"
+                    >
+                        <span class=(ICON, " ", CODE_EXAMPLE_THEME_LIGHT)>
+                            (fontawesome_ext::regular::SunBright)
+                        </span>
+                        <span class=(ICON, " ", CODE_EXAMPLE_THEME_DARK)>
+                            (fontawesome_ext::regular::MoonStars)
+                        </span>
+                    </button>
+                }
             </div>
         }
         .render_to(buffer);

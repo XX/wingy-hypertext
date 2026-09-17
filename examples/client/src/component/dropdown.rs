@@ -92,7 +92,7 @@ pub fn overview() -> impl Renderable {
                     </Dropdown>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H2 id="examples" anchor=true>
@@ -153,7 +153,7 @@ pub fn overview() -> impl Renderable {
                     </Dropdown>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="labels-and-dividers" anchor=true>
@@ -207,7 +207,7 @@ pub fn overview() -> impl Renderable {
                     </Dropdown>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="showing-details" anchor=true>
@@ -272,7 +272,7 @@ pub fn overview() -> impl Renderable {
                     </Dropdown>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="checkable-items" anchor=true>
@@ -329,7 +329,7 @@ pub fn overview() -> impl Renderable {
                     document.add_steady_event_listener("wg-select", |event| { ... });
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="destructive-items" anchor=true>
@@ -386,7 +386,7 @@ pub fn overview() -> impl Renderable {
                     </Dropdown>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="submenus" anchor=true>
@@ -476,7 +476,7 @@ pub fn overview() -> impl Renderable {
                     </Dropdown>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="disabled" anchor=true>
@@ -523,7 +523,7 @@ pub fn overview() -> impl Renderable {
                     </Dropdown>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="placement" anchor=true>
@@ -577,7 +577,7 @@ pub fn overview() -> impl Renderable {
                     </Dropdown>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="distance" anchor=true>
@@ -621,7 +621,7 @@ pub fn overview() -> impl Renderable {
                     </Dropdown>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="offset" anchor=true>
@@ -665,7 +665,7 @@ pub fn overview() -> impl Renderable {
                     </Dropdown>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="size" anchor=true>
@@ -717,7 +717,7 @@ pub fn overview() -> impl Renderable {
                     </Dropdown>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="reacting-to-selections" anchor=true>
@@ -773,7 +773,7 @@ pub fn overview() -> impl Renderable {
                     document.add_steady_event_listener("wg-select", |event| { ... });
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
     }
 }

@@ -24,7 +24,7 @@ pub fn overview() -> impl Renderable {
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"<Button>"Button"</Button>"#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H2 id="examples" anchor=true>
@@ -54,7 +54,7 @@ pub fn overview() -> impl Renderable {
                     <Button variant=Danger>"Danger"</Button>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="appearance" anchor=true>
@@ -138,7 +138,7 @@ pub fn overview() -> impl Renderable {
                     </div>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="size" anchor=true>
@@ -194,7 +194,7 @@ pub fn overview() -> impl Renderable {
                     </div>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="pill-buttons" anchor=true>
@@ -220,7 +220,7 @@ pub fn overview() -> impl Renderable {
                     <Button variant=Danger pill=true class=SIZE_EXTRA_LARGE>"Danger"</Button>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="link-buttons" anchor=true>
@@ -246,7 +246,7 @@ pub fn overview() -> impl Renderable {
                     <Button href="https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/car.svg" download="auto.svg">"Download"</Button>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="icon-buttons" anchor=true>
@@ -311,7 +311,7 @@ pub fn overview() -> impl Renderable {
                     </Button>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
     }
 }

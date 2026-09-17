@@ -10,6 +10,12 @@
   --code-example-preview-padding-inline-start: var(--wa-space-xl);
   --code-example-preview-padding-inline-end: calc(var(--wa-space-xl) + var(--code-example-resizer-inline-size));
 
+  /* Frozen above the preview so the resizer keeps the page's colors even when a per-example
+     color scheme override is applied to .code-example-preview. */
+  --code-example-chrome-surface: var(--wa-color-surface-default);
+  --code-example-chrome-text-quiet: var(--wa-color-text-quiet);
+  --code-example-chrome-border: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-neutral-border-quiet);
+
   background: var(--wa-color-surface-lowered);
   border: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-neutral-border-quiet);
   border-radius: var(--wa-border-radius-l);
@@ -21,6 +27,7 @@
 .code-example-preview {
   position: relative;
   background: var(--wa-color-surface-default);
+  color: var(--wa-color-text-normal);
   border-top-left-radius: inherit;
   border-top-right-radius: inherit;
   border-bottom: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-neutral-border-quiet);
@@ -59,9 +66,9 @@
   bottom: 0;
   width: 1.75rem;
   font-size: 20px;
-  color: var(--wa-color-text-quiet);
-  background-color: var(--wa-color-neutral--wa-color-surface-default);
-  border-left: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-neutral-border-quiet);
+  color: var(--code-example-chrome-text-quiet);
+  background-color: var(--code-example-chrome-surface);
+  border-left: var(--code-example-chrome-border);
   border-top-right-radius: var(--wa-border-radius-l);
   cursor: ew-resize;
 
@@ -236,4 +243,26 @@
     height: 1em;
     vertical-align: -2px;
   }
+}
+
+/* The preview color scheme button hugs its icon instead of stretching like the text buttons */
+.code-example-buttons .code-example-theme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-inline-size: 2.25rem;
+}
+
+/* The visible icon shows the scheme the preview is displayed in.
+   Effective dark = explicit wa-dark, or page dark with no explicit wa-light. */
+.code-example-theme .code-example-theme-dark,
+.code-example:has(.code-example-preview.wa-dark) .code-example-theme .code-example-theme-light,
+html.wa-dark .code-example:not(:has(.code-example-preview.wa-light)) .code-example-theme .code-example-theme-light {
+  display: none;
+}
+
+.code-example:has(.code-example-preview.wa-dark) .code-example-theme .code-example-theme-dark,
+html.wa-dark .code-example:not(:has(.code-example-preview.wa-light)) .code-example-theme .code-example-theme-dark {
+  display: inline-flex;
 }

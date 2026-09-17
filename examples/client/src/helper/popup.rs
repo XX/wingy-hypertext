@@ -103,7 +103,7 @@ pub fn overview() -> impl Renderable {
                     // see `listen_popup_overview` in examples/client/src/helper/popup.rs
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H2 id="examples" anchor=true>
@@ -147,7 +147,7 @@ pub fn overview() -> impl Renderable {
                     <Popup placement=BottomEnd active=true>...</Popup>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="distance-skidding" anchor=true>
@@ -180,7 +180,7 @@ pub fn overview() -> impl Renderable {
                     <Popup placement=Top skidding=40 active=true>...</Popup>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="arrows" anchor=true>
@@ -211,7 +211,7 @@ pub fn overview() -> impl Renderable {
                     </Popup>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="sync" anchor=true>
@@ -237,7 +237,7 @@ pub fn overview() -> impl Renderable {
                     </Popup>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="flip" anchor=true>
@@ -264,7 +264,7 @@ pub fn overview() -> impl Renderable {
                     </Popup>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="shift" anchor=true>
@@ -291,7 +291,7 @@ pub fn overview() -> impl Renderable {
                     </Popup>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="auto-size" anchor=true>
@@ -335,7 +335,7 @@ pub fn overview() -> impl Renderable {
                     </Popup>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
     }
 }

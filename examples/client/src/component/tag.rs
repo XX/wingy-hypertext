@@ -24,7 +24,7 @@ pub fn overview() -> impl Renderable {
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"<Tag>"Tag"</Tag>"#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H2 id="examples" anchor=true>
@@ -54,7 +54,7 @@ pub fn overview() -> impl Renderable {
                     <Tag variant=Danger>"Danger"</Tag>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="appearance" anchor=true>
@@ -94,7 +94,7 @@ pub fn overview() -> impl Renderable {
                     </div>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="size" anchor=true>
@@ -122,7 +122,7 @@ pub fn overview() -> impl Renderable {
                     <Tag variant=Brand class=SIZE_EXTRA_LARGE>"Extra Large"</Tag>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="pill" anchor=true>
@@ -144,7 +144,7 @@ pub fn overview() -> impl Renderable {
                     <Tag variant=Success pill=true>"Success"</Tag>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="removable" anchor=true>
@@ -179,7 +179,7 @@ pub fn overview() -> impl Renderable {
                     // The removal is handled by a "wg-remove" listener.
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
     }
 }

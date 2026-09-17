@@ -8,6 +8,8 @@ use wasm_dom::event::EventListener;
 use web_sys::MediaQueryList;
 use wingy_hypertext::class::DARK;
 
+use crate::util::event;
+
 /// The `localStorage` key holding the chosen scheme.
 pub const STORAGE_KEY: &str = "color-scheme";
 
@@ -61,12 +63,15 @@ pub fn color_scheme() -> ColorScheme {
         .unwrap_or_default()
 }
 
-/// Stores `scheme` and applies it to the document.
+/// Stores `scheme`, applies it to the document and dispatches a bubbling
+/// `wg-color-scheme-change` event on the document element.
 pub fn set_color_scheme(scheme: ColorScheme) {
     if let Some(storage) = dom::existing::local_storage() {
         storage.set_item(STORAGE_KEY, scheme.as_ref()).ok();
     }
     apply_color_scheme(scheme);
+
+    event::dispatch(&dom::existing::document_element(), event::COLOR_SCHEME_CHANGE, true).ok();
 }
 
 /// Toggles the `wa-dark` class on the document element to match `scheme`.

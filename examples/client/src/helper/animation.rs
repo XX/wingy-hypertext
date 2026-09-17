@@ -82,7 +82,7 @@ pub fn overview() -> impl Renderable {
                     </div>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
         <p>"The animation will only be applied to the first child element found in "<code>Animation</code>
             ". To animate multiple elements, either wrap them in a single container or use multiple "
@@ -148,7 +148,7 @@ pub fn overview() -> impl Renderable {
                     // see `listen_animation_overview` in examples/client/src/helpers/animation.rs
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="intersection-observer" anchor=true>
@@ -183,7 +183,7 @@ pub fn overview() -> impl Renderable {
                     // }
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="custom-keyframes" anchor=true>
@@ -227,7 +227,7 @@ pub fn overview() -> impl Renderable {
                     </Animation>
                 "##</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="on-demand" anchor=true>
@@ -262,7 +262,7 @@ pub fn overview() -> impl Renderable {
                     // });
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
     }
 }

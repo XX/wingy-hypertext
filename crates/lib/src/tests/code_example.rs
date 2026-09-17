@@ -236,3 +236,33 @@ fn children() {
     };
     assert_eq!(code_example.render().as_inner(), &code_example_markup);
 }
+
+#[test]
+fn color_scheme() {
+    let code_example_button_markup = format!(
+        r#"
+            <div class="code-example-buttons">
+                <button class="code-example-toggle" type="button">Code 
+                    <span class="icon">{}</span>
+                </button>
+                <button class="code-example-theme" type="button" title="Toggle color scheme" aria-label="Toggle color scheme">
+                    <span class="icon code-example-theme-light">{}</span>
+                    <span class="icon code-example-theme-dark">{}</span>
+                </button>
+            </div>
+        "#,
+        fontawesome_ext::regular::ChevronDown.render().as_inner(),
+        fontawesome_ext::regular::SunBright.render().as_inner(),
+        fontawesome_ext::regular::MoonStars.render().as_inner(),
+    )
+    .lines()
+    .map(str::trim_start)
+    .collect::<String>();
+
+    let label = rsx!("Code");
+    let code_example_button = CodeExampleButton::builder().color_scheme(true).children(&label);
+    assert_eq!(code_example_button.render().as_inner(), &code_example_button_markup);
+
+    let code_example_button = rsx! { <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton> };
+    assert_eq!(code_example_button.render().as_inner(), &code_example_button_markup);
+}

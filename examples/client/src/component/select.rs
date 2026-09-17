@@ -36,7 +36,7 @@ pub fn overview() -> impl Renderable {
                     </Select>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H2 id="examples" anchor=true>
@@ -66,7 +66,7 @@ pub fn overview() -> impl Renderable {
                     </Select>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="hint" anchor=true>
@@ -90,7 +90,7 @@ pub fn overview() -> impl Renderable {
                     </Select>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="placeholder" anchor=true>
@@ -114,7 +114,7 @@ pub fn overview() -> impl Renderable {
                     </Select>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="clearable" anchor=true>
@@ -140,7 +140,7 @@ pub fn overview() -> impl Renderable {
                     </Select>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="appearance" anchor=true>
@@ -174,7 +174,7 @@ pub fn overview() -> impl Renderable {
                     </Select>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="pill" anchor=true>
@@ -198,7 +198,7 @@ pub fn overview() -> impl Renderable {
                     </Select>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="size" anchor=true>
@@ -242,7 +242,7 @@ pub fn overview() -> impl Renderable {
                     </Select>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="disabled" anchor=true>
@@ -276,7 +276,7 @@ pub fn overview() -> impl Renderable {
                     </Select>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="initial-value" anchor=true>
@@ -300,7 +300,7 @@ pub fn overview() -> impl Renderable {
                     </Select>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="multiple" anchor=true>
@@ -331,7 +331,7 @@ pub fn overview() -> impl Renderable {
                     </Select>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="grouping-options" anchor=true>
@@ -368,7 +368,7 @@ pub fn overview() -> impl Renderable {
                     </Select>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="placement" anchor=true>
@@ -395,7 +395,7 @@ pub fn overview() -> impl Renderable {
                     </Select>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
     }
 }

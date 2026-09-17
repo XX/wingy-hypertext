@@ -55,7 +55,7 @@ pub fn overview() -> impl Renderable {
                     <Tooltip anchor_id="my-button">"This is a tooltip"</Tooltip>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H2 id="examples" anchor=true>
@@ -125,7 +125,7 @@ pub fn overview() -> impl Renderable {
                     ...
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="triggers" anchor=true>
@@ -149,7 +149,7 @@ pub fn overview() -> impl Renderable {
                     <Tooltip anchor_id="toggle-button" trigger=Click>"Click again to dismiss"</Tooltip>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="html-in-tooltips" anchor=true>
@@ -177,7 +177,7 @@ pub fn overview() -> impl Renderable {
                     </Tooltip>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="customizing" anchor=true>
@@ -202,7 +202,7 @@ pub fn overview() -> impl Renderable {
                     </Tooltip>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <p>"Set the "<code>arrow</code>" property to "<code>false</code>" to remove the arrow from a single tooltip. "
@@ -222,7 +222,7 @@ pub fn overview() -> impl Renderable {
                     <Tooltip anchor_id="no-arrow" arrow=false>"This is a tooltip with no arrow"</Tooltip>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="showing-and-hiding-manually" anchor=true>
@@ -254,7 +254,7 @@ pub fn overview() -> impl Renderable {
                     set_tooltip_open(&tooltip, !is_open(&tooltip), &toggle);
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
         </CodeExample>
     }
 }

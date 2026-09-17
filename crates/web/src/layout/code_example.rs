@@ -9,9 +9,11 @@ use wasm_dom::event::EventListener;
 use wasm_dom::existing::JsObjectAccess;
 use wasm_dom::existing::access::{CastToElement, CastToHtmlElement};
 use web_sys::{AddEventListenerOptions, Animation, Element, Event, HtmlElement, MouseEvent, TouchEvent};
+use wingy_hypertext::class::{DARK, LIGHT};
 
 use crate::util::animate::{linear_animate, prefers_reduced_motion};
 use crate::util::convert::{bool_to_str, parse_duration_millis, parse_float};
+use crate::util::event;
 
 //
 // Resizing previews
@@ -98,6 +100,36 @@ fn first_touch_page_x(event: &Event) -> Option<f64> {
         .dyn_ref::<TouchEvent>()
         .and_then(|event| event.changed_touches().get(0))
         .map(|touch| touch.page_x() as _)
+}
+
+//
+// Preview color scheme
+//
+
+/// Switches the preview of the code example holding `button` to the opposite of
+/// the color scheme it is displayed in: its own override, or the page's one.
+pub fn toggle_preview_color_scheme(button: &Element) -> Option<()> {
+    let preview = button
+        .closest(".code-example")
+        .ok()??
+        .query_selector(":scope > .code-example-preview")
+        .ok()??;
+
+    let classes = preview.class_list();
+    let dark = classes.contains(DARK)
+        || (!classes.contains(LIGHT) && dom::existing::document_element().class_list().contains(DARK));
+
+    classes.remove_2(DARK, LIGHT).ok();
+    classes.add_1(if dark { LIGHT } else { DARK }).ok();
+
+    Some(())
+}
+
+/// Drops the color scheme overrides of all previews, so they follow the page again.
+pub fn reset_preview_color_schemes() {
+    for preview in dom::existing::select_all_elements(".code-example-preview.wa-dark, .code-example-preview.wa-light") {
+        preview.class_list().remove_2(DARK, LIGHT).ok();
+    }
 }
 
 //
@@ -273,7 +305,8 @@ pub fn init_code_examples() {
     }
 }
 
-/// Installs the document-level listeners that drive code-example toggling and preview resizing.
+/// Installs the document-level listeners that drive code-example toggling, preview resizing and the
+/// preview color scheme switching.
 pub fn listen_code_examples() {
     let document = dom::existing::document();
 
@@ -292,8 +325,16 @@ pub fn listen_code_examples() {
         &options,
     );
 
+    // Switching the page color scheme resets the previews to it
+    document.add_steady_event_listener(event::COLOR_SCHEME_CHANGE, |_| reset_preview_color_schemes());
+
     let click_handler = |event: Event| -> Option<()> {
         let target = event.target()?.maybe_into_element()?;
+
+        if let Some(button) = target.closest(".code-example-theme").ok()? {
+            return toggle_preview_color_scheme(&button);
+        }
+
         let toggle = target.closest(".code-example-toggle").ok()??;
         let code_example = toggle.closest(".code-example").ok()??;
         let open = !code_example.class_list().contains("open");
