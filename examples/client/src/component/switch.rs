@@ -22,7 +22,7 @@ pub fn overview() -> impl Renderable {
                     <Switch>"Enable notifications"</Switch>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H2 id="examples" anchor=true>
@@ -42,7 +42,7 @@ pub fn overview() -> impl Renderable {
                     <Switch>"Subscribe to the newsletter"</Switch>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="hint" anchor=true>
@@ -65,7 +65,7 @@ pub fn overview() -> impl Renderable {
                     </Switch>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="initial-value" anchor=true>
@@ -81,7 +81,7 @@ pub fn overview() -> impl Renderable {
                     <Switch checked=true>"Remember this device"</Switch>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="disabled" anchor=true>
@@ -97,7 +97,7 @@ pub fn overview() -> impl Renderable {
                     <Switch disabled=true>"Sync over cellular"</Switch>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="size" anchor=true>
@@ -129,7 +129,7 @@ pub fn overview() -> impl Renderable {
                     </div>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="custom-properties" anchor=true>
@@ -145,7 +145,7 @@ pub fn overview() -> impl Renderable {
                     <Switch style="--width: 80px; --height: 40px; --thumb-size: 36px;">"Really big"</Switch>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="bare-body" anchor=true>
@@ -175,7 +175,7 @@ pub fn overview() -> impl Renderable {
                     </Switch>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
     }
 }

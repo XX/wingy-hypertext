@@ -29,7 +29,7 @@ pub fn overview() -> impl Renderable {
                     </Callout>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H2 id="examples" anchor=true>
@@ -89,7 +89,7 @@ pub fn overview() -> impl Renderable {
                     </Callout>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="appearance" anchor=true>
@@ -138,7 +138,7 @@ pub fn overview() -> impl Renderable {
                     </Callout>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="size" anchor=true>
@@ -188,7 +188,7 @@ pub fn overview() -> impl Renderable {
                     </Callout>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="without-icon" anchor=true>
@@ -202,7 +202,7 @@ pub fn overview() -> impl Renderable {
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"<Callout variant=Brand>"All times are shown in your local timezone."</Callout>"#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="bare-body" anchor=true>
@@ -238,7 +238,7 @@ pub fn overview() -> impl Renderable {
                     </Callout>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="with-close-button" anchor=true>
@@ -330,7 +330,7 @@ pub fn overview() -> impl Renderable {
                     </Callout>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
     }
 }

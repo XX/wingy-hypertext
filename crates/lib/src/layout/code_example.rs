@@ -8,9 +8,9 @@ use wingy_hypertext_macros::{Props, const_str};
 
 use crate::attributes::{CommonAttributeGetters, CommonAttributeSetters, CommonAttrs};
 use crate::class::{
-    CODE_EXAMPLE, CODE_EXAMPLE_BUTTONS, CODE_EXAMPLE_PREVIEW, CODE_EXAMPLE_RESIZER, CODE_EXAMPLE_SOURCE,
-    CODE_EXAMPLE_THEME, CODE_EXAMPLE_THEME_DARK, CODE_EXAMPLE_THEME_LIGHT, CODE_EXAMPLE_TOGGLE, DARK, ICON,
-    NO_ANIMATION, OPEN,
+    CODE_EXAMPLE, CODE_EXAMPLE_BUTTONS, CODE_EXAMPLE_CONTENT, CODE_EXAMPLE_DIR, CODE_EXAMPLE_DIR_LTR,
+    CODE_EXAMPLE_DIR_RTL, CODE_EXAMPLE_PREVIEW, CODE_EXAMPLE_RESIZER, CODE_EXAMPLE_SOURCE, CODE_EXAMPLE_THEME,
+    CODE_EXAMPLE_THEME_DARK, CODE_EXAMPLE_THEME_LIGHT, CODE_EXAMPLE_TOGGLE, DARK, ICON, NO_ANIMATION, OPEN,
 };
 use crate::component::copy_button::CopyButton;
 
@@ -43,6 +43,9 @@ impl<'a> Renderable for CodeExample<'a> {
     }
 }
 
+/// The live preview of a [`CodeExample`]. The children are wrapped into a
+/// `code-example-content` element, the one the text direction switched by
+/// [`CodeExampleButton`] applies to, so the resizer stays in place.
 #[derive(Default, AsRef, AsMut, Props)]
 #[const_str(CLASS = CODE_EXAMPLE_PREVIEW)]
 #[props(builder)]
@@ -64,7 +67,9 @@ impl<'a> Renderable for CodeExamplePreview<'a> {
 
         rsx! {
             <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
-                (self.children)
+                <div class=CODE_EXAMPLE_CONTENT>
+                    (self.children)
+                </div>
                 @if self.resize {
                     <div class=CODE_EXAMPLE_RESIZER>
                         <span class=ICON>
@@ -133,6 +138,12 @@ pub struct CodeExampleButton<'a> {
     /// `wingy-hypertext-web` (`layout::code_example`).
     pub color_scheme: bool,
 
+    /// Renders a button switching the text direction of the preview content
+    /// between left-to-right and right-to-left, by setting the `dir` attribute
+    /// on it. Its icon shows the current direction. The behavior is implemented
+    /// in `wingy-hypertext-web` (`layout::code_example`).
+    pub direction: bool,
+
     #[as_ref]
     #[as_mut]
     pub attributes: CommonAttrs<'a>,
@@ -167,6 +178,21 @@ impl<'a> Renderable for CodeExampleButton<'a> {
                         </span>
                         <span class=(ICON, " ", CODE_EXAMPLE_THEME_DARK)>
                             (fontawesome_ext::regular::MoonStars)
+                        </span>
+                    </button>
+                }
+                @if self.direction {
+                    <button
+                        class=CODE_EXAMPLE_DIR
+                        type="button"
+                        title="Toggle text direction"
+                        aria-label="Toggle text direction"
+                    >
+                        <span class=(ICON, " ", CODE_EXAMPLE_DIR_LTR)>
+                            (fontawesome_ext::regular::AlignLeft)
+                        </span>
+                        <span class=(ICON, " ", CODE_EXAMPLE_DIR_RTL)>
+                            (fontawesome_ext::regular::AlignRight)
                         </span>
                     </button>
                 }

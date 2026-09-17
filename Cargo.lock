@@ -443,7 +443,7 @@ dependencies = [
 [[package]]
 name = "iconic"
 version = "0.1.0"
-source = "git+https://github.com/XX/iconic#54255467930aa491bc966a83b7f1da5e8344bc44"
+source = "git+https://github.com/XX/iconic#9dd0f760c9250945b396d1674d5e207542fa6aef"
 dependencies = [
  "derive_more",
  "hypertext",

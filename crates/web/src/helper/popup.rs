@@ -9,6 +9,10 @@
 //! The anchor is either the element `data-anchor` points at or the child of the
 //! host that is not a part of the popup itself — `.popup-body` and
 //! `.popup-hover-bridge` are.
+//!
+//! Like floating-ui, the `start`/`end` alignments, the skidding and the
+//! `start`/`end` arrow placements of the `top`/`bottom` placements follow the
+//! text direction of the popup: in right-to-left they are mirrored.
 
 use std::borrow::Cow;
 
@@ -16,6 +20,8 @@ use wasm_dom as dom;
 use wasm_dom::event::EventListener;
 use wasm_dom::existing::access::{CastToElement, CastToHtmlElement};
 use web_sys::{AddEventListenerOptions, Element, HtmlElement};
+
+use crate::util::direction::{is_rtl, observe_direction_changes};
 
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub enum Side {
@@ -109,6 +115,8 @@ pub struct PopupConfig {
     pub auto_size_padding: f64,
     pub arrow_placement: String,
     pub arrow_padding: f64,
+    /// Mirrors the cross axis of the `top`/`bottom` placements for right-to-left.
+    pub rtl: bool,
 }
 
 impl PopupConfig {
@@ -128,6 +136,7 @@ impl PopupConfig {
             auto_size_padding: 0.0,
             arrow_placement: String::new(),
             arrow_padding: 0.0,
+            rtl: false,
         }
     }
 }
@@ -182,6 +191,7 @@ fn read_config(host: &Element) -> PopupConfig {
             .get_attribute("data-arrow-placement")
             .unwrap_or_else(|| "anchor".to_string()),
         arrow_padding: number_attr(host, "data-arrow-padding", 10.0),
+        rtl: is_rtl(host),
     }
 }
 
@@ -330,7 +340,8 @@ pub fn place(
     let popup_height = popup.offset_height() as f64;
 
     // The main-axis coordinate comes from the side, the cross-axis one from
-    // the alignment plus skidding.
+    // the alignment plus skidding. Along a horizontal cross axis both follow
+    // the text direction: `start` is the right edge in right-to-left.
     let main = match side {
         Side::Top => anchor_rect.y - config.distance - popup_height,
         Side::Bottom => anchor_rect.bottom() + config.distance,
@@ -338,18 +349,21 @@ pub fn place(
         Side::Right => anchor_rect.right() + config.distance,
     };
     let mut cross = if side.is_vertical() {
-        match config.align {
-            Align::Start => anchor_rect.x,
-            Align::Center => anchor_rect.center_x() - popup_width / 2.0,
-            Align::End => anchor_rect.right() - popup_width,
-        }
+        let skidding = if config.rtl { -config.skidding } else { config.skidding };
+        let x = match (config.align, config.rtl) {
+            (Align::Start, false) | (Align::End, true) => anchor_rect.x,
+            (Align::Center, _) => anchor_rect.center_x() - popup_width / 2.0,
+            (Align::End, false) | (Align::Start, true) => anchor_rect.right() - popup_width,
+        };
+        x + skidding
     } else {
-        match config.align {
+        let y = match config.align {
             Align::Start => anchor_rect.y,
             Align::Center => anchor_rect.center_y() - popup_height / 2.0,
             Align::End => anchor_rect.bottom() - popup_height,
-        }
-    } + config.skidding;
+        };
+        y + config.skidding
+    };
 
     // Shift the popup along the cross axis to keep it in view
     if config.shift {
@@ -395,14 +409,21 @@ fn position_arrow(config: &PopupConfig, popup: &HtmlElement, anchor_rect: &Rect,
         ("top", "bottom")
     };
 
+    // The `start` and `end` placements follow the text direction on a horizontal cross axis
+    let (start_edge, end_edge) = if side.is_vertical() && config.rtl {
+        (end, start)
+    } else {
+        (start, end)
+    };
+
     match config.arrow_placement.as_str() {
         "start" => {
             let value = format!("calc({}px - var(--arrow-padding-offset))", config.arrow_padding);
-            style.set_property(start, &value).ok();
+            style.set_property(start_edge, &value).ok();
         },
         "end" => {
             let value = format!("calc({}px - var(--arrow-padding-offset))", config.arrow_padding);
-            style.set_property(end, &value).ok();
+            style.set_property(end_edge, &value).ok();
         },
         "center" => {
             style.set_property(start, "calc(50% - var(--arrow-size-diagonal))").ok();
@@ -599,8 +620,11 @@ pub fn init_popups() {
 }
 
 /// Installs the window-level listeners that keep active popups anchored while
-/// the page scrolls or resizes (the `autoUpdate` part of floating-ui).
+/// the page scrolls or resizes (the `autoUpdate` part of floating-ui), or the
+/// text direction changes.
 pub fn listen_popups() {
+    observe_direction_changes(reposition_active_popups);
+
     let window = dom::existing::window();
 
     // Scroll events don't bubble, but they do capture, so a capturing

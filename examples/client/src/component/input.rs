@@ -19,7 +19,7 @@ pub fn overview() -> impl Renderable {
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"<Input label="Name" placeholder="Enter your name" />"#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H2 id="examples" anchor=true>
@@ -37,7 +37,7 @@ pub fn overview() -> impl Renderable {
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"<Input label="What is your name?" />"#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="hint" anchor=true>
@@ -51,7 +51,7 @@ pub fn overview() -> impl Renderable {
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"<Input label="Nickname" hint="What would you like people to call you?" />"#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="placeholder" anchor=true>
@@ -65,7 +65,7 @@ pub fn overview() -> impl Renderable {
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"<Input placeholder="Type something" />"#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="types" anchor=true>
@@ -91,7 +91,7 @@ pub fn overview() -> impl Renderable {
                     <Input input_type=Date />
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="appearance" anchor=true>
@@ -113,7 +113,7 @@ pub fn overview() -> impl Renderable {
                     <Input appearance=FilledOutlined placeholder="Filled-Outlined" />
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="composite" anchor=true>
@@ -149,7 +149,7 @@ pub fn overview() -> impl Renderable {
                     </Input>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <p>"Shorthand attributes can be mixed with composition: a "<code>"hint"</code>
@@ -174,7 +174,7 @@ pub fn overview() -> impl Renderable {
                     </Input>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="size" anchor=true>
@@ -201,7 +201,7 @@ pub fn overview() -> impl Renderable {
                     <Input class=SIZE_LARGE placeholder="Large" />
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="pill" anchor=true>
@@ -215,7 +215,7 @@ pub fn overview() -> impl Renderable {
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"<Input pill=true placeholder="Pill input" />"#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="states" anchor=true>
@@ -237,7 +237,7 @@ pub fn overview() -> impl Renderable {
                     <Input label="Required" placeholder="This field is required" required=true />
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
     }
 }

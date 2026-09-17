@@ -36,6 +36,8 @@ web-sys = { workspace = true, features = [
     "Location",
     "MediaQueryList",
     "MouseEvent",
+    "MutationObserver",
+    "MutationObserverInit",
     "Navigator",
     "Node",
     "NodeList",

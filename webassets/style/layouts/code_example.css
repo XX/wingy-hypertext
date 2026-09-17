@@ -38,7 +38,10 @@
   padding: 2rem 3.25rem 2rem 2rem;
   min-width: 20rem;
   max-width: 100%;
+}
 
+/* The demo itself: the element the text direction of the preview is switched on */
+.code-example-content {
   > :first-child:not(dialog) {
     margin-block-start: 0;
   }
@@ -289,8 +292,9 @@
   }
 }
 
-/* The preview color scheme button hugs its icon instead of stretching like the text buttons */
-.code-example-buttons .code-example-theme {
+/* The preview color scheme and direction buttons hug their icon instead of stretching like the text buttons */
+.code-example-buttons .code-example-theme,
+.code-example-buttons .code-example-dir {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -308,5 +312,15 @@ html.wa-dark .code-example:not(:has(.code-example-preview.wa-light)) .code-examp
 
 .code-example:has(.code-example-preview.wa-dark) .code-example-theme .code-example-theme-dark,
 html.wa-dark .code-example:not(:has(.code-example-preview.wa-light)) .code-example-theme .code-example-theme-dark {
+  display: inline-flex;
+}
+
+/* The visible icon shows the current text direction of the preview content */
+.code-example-dir .code-example-dir-rtl,
+.code-example:has(.code-example-content[dir='rtl']) .code-example-dir .code-example-dir-ltr {
+  display: none;
+}
+
+.code-example:has(.code-example-content[dir='rtl']) .code-example-dir .code-example-dir-rtl {
   display: inline-flex;
 }

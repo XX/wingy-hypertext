@@ -133,6 +133,26 @@ pub fn reset_preview_color_schemes() {
 }
 
 //
+// Preview text direction
+//
+
+/// Switches the content of the preview of the code example holding `button`
+/// between left-to-right and right-to-left. The `dir` attribute is inherited,
+/// so setting it on the content wrapper is enough for the whole demo.
+pub fn toggle_preview_direction(button: &Element) -> Option<()> {
+    let content = button
+        .closest(".code-example")
+        .ok()??
+        .query_selector(":scope > .code-example-preview > .code-example-content")
+        .ok()??;
+
+    let rtl = content.get_attribute("dir").as_deref() == Some("rtl");
+    content.set_attribute("dir", if rtl { "ltr" } else { "rtl" }).ok();
+
+    Some(())
+}
+
+//
 // Code example open animation
 //
 
@@ -306,7 +326,7 @@ pub fn init_code_examples() {
 }
 
 /// Installs the document-level listeners that drive code-example toggling, preview resizing and the
-/// preview color scheme switching.
+/// preview color scheme and text direction switching.
 pub fn listen_code_examples() {
     let document = dom::existing::document();
 
@@ -333,6 +353,10 @@ pub fn listen_code_examples() {
 
         if let Some(button) = target.closest(".code-example-theme").ok()? {
             return toggle_preview_color_scheme(&button);
+        }
+
+        if let Some(button) = target.closest(".code-example-dir").ok()? {
+            return toggle_preview_direction(&button);
         }
 
         let toggle = target.closest(".code-example-toggle").ok()??;

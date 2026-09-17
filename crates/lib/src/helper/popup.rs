@@ -11,6 +11,10 @@ use crate::class::{ACTIVE, ARROW, POPUP, POPUP_BODY, POPUP_HOVER_BRIDGE};
 
 /// The preferred placement of the popup relative to its anchor. The actual
 /// placement may vary to keep the popup inside of the viewport when `flip` is on.
+///
+/// The `start`/`end` alignments of the `top`/`bottom` placements are logical:
+/// in right-to-left they align to the right/left edge of the anchor, and the
+/// skidding is mirrored too.
 #[derive(Copy, Clone, Debug, Default, IntoStaticStr, AsRefStr, PartialEq, Eq)]
 #[strum(const_into_str, serialize_all = "kebab-case")]
 pub enum PopupPlacement {

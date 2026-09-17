@@ -22,7 +22,7 @@ pub fn overview() -> impl Renderable {
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"<Badge>"Badge"</Badge>"#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H2 id="examples" anchor=true>
@@ -52,7 +52,7 @@ pub fn overview() -> impl Renderable {
                     <Badge variant=Danger>"Danger"</Badge>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="appearance" anchor=true>
@@ -126,7 +126,7 @@ pub fn overview() -> impl Renderable {
                     </div>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="size" anchor=true>
@@ -182,7 +182,7 @@ pub fn overview() -> impl Renderable {
                     </div>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="pill-badges" anchor=true>
@@ -208,7 +208,7 @@ pub fn overview() -> impl Renderable {
                     <Badge variant=Danger pill=true>"Danger"</Badge>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="start-end-decorations" anchor=true>
@@ -334,7 +334,7 @@ pub fn overview() -> impl Renderable {
                     </div>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
     }
 }

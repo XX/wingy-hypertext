@@ -81,7 +81,7 @@ pub fn overview() -> impl Renderable {
                     </Button>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H2 id="examples" anchor=true>
@@ -118,7 +118,7 @@ pub fn overview() -> impl Renderable {
                     </Drawer>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="footer" anchor=true>
@@ -155,7 +155,7 @@ pub fn overview() -> impl Renderable {
                     </Drawer>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="opening-closing-declaratively" anchor=true>
@@ -195,7 +195,7 @@ pub fn overview() -> impl Renderable {
                     </Button>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="placement" anchor=true>
@@ -256,7 +256,7 @@ pub fn overview() -> impl Renderable {
                     </Drawer>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="size" anchor=true>
@@ -291,7 +291,7 @@ pub fn overview() -> impl Renderable {
                     </Drawer>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="scrolling" anchor=true>
@@ -330,7 +330,7 @@ pub fn overview() -> impl Renderable {
                     </Drawer>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="header-actions" anchor=true>
@@ -381,7 +381,7 @@ pub fn overview() -> impl Renderable {
                     </Drawer>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="light-dismissal" anchor=true>
@@ -416,7 +416,7 @@ pub fn overview() -> impl Renderable {
                     </Drawer>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="preventing-closing" anchor=true>
@@ -457,7 +457,7 @@ pub fn overview() -> impl Renderable {
                     document.add_steady_event_listener("wg-hide", |event| { ... });
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
 
         <Head level=H3 id="initial-focus" anchor=true>
@@ -492,7 +492,7 @@ pub fn overview() -> impl Renderable {
                     </Drawer>
                 "#</code>
             </CodeExampleSource>
-            <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton>
+            <CodeExampleButton color_scheme=true direction=true>"Code"</CodeExampleButton>
         </CodeExample>
     }
 }

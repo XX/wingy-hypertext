@@ -16,7 +16,8 @@ fn default() {
     let code_example = rsx! { <CodeExample></CodeExample> };
     assert_eq!(code_example.render().as_inner(), code_example_markup);
 
-    let code_example_preview_markup = r#"<div class="code-example-preview"></div>"#;
+    let code_example_preview_markup =
+        r#"<div class="code-example-preview"><div class="code-example-content"></div></div>"#;
 
     let code_example_preview = CodeExamplePreview::builder();
     assert_eq!(code_example_preview.render().as_inner(), code_example_preview_markup);
@@ -59,6 +60,7 @@ fn empty() {
         r#"
             <div class="code-example">
                 <div class="code-example-preview">
+                    <div class="code-example-content"></div>
                 </div>
                 <div class="code-example-source">
                     <pre></pre>
@@ -94,6 +96,7 @@ fn attributes() {
         r#"
             <div class="code-example open">
                 <div id="preview" class="code-example-preview">
+                    <div class="code-example-content"></div>
                     <div class="code-example-resizer">
                         <span class="icon">{}</span>
                     </div>
@@ -161,7 +164,9 @@ fn children() {
         r#"
         <div class="code-example">
             <div class="code-example-preview">
-                <div class="badge neutral accent">Badge</div>
+                <div class="code-example-content">
+                    <div class="badge neutral accent">Badge</div>
+                </div>
                 <div class="code-example-resizer">
                     <span class="icon">{}</span>
                 </div>
@@ -264,5 +269,35 @@ fn color_scheme() {
     assert_eq!(code_example_button.render().as_inner(), &code_example_button_markup);
 
     let code_example_button = rsx! { <CodeExampleButton color_scheme=true>"Code"</CodeExampleButton> };
+    assert_eq!(code_example_button.render().as_inner(), &code_example_button_markup);
+}
+
+#[test]
+fn direction() {
+    let code_example_button_markup = format!(
+        r#"
+            <div class="code-example-buttons">
+                <button class="code-example-toggle" type="button">Code 
+                    <span class="icon">{}</span>
+                </button>
+                <button class="code-example-dir" type="button" title="Toggle text direction" aria-label="Toggle text direction">
+                    <span class="icon code-example-dir-ltr">{}</span>
+                    <span class="icon code-example-dir-rtl">{}</span>
+                </button>
+            </div>
+        "#,
+        fontawesome_ext::regular::ChevronDown.render().as_inner(),
+        fontawesome::solid::AlignLeft.render().as_inner(),
+        fontawesome::solid::AlignRight.render().as_inner(),
+    )
+    .lines()
+    .map(str::trim_start)
+    .collect::<String>();
+
+    let label = rsx!("Code");
+    let code_example_button = CodeExampleButton::builder().direction(true).children(&label);
+    assert_eq!(code_example_button.render().as_inner(), &code_example_button_markup);
+
+    let code_example_button = rsx! { <CodeExampleButton direction=true>"Code"</CodeExampleButton> };
     assert_eq!(code_example_button.render().as_inner(), &code_example_button_markup);
 }

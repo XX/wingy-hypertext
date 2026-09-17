@@ -18,12 +18,14 @@ use crate::helper::popup;
 use crate::util::animate::animate_with_class;
 pub use crate::util::class::{is_disabled, is_open};
 use crate::util::convert::bool_to_str;
+use crate::util::direction::{is_rtl, observe_direction_changes};
 use crate::util::event;
 use crate::util::typeahead::{TypeaheadKey, typeahead_buffer, update_typeahead_buffer};
 
-// Submenus open next to their item, pulled up slightly so the first submenu
-// item lines up with it.
+// Submenus open next to their item, on the end side of the text direction,
+// pulled up slightly so the first submenu item lines up with it.
 const SUBMENU_PLACEMENT: &str = "right-start";
+const SUBMENU_PLACEMENT_RTL: &str = "left-start";
 const SUBMENU_SKIDDING: f64 = -5.0;
 const SUBMENU_PADDING: f64 = 8.0;
 
@@ -225,10 +227,12 @@ pub fn close_dropdowns_outside(target: Option<&Element>) {
 // Submenus
 //
 
-/// Positions a submenu next to its item: to the end side, flipped and shifted
-/// to stay in the viewport.
+/// Positions a submenu next to its item: to the end side (the left one in
+/// right-to-left), flipped and shifted to stay in the viewport.
 pub fn position_submenu(item: &Element, submenu: &Element) -> Option<()> {
-    let mut config = popup::PopupConfig::new(SUBMENU_PLACEMENT);
+    let rtl = is_rtl(item);
+    let mut config = popup::PopupConfig::new(if rtl { SUBMENU_PLACEMENT_RTL } else { SUBMENU_PLACEMENT });
+    config.rtl = rtl;
     config.skidding = SUBMENU_SKIDDING;
     config.flip = true;
     config.shift = true;
@@ -482,6 +486,13 @@ pub fn handle_keydown(event: &Event) -> Option<()> {
     let items: Vec<_> = enabled_items(&menu).collect();
     let active = active_item(&dropdown);
 
+    // Submenus open towards the end side, so the arrows swap in right-to-left
+    let (enter_key, leave_key) = if is_rtl(&dropdown) {
+        ("ArrowLeft", "ArrowRight")
+    } else {
+        ("ArrowRight", "ArrowLeft")
+    };
+
     // Navigate the current menu level
     if matches!(key.as_str(), "ArrowUp" | "ArrowDown" | "Home" | "End") {
         event.prevent_default();
@@ -510,7 +521,7 @@ pub fn handle_keydown(event: &Event) -> Option<()> {
     }
 
     // Enter the submenu of the active item
-    if key == "ArrowRight" {
+    if key == enter_key {
         if let Some(active) = active.filter(|active| submenu_of(active).is_some()) {
             event.prevent_default();
             event.stop_propagation();
@@ -522,7 +533,7 @@ pub fn handle_keydown(event: &Event) -> Option<()> {
     }
 
     // Leave the current submenu, returning to the item that owns it
-    if key == "ArrowLeft" {
+    if key == leave_key {
         if menu.class_list().contains("dropdown-submenu")
             && let Some(item) = menu.parent_element()
         {
@@ -638,6 +649,8 @@ pub fn init_dropdowns() {
 /// Installs the document-level listeners that drive all dropdowns on the page.
 pub fn listen_dropdowns() {
     let document = dom::correct::document();
+
+    observe_direction_changes(reposition_open_submenus);
 
     document.add_steady_event_listener("click", |event| {
         handle_click(&event);

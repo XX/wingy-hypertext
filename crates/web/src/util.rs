@@ -3,6 +3,7 @@ pub mod animate;
 pub mod class;
 pub mod color_scheme;
 pub mod convert;
+pub mod direction;
 pub mod event;
 pub mod scroll;
 pub mod typeahead;
