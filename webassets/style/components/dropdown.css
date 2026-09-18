@@ -38,12 +38,18 @@
   transform-origin: top;
 }
 
-/* Submenus are positioned in viewport coordinates, like the popup body */
+/* Submenus are positioned like the popup body — in document coordinates, unless
+ * the browser has no popover support; both are manual popovers, reset in the
+ * popup stylesheet. */
 .dropdown .dropdown-submenu {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   z-index: 901;
+}
+
+.dropdown .dropdown-submenu.fixed-strategy {
+  position: fixed;
 }
 
 /* Group labels and dividers between groups of items */

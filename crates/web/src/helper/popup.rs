@@ -16,12 +16,17 @@
 
 use std::borrow::Cow;
 
+use wasm_bindgen::JsValue;
 use wasm_dom as dom;
 use wasm_dom::event::EventListener;
 use wasm_dom::existing::access::{CastToElement, CastToHtmlElement};
 use web_sys::{AddEventListenerOptions, Element, HtmlElement};
 
 use crate::util::direction::{is_rtl, observe_direction_changes};
+
+/// Marks a popup positioned in viewport coordinates, for browsers without
+/// popover support; the stylesheet makes it `position: fixed`.
+const FIXED_STRATEGY: &str = "fixed-strategy";
 
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub enum Side {
@@ -209,11 +214,28 @@ fn anchor_element(host: &Element) -> Option<Element> {
         .ok()?
 }
 
-fn viewport_size() -> (f64, f64) {
+/// Whether the browser supports the popover API. The popup bodies are manual
+/// popovers, and a shown popover is laid out against the initial containing
+/// block whatever its ancestors are, so it can be positioned in document
+/// coordinates — and then the browser scrolls it along with the page, instead
+/// of a `scroll` listener having to move it a frame late (floating-ui calls
+/// this the `absolute` strategy, and Web Awesome uses it for the same reason).
+fn supports_popover(element: &HtmlElement) -> bool {
+    js_sys::Reflect::has(element.as_ref(), &JsValue::from_str("popover")).unwrap_or(false)
+}
+
+/// The scroll offsets to turn viewport coordinates into document ones.
+fn scroll_offsets() -> (f64, f64) {
     let window = dom::existing::window();
-    let width = window.inner_width().ok().and_then(|w| w.as_f64()).unwrap_or(0.0);
-    let height = window.inner_height().ok().and_then(|h| h.as_f64()).unwrap_or(0.0);
-    (width, height)
+    (window.scroll_x().unwrap_or(0.0), window.scroll_y().unwrap_or(0.0))
+}
+
+/// The size of the area a `position: fixed` element is laid out in: the
+/// viewport without the scrollbars, which is what the `right` and `bottom`
+/// offsets are measured against (`window.inner_*` counts the scrollbars in).
+fn viewport_size() -> (f64, f64) {
+    let root = dom::existing::document_element();
+    (root.client_width() as f64, root.client_height() as f64)
 }
 
 /// The free space between the anchor's `side` edge and the viewport.
@@ -339,15 +361,21 @@ pub fn place(
     let popup_width = popup.offset_width() as f64;
     let popup_height = popup.offset_height() as f64;
 
-    // The main-axis coordinate comes from the side, the cross-axis one from
-    // the alignment plus skidding. Along a horizontal cross axis both follow
-    // the text direction: `start` is the right edge in right-to-left.
-    let main = match side {
-        Side::Top => anchor_rect.y - config.distance - popup_height,
-        Side::Bottom => anchor_rect.bottom() + config.distance,
-        Side::Left => anchor_rect.x - config.distance - popup_width,
-        Side::Right => anchor_rect.right() + config.distance,
+    // The main axis is pinned by the edge facing the anchor, so that edge stays
+    // put whatever the popup measures: `offset_width`/`offset_height` are whole
+    // pixels, and deriving the near edge from the far one plus a rounded size
+    // makes it jump by a pixel while an auto-sized popup is resized on scroll.
+    // The far edge is the one that follows the size, as in floating-ui.
+    let (main_property, main) = match side {
+        Side::Top => ("bottom", viewport.1 - (anchor_rect.y - config.distance)),
+        Side::Bottom => ("top", anchor_rect.bottom() + config.distance),
+        Side::Left => ("right", viewport.0 - (anchor_rect.x - config.distance)),
+        Side::Right => ("left", anchor_rect.right() + config.distance),
     };
+
+    // The cross-axis coordinate comes from the alignment plus skidding. Along a
+    // horizontal cross axis both follow the text direction: `start` is the right
+    // edge in right-to-left.
     let mut cross = if side.is_vertical() {
         let skidding = if config.rtl { -config.skidding } else { config.skidding };
         let x = match (config.align, config.rtl) {
@@ -376,13 +404,42 @@ pub fn place(
         cross = cross.min(max).max(config.shift_padding);
     }
 
-    let (x, y) = if side.is_vertical() {
-        (cross, main)
+    let (cross_property, cross_reset) = if side.is_vertical() {
+        ("left", "right")
     } else {
-        (main, cross)
+        ("top", "bottom")
     };
-    popup.style().set_property("left", &format!("{x}px")).ok();
-    popup.style().set_property("top", &format!("{y}px")).ok();
+    let main_reset = match side {
+        Side::Top => "top",
+        Side::Bottom => "bottom",
+        Side::Left => "left",
+        Side::Right => "right",
+    };
+
+    // A popover is positioned in document coordinates so the browser scrolls it
+    // with the page; without popover support the popup stays a `position: fixed`
+    // element placed in viewport coordinates.
+    let absolute = supports_popover(popup);
+    let (scroll_x, scroll_y) = if absolute { scroll_offsets() } else { (0.0, 0.0) };
+    // `top` and `left` grow with the scroll offset, `bottom` and `right` shrink:
+    // they are measured from the far edges of the initial containing block.
+    let to_document = |property: &str| match property {
+        "top" => scroll_y,
+        "bottom" => -scroll_y,
+        "left" => scroll_x,
+        _ => -scroll_x,
+    };
+
+    let style = popup.style();
+    popup.class_list().toggle_with_force(FIXED_STRATEGY, !absolute).ok();
+    style
+        .set_property(main_property, &format!("{}px", main + to_document(main_property)))
+        .ok();
+    style.set_property(main_reset, "auto").ok();
+    style
+        .set_property(cross_property, &format!("{}px", cross + to_document(cross_property)))
+        .ok();
+    style.set_property(cross_reset, "auto").ok();
 
     Some((side, config.align))
 }
@@ -587,10 +644,25 @@ fn update_hover_bridge(host: &Element, anchor: &Element, popup: &HtmlElement, si
     }
 }
 
+/// Shows or hides the body as a popover, so it is painted in the top layer.
+/// Both calls throw when the body is already in the requested state; the popup
+/// state is driven by the `active` class, so that is nothing to act on.
+fn set_popover_open(host: &Element, open: bool) {
+    let Some(body) = popup_body(host) else {
+        return;
+    };
+    if open {
+        body.show_popover().ok();
+    } else {
+        body.hide_popover().ok();
+    }
+}
+
 /// Activates or deactivates the positioning logic: `.popup-body` is only
 /// displayed while the host has the `active` class.
 pub fn set_popup_active(host: &Element, active: bool) {
     host.class_list().toggle_with_force("active", active).ok();
+    set_popover_open(host, active);
 
     if active {
         reposition(host);
@@ -614,8 +686,12 @@ fn reposition_active_popups() {
     }
 }
 
-/// Positions every active `.popup` on the page. Run it after every render.
+/// Positions every active `.popup` on the page, opening the popovers a render
+/// has reset. Run it after every render.
 pub fn init_popups() {
+    for host in dom::existing::select_all_elements(".popup.active") {
+        set_popover_open(&host, true);
+    }
     reposition_active_popups();
 }
 

@@ -229,7 +229,9 @@ impl<'a> Renderable for PopupBody<'a> {
             @if self.hover_bridge {
                 <span class=POPUP_HOVER_BRIDGE></span>
             }
-            <div id=[id] class=[&class_line] style=[&style_line]>
+            // A manual popover, so the body is painted in the top layer, above
+            // any stacking context of the page; `popup::set_popup_active` shows it.
+            <div id=[id] class=[&class_line] style=[&style_line] popover="manual">
                 (self.children)
                 @if self.arrow {
                     <div class=ARROW role="presentation"></div>

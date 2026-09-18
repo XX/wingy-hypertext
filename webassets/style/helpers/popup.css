@@ -27,10 +27,33 @@
 }
 
 .popup > .popup-body {
-  position: fixed;
+  /* Positioned in document coordinates, so the browser scrolls it with the page;
+   * `popup::place` switches to viewport coordinates (and to `fixed` through
+   * `.fixed-strategy`) when the browser has no popover support. */
+  position: absolute;
   isolation: isolate;
   max-width: var(--auto-size-available-width, none);
   max-height: var(--auto-size-available-height, none);
+}
+
+/* The popup body and the dropdown submenus are manual popovers, so they are
+ * painted in the top layer, above any stacking context of the page. Clear the
+ * styles the user agent gives `[popover]`: the selector carries no specificity,
+ * so it only beats the user agent, never the component styles. */
+:where(.popup-body[popover], .dropdown-submenu[popover]) {
+  inset: auto;
+  margin: unset;
+  padding: unset;
+  width: unset;
+  height: unset;
+  border: unset;
+  background: unset;
+  color: unset;
+  overflow: unset;
+}
+
+.popup > .popup-body.fixed-strategy {
+  position: fixed;
 }
 
 .popup:not(.active) > .popup-body {

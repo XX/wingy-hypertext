@@ -15,7 +15,7 @@ fn tooltip(host_attrs: &str, popup_attrs: &str, body: &str) -> String {
         r#"<div {host_attrs}><div class="popup" {popup_attrs} {POPUP_OPTIONS}>"#,
         host_attrs = host_attrs,
         popup_attrs = popup_attrs,
-    ) + r#"<span class="popup-hover-bridge"></span><div class="popup-body"><div class="tooltip-body">"#
+    ) + r#"<span class="popup-hover-bridge"></span><div class="popup-body" popover="manual"><div class="tooltip-body">"#
         + body
         + r#"</div><div class="arrow" role="presentation"></div></div></div></div>"#
 }
@@ -118,7 +118,7 @@ fn without_arrow() {
         r#"<div class="popup" data-placement="top" data-distance="8" "#,
         r#"data-flip="" data-shift="" data-shift-padding="8">"#,
         r#"<span class="popup-hover-bridge"></span>"#,
-        r#"<div class="popup-body"><div class="tooltip-body">No arrow</div></div></div></div>"#,
+        r#"<div class="popup-body" popover="manual"><div class="tooltip-body">No arrow</div></div></div></div>"#,
     );
 
     let tooltip = rsx! { <Tooltip arrow=false>"No arrow"</Tooltip> };

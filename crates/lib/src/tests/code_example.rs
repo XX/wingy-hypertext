@@ -287,8 +287,8 @@ fn direction() {
             </div>
         "#,
         fontawesome_ext::regular::ChevronDown.render().as_inner(),
-        fontawesome::solid::AlignLeft.render().as_inner(),
-        fontawesome::solid::AlignRight.render().as_inner(),
+        fontawesome_ext::regular::AlignLeft.render().as_inner(),
+        fontawesome_ext::regular::AlignRight.render().as_inner(),
     )
     .lines()
     .map(str::trim_start)

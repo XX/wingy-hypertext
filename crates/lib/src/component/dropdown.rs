@@ -412,12 +412,15 @@ impl<'a> Renderable for DropdownSubmenu<'a> {
             <span class=SUBMENU_ICON aria-hidden="true">
                 (fontawesome_ext::regular::ChevronRight)
             </span>
+            // A manual popover, like the menu itself: a submenu is painted in the
+            // top layer above the menu that opened it.
             <div id=[id]
                 class=[&class_line]
                 style=[&style_line]
                 role="menu"
                 tabindex="-1"
                 aria-orientation="vertical"
+                popover="manual"
                 hidden
                 (self.get_attrs())
             >

@@ -36,6 +36,20 @@ fn menu(dropdown: &Element) -> Option<Element> {
         .ok()?
 }
 
+/// Shows or hides a submenu as a popover, so it is painted in the top layer,
+/// above the menu that opened it. Both calls throw when the submenu is already
+/// in the requested state, which the `submenu-open` class drives anyway.
+fn set_submenu_popover_open(submenu: &Element, open: bool) {
+    let Some(submenu) = submenu.maybe_as_html() else {
+        return;
+    };
+    if open {
+        submenu.show_popover().ok();
+    } else {
+        submenu.hide_popover().ok();
+    }
+}
+
 fn popup_host(dropdown: &Element) -> Option<Element> {
     dropdown.query_selector(":scope > .popup").ok()?
 }
@@ -277,6 +291,7 @@ pub async fn open_submenu(item: Element, focus_first: bool) -> Option<()> {
         item.class_list().add_1("submenu-open").ok();
         item.set_attribute("aria-expanded", "true").ok();
         submenu.remove_attribute("hidden").ok();
+        set_submenu_popover_open(&submenu, true);
         position_submenu(&item, &submenu);
 
         animate_with_class(&submenu, "show").await.ok();
@@ -307,6 +322,7 @@ pub async fn close_submenu(item: Element) -> Option<()> {
 
     if !is_submenu_open(&item) {
         submenu.set_attribute("hidden", "").ok();
+        set_submenu_popover_open(&submenu, false);
     }
 
     Some(())
@@ -326,6 +342,7 @@ pub fn close_submenu_now(item: &Element) {
     item.set_attribute("aria-expanded", "false").ok();
     submenu.class_list().remove_2("show", "hide").ok();
     submenu.set_attribute("hidden", "").ok();
+    set_submenu_popover_open(&submenu, false);
 }
 
 pub fn close_all_submenus(dropdown: &Element) {

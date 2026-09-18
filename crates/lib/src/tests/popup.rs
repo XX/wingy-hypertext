@@ -17,7 +17,7 @@ fn default() {
 
 #[test]
 fn active_with_anchor() {
-    let popup_markup = r#"<div class="popup active" data-placement="bottom-start"><span>Anchor</span><div class="popup-body"><span>Content</span></div></div>"#;
+    let popup_markup = r#"<div class="popup active" data-placement="bottom-start"><span>Anchor</span><div class="popup-body" popover="manual"><span>Content</span></div></div>"#;
 
     let popup = rsx! {
         <Popup placement=BottomStart active=true>
@@ -56,7 +56,7 @@ fn positioning_attributes() {
 
 #[test]
 fn arrow_and_external_anchor() {
-    let popup_markup = r#"<div class="popup" data-placement="top" data-anchor="external-anchor"><div class="popup-body">Content<div class="arrow" role="presentation"></div></div></div>"#;
+    let popup_markup = r#"<div class="popup" data-placement="top" data-anchor="external-anchor"><div class="popup-body" popover="manual">Content<div class="arrow" role="presentation"></div></div></div>"#;
 
     let popup = rsx! {
         <Popup anchor_id="external-anchor">
@@ -68,7 +68,7 @@ fn arrow_and_external_anchor() {
 
 #[test]
 fn hover_bridge() {
-    let popup_markup = r#"<div class="popup" data-placement="top"><span class="popup-hover-bridge"></span><div class="popup-body"></div></div>"#;
+    let popup_markup = r#"<div class="popup" data-placement="top"><span class="popup-hover-bridge"></span><div class="popup-body" popover="manual"></div></div>"#;
 
     let popup_body = PopupBody::builder().hover_bridge(true);
     let popup = Popup::builder().children(&popup_body);

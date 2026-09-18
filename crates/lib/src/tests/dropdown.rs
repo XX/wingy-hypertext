@@ -23,7 +23,7 @@ fn dropdown(host_attrs: &str, popup_attrs: &str, content: &str) -> String {
 
 fn menu(items: &str) -> String {
     format!(
-        r#"<div class="popup-body"><div class="dropdown-menu" role="menu" tabindex="-1" aria-orientation="vertical" hidden>{items}</div></div>"#,
+        r#"<div class="popup-body" popover="manual"><div class="dropdown-menu" role="menu" tabindex="-1" aria-orientation="vertical" hidden>{items}</div></div>"#,
     )
 }
 
@@ -190,7 +190,7 @@ fn item_submenu() {
             r#" aria-haspopup="menu" aria-expanded="false">"#,
             r#"<span class="dropdown-item-label">Export</span>"#,
             r#"<span class="submenu-icon" aria-hidden="true">{chevron}</span>"#,
-            r#"<div class="dropdown-submenu" role="menu" tabindex="-1" aria-orientation="vertical" hidden>"#,
+            r#"<div class="dropdown-submenu" role="menu" tabindex="-1" aria-orientation="vertical" popover="manual" hidden>"#,
             r#"<div class="dropdown-item neutral" role="menuitem" tabindex="-1" data-value="pdf">"#,
             r#"<span class="dropdown-item-label">PDF</span></div></div></div>"#,
         ),
