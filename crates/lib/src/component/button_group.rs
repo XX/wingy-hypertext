@@ -6,7 +6,7 @@ use hypertext::{Buffer, Renderable, rsx};
 use wingy_hypertext_macros::{Props, const_str};
 
 use crate::attributes::{CommonAttributeGetters, CommonAttrs};
-use crate::class::{BUTTON_GROUP, VERTICAL};
+use crate::class::BUTTON_GROUP;
 use crate::orientation::Orientation;
 
 /// A group of related buttons — a toolbar, a split button or any set of actions
@@ -50,14 +50,7 @@ pub struct ButtonGroup<'a> {
 impl<'a> Renderable for ButtonGroup<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.id();
-        let class_line = self.class_line_with(&[
-            Self::CLASS,
-            if self.orientation == Orientation::Vertical {
-                VERTICAL
-            } else {
-                ""
-            },
-        ]);
+        let class_line = self.class_line_with(&[Self::CLASS, self.orientation.as_vertical_class()]);
         let style_line = self.style_line_with(&[]);
 
         rsx! {

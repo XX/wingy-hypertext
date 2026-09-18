@@ -12,6 +12,9 @@
     position: relative;
     display: flex;
     align-items: center;
+    /* The native styles give `label:has(input[type='checkbox'])` a `fit-content`
+     * width, which would keep the toggle row from filling a stretched switch */
+    width: auto;
     font: inherit;
     color: var(--wa-form-control-value-color);
     vertical-align: middle;

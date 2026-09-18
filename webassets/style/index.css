@@ -8,6 +8,8 @@
 @import url("components/dropdown.css");
 @import url("components/head.css");
 @import url("components/input.css");
+@import url("components/radio.css");
+@import url("components/radio_group.css");
 @import url("components/select.css");
 @import url("components/switch.css");
 @import url("components/tag.css");

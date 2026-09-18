@@ -1,0 +1,142 @@
+.radio {
+  --checked-icon-color: var(--wa-form-control-activated-color);
+  --checked-icon-scale: 0.7;
+
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  /* The native styles give `label:has(input[type='radio'])` a `fit-content`
+   * width, which would keep the radio from stretching across its group */
+  width: auto;
+  color: var(--wa-form-control-value-color);
+  font-family: inherit;
+  font-weight: var(--wa-form-control-value-font-weight);
+  line-height: var(--wa-form-control-value-line-height);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* The native radio is visually hidden but keeps native selection, keyboard
+ * navigation and form submission */
+.radio .control {
+  position: absolute;
+  opacity: 0;
+  padding: 0;
+  margin: 0;
+  pointer-events: none;
+}
+
+.radio .radio-indicator {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--wa-form-control-toggle-size);
+  height: var(--wa-form-control-toggle-size);
+  margin-inline-end: 0.5em;
+  background-color: var(--wa-form-control-background-color);
+  border-color: var(--wa-form-control-border-color);
+  border-radius: 50%;
+  border-style: var(--wa-form-control-border-style);
+  border-width: var(--wa-form-control-border-width);
+  transition-property: background, border-color, box-shadow, color;
+  transition-duration: var(--wa-transition-fast);
+  transition-timing-function: var(--wa-transition-easing);
+}
+
+/* The dot of the selected radio, drawn instead of the icon `wa-radio` slots in */
+.radio .radio-indicator::after {
+  content: '';
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: var(--checked-icon-color);
+  scale: var(--checked-icon-scale);
+  opacity: 0;
+  transition: opacity var(--wa-transition-fast) var(--wa-transition-easing);
+}
+
+.radio .label {
+  display: inline;
+}
+
+/* Checked */
+.radio .control:checked ~ .radio-indicator {
+  border-color: var(--wa-form-control-activated-color);
+}
+
+.radio .control:checked ~ .radio-indicator::after {
+  opacity: 1;
+}
+
+/* Focus */
+.radio .control:focus-visible ~ .radio-indicator {
+  outline: var(--wa-focus-ring);
+  outline-offset: var(--wa-focus-ring-offset);
+}
+
+/* Disabled */
+.radio:has(> .control:disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/*
+ * The button appearance: a box instead of a circle, which turns a group of
+ * radios into a segmented control. The rounding of the outer edges and the
+ * overlap of the adjacent borders belong to the group, so they live in
+ * `radio_group.css`.
+ */
+.radio.radio-button {
+  align-items: center;
+  min-height: var(--wa-form-control-height);
+  padding: 0 var(--wa-form-control-padding-inline);
+  background-color: var(--wa-color-surface-default);
+  border: var(--wa-form-control-border-width) var(--wa-form-control-border-style)
+    var(--wa-form-control-border-color);
+  border-radius: var(--wa-border-radius-m);
+  transition:
+    background-color var(--wa-transition-fast) var(--wa-transition-easing),
+    border-color var(--wa-transition-fast) var(--wa-transition-easing);
+}
+
+.radio.radio-button .radio-indicator {
+  display: none;
+}
+
+@media (hover: hover) {
+  .radio.radio-button:has(> .control:enabled:not(:checked)):hover {
+    background-color: color-mix(in srgb, var(--wa-color-surface-default) 95%, var(--wa-color-mix-hover));
+  }
+}
+
+.radio.radio-button:has(> .control:checked) {
+  border-color: var(--wa-form-control-activated-color);
+  background-color: var(--wa-color-brand-fill-quiet);
+}
+
+.radio.radio-button:has(> .control:focus-visible) {
+  outline: var(--wa-focus-ring);
+  outline-offset: var(--wa-focus-ring-offset);
+}
+
+/* Interactive states stay visible above the adjacent buttons */
+.radio.radio-button:hover,
+.radio.radio-button:has(> .control:checked) {
+  position: relative;
+  z-index: 1;
+}
+
+.radio.radio-button:has(> .control:focus-visible) {
+  position: relative;
+  z-index: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .radio .radio-indicator,
+  .radio .radio-indicator::after,
+  .radio.radio-button {
+    transition: none;
+  }
+}

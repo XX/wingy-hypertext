@@ -1,6 +1,7 @@
 use strum::{AsRefStr, IntoStaticStr};
 
 use crate::attributes::CommonAttributeSetters;
+use crate::class::VERTICAL;
 
 #[derive(Copy, Clone, Debug, Default, IntoStaticStr, AsRefStr, PartialEq, Eq)]
 #[strum(const_into_str, serialize_all = "kebab-case")]
@@ -13,6 +14,13 @@ pub enum Orientation {
 impl Orientation {
     pub const HORIZONTAL: &str = Self::Horizontal.into_str();
     pub const VERTICAL: &str = Self::Vertical.into_str();
+
+    pub const fn as_vertical_class(&self) -> &'static str {
+        match self {
+            Self::Horizontal => "",
+            Self::Vertical => VERTICAL,
+        }
+    }
 }
 
 pub trait OrientationConstructor {

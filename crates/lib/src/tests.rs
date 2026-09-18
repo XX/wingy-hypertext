@@ -11,6 +11,7 @@ pub mod dyn_renderable;
 pub mod input;
 pub mod page;
 pub mod popup;
+pub mod radio;
 pub mod select;
 pub mod switch;
 pub mod tag;
