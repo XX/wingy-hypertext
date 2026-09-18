@@ -56,7 +56,7 @@ pub fn init() {
     listen_removable_demo();
     layout::drawer::listen_drawer_overview();
     component::dropdown::listen_dropdown_overview();
-    component::radio::listen_radio_overview();
+    component::radio_group::listen_radio_group_overview();
     component::tooltip::listen_tooltip_overview();
 }
 
@@ -98,6 +98,7 @@ fn main_section(route_path: &str) -> impl Renderable {
             "input" => (component::input::overview()),
             "popup" => (helper::popup::overview()),
             "radio" => (component::radio::overview()),
+            "radio-group" => (component::radio_group::overview()),
             "select" => (component::select::overview()),
             "switch" => (component::switch::overview()),
             "tag" => (component::tag::overview()),
@@ -238,6 +239,16 @@ pub fn render_root(url_path: &str) -> String {
                             class=FLANK
                             href="/radio"
                             hx-get="/radio"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Radio"</span>
+                        </a>
+                        <a
+                            class=FLANK
+                            href="/radio-group"
+                            hx-get="/radio-group"
                             hx-target=".main-content"
                             hx-swap="innerHTML"
                             hx-push-url="true"

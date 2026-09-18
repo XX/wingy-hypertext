@@ -6,6 +6,7 @@ pub mod copy_button;
 pub mod dropdown;
 pub mod input;
 pub mod radio;
+pub mod radio_group;
 pub mod select;
 pub mod switch;
 pub mod tag;
