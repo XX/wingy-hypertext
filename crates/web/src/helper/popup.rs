@@ -332,14 +332,19 @@ pub fn place(
 
     // Expose the available space so auto-sized popups can adhere to it,
     // then re-measure: the `--auto-size-available-*` variables cap the
-    // popup's max width/height in CSS.
+    // popup's max width/height in CSS. The space of a side is measured from the
+    // anchor, so it exceeds the viewport once the anchor is scrolled out of it;
+    // the viewport (minus the padding on both ends) is the real limit, as in the
+    // clipping rect floating-ui measures against.
     let style = host_style(size_host)?;
     let auto_size = config.auto_size.as_deref().unwrap_or("");
+    let padding = config.auto_size_padding;
     if auto_size == "vertical" || auto_size == "both" {
         let available = match side {
-            Side::Top | Side::Bottom => side_space(side, &anchor_rect, viewport) - config.distance,
-            _ => viewport.1 - config.auto_size_padding,
-        } - config.auto_size_padding;
+            Side::Top | Side::Bottom => side_space(side, &anchor_rect, viewport) - config.distance - padding,
+            _ => viewport.1 - 2.0 * padding,
+        }
+        .min(viewport.1 - 2.0 * padding);
         style
             .set_property("--auto-size-available-height", &format!("{}px", available.max(0.0)))
             .ok();
@@ -348,9 +353,10 @@ pub fn place(
     }
     if auto_size == "horizontal" || auto_size == "both" {
         let available = match side {
-            Side::Left | Side::Right => side_space(side, &anchor_rect, viewport) - config.distance,
-            _ => viewport.0 - config.auto_size_padding,
-        } - config.auto_size_padding;
+            Side::Left | Side::Right => side_space(side, &anchor_rect, viewport) - config.distance - padding,
+            _ => viewport.0 - 2.0 * padding,
+        }
+        .min(viewport.0 - 2.0 * padding);
         style
             .set_property("--auto-size-available-width", &format!("{}px", available.max(0.0)))
             .ok();
