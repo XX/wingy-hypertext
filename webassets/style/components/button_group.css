@@ -1,0 +1,78 @@
+/* A group of buttons laid out as one unit: the borders between neighbours
+ * collapse and only the outer edges stay rounded.
+ *
+ * The buttons are styled by `button.css` (and native ones by `common/native.css`),
+ * which read the `--_button-*` custom properties set here. The properties are
+ * inherited, so they also reach a button wrapped into a `display: contents`
+ * element — the trigger of a `Dropdown`, for one. */
+.button-group {
+  display: inline-flex;
+  position: relative;
+  flex-direction: row;
+  flex-wrap: wrap;
+  isolation: isolate;
+
+  --_button-horizontal-indent: var(--wa-form-control-border-width);
+  --_button-horizontal-indent-outlined: calc(var(--wa-form-control-border-width) * -1);
+}
+
+.button-group.vertical {
+  flex-direction: column;
+
+  --_button-horizontal-indent: 0;
+  --_button-horizontal-indent-outlined: 0;
+  --_button-vertical-indent: var(--wa-form-control-border-width);
+  --_button-vertical-indent-outlined: calc(var(--wa-form-control-border-width) * -1);
+}
+
+/* The leading button keeps its place; the rest are pulled onto their neighbour */
+.button-group > :first-child {
+  --_button-horizontal-indent: 0;
+  --_button-horizontal-indent-outlined: 0;
+  --_button-vertical-indent: 0;
+  --_button-vertical-indent-outlined: 0;
+}
+
+/* Only the outer edges of the group stay rounded */
+.button-group > :not(:first-child):not(:last-child) {
+  --_button-start-start-radius: 0;
+  --_button-start-end-radius: 0;
+  --_button-end-start-radius: 0;
+  --_button-end-end-radius: 0;
+}
+
+.button-group:not(.vertical) > :first-child:not(:last-child) {
+  --_button-start-end-radius: 0;
+  --_button-end-end-radius: 0;
+}
+
+.button-group:not(.vertical) > :last-child:not(:first-child) {
+  --_button-start-start-radius: 0;
+  --_button-end-start-radius: 0;
+}
+
+.button-group.vertical > :first-child:not(:last-child) {
+  --_button-end-start-radius: 0;
+  --_button-end-end-radius: 0;
+}
+
+.button-group.vertical > :last-child:not(:first-child) {
+  --_button-start-start-radius: 0;
+  --_button-start-end-radius: 0;
+}
+
+/* The hovered button covers the collapsed border of its neighbour, and the
+ * focused or checked one is always on top. The selectors match the buttons
+ * themselves rather than the group's children: a button may come wrapped into a
+ * `display: contents` element, which has no box to stack. */
+.button-group :is(.button, button, a.wa-button) {
+  &:hover {
+    z-index: 1;
+  }
+
+  &:focus,
+  &[aria-checked='true'],
+  &[checked] {
+    z-index: 2;
+  }
+}

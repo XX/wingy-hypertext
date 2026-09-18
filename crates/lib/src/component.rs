@@ -1,5 +1,6 @@
 pub mod badge;
 pub mod button;
+pub mod button_group;
 pub mod callout;
 pub mod copy_button;
 pub mod dropdown;

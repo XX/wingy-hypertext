@@ -88,6 +88,7 @@ fn main_section(route_path: &str) -> impl Renderable {
             "animation" => (helper::animation::overview()),
             "badge" => (component::badge::overview()),
             "button" => (component::button::overview()),
+            "button-group" => (component::button_group::overview()),
             "callout" => (component::callout::overview()),
             "copy-button" => (component::copy_button::overview()),
             "divider" => (layout::divider::overview()),
@@ -180,6 +181,16 @@ pub fn render_root(url_path: &str) -> String {
                             hx-push-url="true"
                         >
                             <span>"Button"</span>
+                        </a>
+                        <a
+                            class=FLANK
+                            href="/button-group"
+                            hx-get="/button-group"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Button Group"</span>
                         </a>
                         <a
                             class=FLANK

@@ -1,6 +1,7 @@
 pub mod animation;
 pub mod badge;
 pub mod button;
+pub mod button_group;
 pub mod callout;
 pub mod code_example;
 pub mod divider;

@@ -6,6 +6,7 @@ pub const BADGE: &str = "badge";
 pub const BORDER_END: &str = "border-end";
 pub const BOTTOM: &str = "bottom";
 pub const BUTTON: &str = "button";
+pub const BUTTON_GROUP: &str = "button-group";
 pub const CALLOUT: &str = "callout";
 pub const CALLOUT_ICON: &str = "callout-icon";
 pub const CALLOUT_MESSAGE: &str = "callout-message";
