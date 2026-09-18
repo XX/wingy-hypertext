@@ -18,6 +18,7 @@ use wingy_hypertext::link::LinkSetters;
 use wingy_hypertext::link::Target::*;
 use wingy_hypertext::variant::Variant::*;
 use wingy_hypertext_web::component::callout::listen_close_callout;
+use wingy_hypertext_web::component::checkbox::init_checkboxes;
 use wingy_hypertext_web::component::dropdown::{init_dropdowns, listen_dropdowns};
 use wingy_hypertext_web::component::select::{init_selects, listen_selects};
 use wingy_hypertext_web::component::tag::listen_remove_tags;
@@ -66,6 +67,7 @@ pub fn reinit() {
     init_page_element();
     init_scroll_to_anchor();
     init_dropdowns();
+    init_checkboxes();
     init_selects();
     init_popups();
     init_tooltips();
@@ -91,6 +93,8 @@ fn main_section(route_path: &str) -> impl Renderable {
             "button" => (component::button::overview()),
             "button-group" => (component::button_group::overview()),
             "callout" => (component::callout::overview()),
+            "checkbox" => (component::checkbox::overview()),
+            "checkbox-group" => (component::checkbox_group::overview()),
             "copy-button" => (component::copy_button::overview()),
             "divider" => (layout::divider::overview()),
             "dropdown" => (component::dropdown::overview()),
@@ -204,6 +208,26 @@ pub fn render_root(url_path: &str) -> String {
                             hx-push-url="true"
                         >
                             <span>"Callout"</span>
+                        </a>
+                        <a
+                            class=FLANK
+                            href="/checkbox"
+                            hx-get="/checkbox"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Checkbox"</span>
+                        </a>
+                        <a
+                            class=FLANK
+                            href="/checkbox-group"
+                            hx-get="/checkbox-group"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Checkbox Group"</span>
                         </a>
                         <a
                             class=FLANK

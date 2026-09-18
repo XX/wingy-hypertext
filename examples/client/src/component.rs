@@ -2,6 +2,8 @@ pub mod badge;
 pub mod button;
 pub mod button_group;
 pub mod callout;
+pub mod checkbox;
+pub mod checkbox_group;
 pub mod copy_button;
 pub mod dropdown;
 pub mod input;

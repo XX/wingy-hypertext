@@ -1,4 +1,5 @@
 pub mod callout;
+pub mod checkbox;
 pub mod copy_button;
 pub mod dropdown;
 pub mod head;

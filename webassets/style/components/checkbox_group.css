@@ -1,0 +1,53 @@
+/* A native fieldset, so `disabled` disables every checkbox inside */
+.checkbox-group {
+  position: relative;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.checkbox-group > .label {
+  display: inline-flex;
+  padding: 0;
+  color: var(--wa-form-control-label-color);
+  font-weight: var(--wa-form-control-label-font-weight);
+  line-height: var(--wa-form-control-label-line-height);
+  margin-block-end: 0.5em;
+}
+
+/* Only the group's own legend carries the marker, not the labels of the items */
+.checkbox-group.required > .label::after {
+  content: var(--wa-form-control-required-content, '*');
+  margin-inline-start: var(--wa-form-control-required-content-offset, 0.125em);
+  color: var(--wa-form-control-required-content-color, var(--wa-color-danger-on-quiet));
+}
+
+.checkbox-group .checkbox .control:required ~ .label::after,
+.checkbox-group .switch-toggle .control:required ~ .label::after {
+  content: none;
+}
+
+.checkbox-group > .hint {
+  display: block;
+  color: var(--wa-form-control-hint-color);
+  font-weight: var(--wa-form-control-hint-font-weight);
+  line-height: var(--wa-form-control-hint-line-height);
+  margin-block-start: 0.5em;
+  font-size: var(--wa-font-size-smaller);
+}
+
+/* The items keep their own width, so a click lands on the label rather than on
+ * the whole row — the opposite of a radio group, where they stretch */
+.checkbox-group-items {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 0.5em;
+}
+
+.checkbox-group.horizontal .checkbox-group-items {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1em;
+}

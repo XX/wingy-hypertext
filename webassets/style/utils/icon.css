@@ -32,6 +32,8 @@
 :is(
     .icon,
     .callout-icon,
+    .checkbox-check,
+    .checkbox-indeterminate,
     .dropdown-item-icon,
     .check,
     .submenu-icon,

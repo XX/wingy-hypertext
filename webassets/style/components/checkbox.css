@@ -1,0 +1,126 @@
+.checkbox {
+  --checked-icon-color: var(--wa-color-brand-on-loud);
+  --checked-icon-scale: 0.8;
+
+  display: inline-flex;
+  flex-direction: column;
+  color: var(--wa-form-control-value-color);
+  font-family: inherit;
+  font-weight: var(--wa-form-control-value-font-weight);
+  line-height: var(--wa-form-control-value-line-height);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.checkbox-toggle {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  color: currentColor;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+/* The native checkbox is visually hidden but keeps native toggling, the
+ * indeterminate state and form submission */
+.checkbox .control {
+  position: absolute;
+  opacity: 0;
+  padding: 0;
+  margin: 0;
+  pointer-events: none;
+}
+
+.checkbox .checkbox-indicator {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: var(--wa-form-control-toggle-size);
+  height: var(--wa-form-control-toggle-size);
+  margin-inline-end: 0.5em;
+  color: var(--checked-icon-color);
+  background-color: var(--wa-form-control-background-color);
+  border-color: var(--wa-form-control-border-color);
+  /* `min` prevents an entirely circular checkbox */
+  border-radius: min(calc(var(--wa-form-control-toggle-size) * 0.375), var(--wa-border-radius-s));
+  border-style: var(--wa-border-style);
+  border-width: var(--wa-form-control-border-width);
+  transition-property: background, border-color, box-shadow, color;
+  transition-duration: var(--wa-transition-fast);
+  transition-timing-function: var(--wa-transition-easing);
+}
+
+/* Both icons are rendered and stacked on top of each other, so the hidden one
+ * neither takes space next to the visible one nor squeezes it; the state of the
+ * control picks which one shows */
+.checkbox .checkbox-check,
+.checkbox .checkbox-indeterminate {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scale: var(--checked-icon-scale);
+  visibility: hidden;
+}
+
+.checkbox .control:checked ~ .checkbox-indicator .checkbox-check,
+.checkbox .control:indeterminate ~ .checkbox-indicator .checkbox-indeterminate {
+  visibility: visible;
+}
+
+/* An indeterminate checkbox shows the dash even when it is checked as well */
+.checkbox .control:indeterminate ~ .checkbox-indicator .checkbox-check {
+  visibility: hidden;
+}
+
+.checkbox .label {
+  display: inline;
+}
+
+/* Checked and indeterminate */
+.checkbox .control:checked ~ .checkbox-indicator,
+.checkbox .control:indeterminate ~ .checkbox-indicator {
+  border-color: var(--wa-form-control-activated-color);
+  background-color: var(--wa-form-control-activated-color);
+}
+
+/* Focus */
+.checkbox .control:focus-visible:not(:disabled) ~ .checkbox-indicator {
+  outline: var(--wa-focus-ring);
+  outline-offset: var(--wa-focus-ring-offset);
+}
+
+/* Disabled */
+.checkbox:has(.control:disabled) {
+  opacity: 0.5;
+}
+
+.checkbox:has(.control:disabled) .checkbox-toggle {
+  cursor: not-allowed;
+}
+
+/* The required marker belongs to the checkbox on its own; inside a group the
+ * group's label carries it instead */
+.checkbox .control:required ~ .label::after {
+  content: var(--wa-form-control-required-content, '*');
+  margin-inline-start: var(--wa-form-control-required-content-offset, 0.125em);
+  color: var(--wa-form-control-required-content-color, var(--wa-color-danger-on-quiet));
+}
+
+.checkbox > .hint {
+  display: block;
+  color: var(--wa-form-control-hint-color);
+  font-weight: var(--wa-form-control-hint-font-weight);
+  line-height: var(--wa-form-control-hint-line-height);
+  margin-block-start: 0.5em;
+  font-size: var(--wa-font-size-smaller);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .checkbox .checkbox-indicator {
+    transition: none;
+  }
+}
