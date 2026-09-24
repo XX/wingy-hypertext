@@ -14,6 +14,7 @@ pub mod page;
 pub mod popup;
 pub mod radio;
 pub mod select;
+pub mod slider;
 pub mod switch;
 pub mod tag;
 pub mod tooltip;

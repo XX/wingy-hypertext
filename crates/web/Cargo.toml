@@ -5,6 +5,7 @@ edition.workspace = true
 license.workspace = true
 
 [dependencies]
+const_format = { workspace = true }
 futures = { workspace = true }
 hypertext = { workspace = true }
 js-sys = { workspace = true }
@@ -41,6 +42,7 @@ web-sys = { workspace = true, features = [
     "Navigator",
     "Node",
     "NodeList",
+    "PointerEvent",
     "PlaybackDirection",
     "ResizeObserver",
     "ResizeObserverEntry",

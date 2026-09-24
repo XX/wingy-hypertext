@@ -70,3 +70,32 @@
     background-color: var(--code-background-dark, var(--wa-color-surface-lowered));
   }
 }
+
+/* Slider demos: the preview that follows the value and the filtered list */
+.slider-text-size-preview {
+  margin: 0 0 1rem;
+  font-size: 18px;
+  transition: font-size 75ms ease;
+}
+
+.slider-price-filter-list {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 13rem;
+}
+
+.slider-price-filter-list li {
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--wa-border-radius-m);
+  background-color: color-mix(in srgb, var(--wa-color-brand-fill-loud) 10%, transparent);
+}
+
+.slider-demo-output {
+  margin-block-start: var(--wa-space-m);
+  color: var(--wa-color-text-quiet);
+  font-size: var(--wa-font-size-smaller);
+}

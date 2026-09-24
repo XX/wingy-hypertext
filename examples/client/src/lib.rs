@@ -21,6 +21,7 @@ use wingy_hypertext_web::component::callout::listen_close_callout;
 use wingy_hypertext_web::component::checkbox::init_checkboxes;
 use wingy_hypertext_web::component::dropdown::{init_dropdowns, listen_dropdowns};
 use wingy_hypertext_web::component::select::{init_selects, listen_selects};
+use wingy_hypertext_web::component::slider::{init_sliders, listen_sliders};
 use wingy_hypertext_web::component::tag::listen_remove_tags;
 use wingy_hypertext_web::component::tooltip::{init_tooltips, listen_tooltips};
 use wingy_hypertext_web::helper::animation::init_animations;
@@ -48,6 +49,7 @@ pub fn init() {
     listen_close_callout();
     listen_dropdowns();
     listen_selects();
+    listen_sliders();
     listen_tooltips();
     listen_popups();
     listen_remove_tags();
@@ -58,6 +60,7 @@ pub fn init() {
     layout::drawer::listen_drawer_overview();
     component::dropdown::listen_dropdown_overview();
     component::radio_group::listen_radio_group_overview();
+    component::slider::listen_slider_overview();
     component::tooltip::listen_tooltip_overview();
 }
 
@@ -69,6 +72,7 @@ pub fn reinit() {
     init_dropdowns();
     init_checkboxes();
     init_selects();
+    init_sliders();
     init_popups();
     init_tooltips();
     init_animations();
@@ -104,6 +108,7 @@ fn main_section(route_path: &str) -> impl Renderable {
             "radio" => (component::radio::overview()),
             "radio-group" => (component::radio_group::overview()),
             "select" => (component::select::overview()),
+            "slider" => (component::slider::overview()),
             "switch" => (component::switch::overview()),
             "tag" => (component::tag::overview()),
             "tooltip" => (component::tooltip::overview()),
@@ -288,6 +293,16 @@ pub fn render_root(url_path: &str) -> String {
                             hx-push-url="true"
                         >
                             <span>"Select"</span>
+                        </a>
+                        <a
+                            class=FLANK
+                            href="/slider"
+                            hx-get="/slider"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Slider"</span>
                         </a>
                         <a
                             class=FLANK

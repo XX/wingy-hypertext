@@ -1,0 +1,210 @@
+/* A port of `slider.styles.ts`: the track, the filled indicator, the markers and
+ * the thumbs. All positions come in as percentages — `--position` for a thumb or
+ * a marker, `--start` and `--end` for the filled part — so the server renders the
+ * slider in its final shape and the client only updates the numbers. */
+.slider {
+  --track-size: 0.5em;
+  --thumb-width: 1.4em;
+  --thumb-height: 1.4em;
+  --marker-width: 0.1875em;
+  --marker-height: 0.1875em;
+
+  display: block;
+}
+
+.slider > .label {
+  display: inline-flex;
+  color: var(--wa-form-control-label-color);
+  font-weight: var(--wa-form-control-label-font-weight);
+  line-height: var(--wa-form-control-label-line-height);
+  margin-block-end: 0.5em;
+}
+
+.slider > .hint {
+  display: block;
+  color: var(--wa-form-control-hint-color);
+  font-weight: var(--wa-form-control-hint-font-weight);
+  line-height: var(--wa-form-control-hint-line-height);
+  margin-block-start: 0.5em;
+  font-size: var(--wa-font-size-smaller);
+}
+
+.slider-control {
+  touch-action: none;
+  /* Dragging shouldn't select the text around the track; the label and the hint
+   * stay selectable, since they live outside of the control */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.slider-control:focus {
+  outline: none;
+}
+
+/* The focus ring sits on the thumb, not on the control */
+.slider-control:focus-visible .slider-thumb,
+.slider-thumb:focus-visible {
+  outline: var(--wa-focus-ring);
+  /* intentionally no offset due to border */
+}
+
+.slider.disabled .slider-control:focus-visible .slider-thumb,
+.slider.disabled .slider-thumb:focus-visible {
+  outline: none;
+}
+
+.slider-track {
+  position: relative;
+  border-radius: 9999px;
+  background: var(--wa-color-neutral-fill-normal);
+  isolation: isolate;
+}
+
+.slider.horizontal .slider-track {
+  height: var(--track-size);
+}
+
+.slider.vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-inline: auto;
+  width: auto;
+}
+
+.slider.vertical .slider-control {
+  display: flex;
+}
+
+.slider.vertical .slider-track {
+  order: 1;
+  width: var(--track-size);
+  height: 200px;
+}
+
+.slider.disabled .slider-track {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* The filled part of the track, drawn between `--start` and `--end` so it can
+ * start from an arbitrary value (`indicator_offset`), not only from the minimum */
+.slider-indicator {
+  position: absolute;
+  border-radius: inherit;
+  background-color: var(--wa-form-control-activated-color);
+}
+
+.slider.horizontal .slider-indicator {
+  top: 0;
+  height: 100%;
+}
+
+.slider.horizontal .slider-indicator:dir(ltr) {
+  right: calc(100% - max(var(--start), var(--end)));
+  left: min(var(--start), var(--end));
+}
+
+.slider.horizontal .slider-indicator:dir(rtl) {
+  right: min(var(--start), var(--end));
+  left: calc(100% - max(var(--start), var(--end)));
+}
+
+.slider.vertical .slider-indicator {
+  top: calc(100% - var(--end));
+  bottom: var(--start);
+  left: 0;
+  width: 100%;
+}
+
+/* Thumbs */
+.slider-thumb {
+  z-index: 3;
+  position: absolute;
+  width: var(--thumb-width);
+  height: var(--thumb-height);
+  border: solid 0.125em var(--wa-color-surface-default);
+  border-radius: 50%;
+  background-color: var(--wa-form-control-activated-color);
+  cursor: pointer;
+}
+
+.slider.disabled .slider-thumb {
+  cursor: inherit;
+}
+
+.slider.horizontal .slider-thumb {
+  top: calc(50% - var(--thumb-height) / 2);
+}
+
+.slider.horizontal .slider-thumb:dir(ltr) {
+  right: auto;
+  left: calc(var(--position) - var(--thumb-width) / 2);
+}
+
+.slider.horizontal .slider-thumb:dir(rtl) {
+  right: calc(var(--position) - var(--thumb-width) / 2);
+  left: auto;
+}
+
+.slider.vertical .slider-thumb {
+  bottom: calc(var(--position) - var(--thumb-height) / 2);
+  left: calc(50% - var(--thumb-width) / 2);
+}
+
+/* The focused thumb of a range slider goes on top of its neighbour */
+.slider-thumb:focus-visible {
+  z-index: 4;
+}
+
+/* Markers */
+.slider-markers {
+  pointer-events: none;
+}
+
+.slider-marker {
+  z-index: 2;
+  position: absolute;
+  width: var(--marker-width);
+  height: var(--marker-height);
+  border-radius: 50%;
+  background-color: var(--wa-color-surface-default);
+}
+
+/* The markers at the ends would sit under the rounded caps of the track */
+.slider-marker:first-of-type,
+.slider-marker:last-of-type {
+  display: none;
+}
+
+.slider.horizontal .slider-marker {
+  top: calc(50% - var(--marker-height) / 2);
+  left: calc(var(--position) - var(--marker-width) / 2);
+}
+
+.slider.vertical .slider-marker {
+  top: calc(var(--position) - var(--marker-height) / 2);
+  left: calc(50% - var(--marker-width) / 2);
+}
+
+/* References: the labels spread along the track */
+.slider-references {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  color: var(--wa-color-text-quiet);
+  font-size: 0.875em;
+  line-height: 1;
+}
+
+.slider.horizontal .slider-references {
+  margin-block-start: 0.5em;
+}
+
+.slider.vertical .slider-references {
+  order: 2;
+  flex-direction: column;
+  width: min-content;
+  height: 100%;
+  margin-inline-start: 0.75em;
+}

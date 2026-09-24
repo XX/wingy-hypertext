@@ -11,6 +11,7 @@ pub mod input;
 pub mod radio;
 pub mod radio_group;
 pub mod select;
+pub mod slider;
 pub mod switch;
 pub mod tag;
 pub mod tooltip;
