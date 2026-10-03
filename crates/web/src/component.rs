@@ -6,4 +6,5 @@ pub mod head;
 pub mod select;
 pub mod slider;
 pub mod tag;
+pub mod textarea;
 pub mod tooltip;

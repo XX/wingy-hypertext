@@ -17,4 +17,5 @@ pub mod select;
 pub mod slider;
 pub mod switch;
 pub mod tag;
+pub mod textarea;
 pub mod tooltip;

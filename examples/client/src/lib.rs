@@ -23,6 +23,7 @@ use wingy_hypertext_web::component::dropdown::{init_dropdowns, listen_dropdowns}
 use wingy_hypertext_web::component::select::{init_selects, listen_selects};
 use wingy_hypertext_web::component::slider::{init_sliders, listen_sliders};
 use wingy_hypertext_web::component::tag::listen_remove_tags;
+use wingy_hypertext_web::component::textarea::{init_textareas, listen_textareas};
 use wingy_hypertext_web::component::tooltip::{init_tooltips, listen_tooltips};
 use wingy_hypertext_web::helper::animation::init_animations;
 use wingy_hypertext_web::helper::popup::{init_popups, listen_popups};
@@ -50,6 +51,7 @@ pub fn init() {
     listen_dropdowns();
     listen_selects();
     listen_sliders();
+    listen_textareas();
     listen_tooltips();
     listen_popups();
     listen_remove_tags();
@@ -74,6 +76,7 @@ pub fn reinit() {
     init_selects();
     init_sliders();
     init_popups();
+    init_textareas();
     init_tooltips();
     init_animations();
     init_drawers();
@@ -111,6 +114,7 @@ fn main_section(route_path: &str) -> impl Renderable {
             "slider" => (component::slider::overview()),
             "switch" => (component::switch::overview()),
             "tag" => (component::tag::overview()),
+            "textarea" => (component::textarea::overview()),
             "tooltip" => (component::tooltip::overview()),
             _ => {},
         }
@@ -323,6 +327,16 @@ pub fn render_root(url_path: &str) -> String {
                             hx-push-url="true"
                         >
                             <span>"Tag"</span>
+                        </a>
+                        <a
+                            class=FLANK
+                            href="/textarea"
+                            hx-get="/textarea"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Textarea"</span>
                         </a>
                         <a
                             class=FLANK

@@ -23,3 +23,10 @@ pub fn percentage(value: f64, min: f64, max: f64) -> f64 {
         (((value - min) / (max - min)) * 100.0).clamp(0.0, 100.0)
     }
 }
+
+/// The number of UTF-16 code units in `value` — the length a browser counts for
+/// `maxlength`, which is what the character count has to agree with.
+#[inline]
+pub fn utf16_len(value: &str) -> usize {
+    value.chars().map(char::len_utf16).sum()
+}
