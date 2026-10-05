@@ -86,7 +86,7 @@ pub struct Select<'a> {
 
 impl<'a> Renderable for Select<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
             if self.pill { PILL } else { "" },
@@ -205,7 +205,7 @@ pub struct SelectOption<'a> {
 
 impl<'a> Renderable for SelectOption<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
             if self.selected { SELECTED } else { "" },

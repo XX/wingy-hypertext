@@ -159,7 +159,7 @@ pub struct Popup<'a> {
 
 impl<'a> Renderable for Popup<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS, if self.active { ACTIVE } else { "" }]);
         let style_line = self.style_line_with(&[]);
 
@@ -221,7 +221,7 @@ pub struct PopupBody<'a> {
 
 impl<'a> Renderable for PopupBody<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
 

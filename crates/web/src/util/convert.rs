@@ -1,5 +1,5 @@
 use wasm_dom::JsCast;
-use web_sys::{Element, HtmlDialogElement};
+use web_sys::{CssStyleDeclaration, Element, HtmlDetailsElement, HtmlDialogElement};
 pub use wingy_hypertext::convert::*;
 
 /// Mimics JavaScript's `parseFloat`: reads a leading (optionally signed) decimal number, defaulting to 0.
@@ -44,6 +44,17 @@ pub fn parse_duration_millis(duration: &str) -> f64 {
     parse_float(&duration)
 }
 
+pub fn parse_duration_style(style: &CssStyleDeclaration, name: &str) -> Option<f64> {
+    style
+        .get_property_value(name)
+        .ok()
+        .map(|value| parse_duration_millis(&value))
+}
+
 pub fn dialog(element: &Element) -> Option<HtmlDialogElement> {
     element.clone().dyn_into::<HtmlDialogElement>().ok()
+}
+
+pub fn details(element: &Element) -> Option<HtmlDetailsElement> {
+    element.clone().dyn_into::<HtmlDetailsElement>().ok()
 }

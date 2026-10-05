@@ -94,7 +94,7 @@ pub trait CommonAttributeSetters<'a> {
 }
 
 pub trait CommonAttributeGetters<'a> {
-    fn id(&'a self) -> Option<&'a Cow<'a, str>> {
+    fn not_empty_id(&'a self) -> Option<&'a Cow<'a, str>> {
         self.get_id().into_not_empty()
     }
 

@@ -47,7 +47,7 @@ impl<'a, I: Renderable> Default for Callout<'a, I> {
 
 impl<'a, I: Renderable> Callout<'a, I> {
     fn render_to(&self, buffer: &mut Buffer, icon: Option<&dyn Renderable>) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS, self.variant.into_str(), self.appearance.into_str()]);
         let style_line = self.style_line_with(&[]);
 

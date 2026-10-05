@@ -50,7 +50,7 @@ pub struct Switch<'a> {
 
 impl<'a> Renderable for Switch<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
             if self.required { REQUIRED } else { "" },
@@ -112,7 +112,7 @@ pub struct Toggle<'a> {
 
 impl<'a> Renderable for Toggle<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
 

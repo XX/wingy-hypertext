@@ -27,6 +27,7 @@ use wingy_hypertext_web::component::textarea::{init_textareas, listen_textareas}
 use wingy_hypertext_web::component::tooltip::{init_tooltips, listen_tooltips};
 use wingy_hypertext_web::helper::animation::init_animations;
 use wingy_hypertext_web::helper::popup::{init_popups, listen_popups};
+use wingy_hypertext_web::layout::details::{init_details, listen_details};
 use wingy_hypertext_web::layout::drawer::{init_drawers, listen_drawers};
 use wingy_hypertext_web::util::event;
 use wingy_hypertext_web::{
@@ -55,6 +56,7 @@ pub fn init() {
     listen_tooltips();
     listen_popups();
     listen_remove_tags();
+    listen_details();
     listen_drawers();
     helper::animation::listen_animation_overview();
     helper::popup::listen_popup_overview();
@@ -79,6 +81,7 @@ pub fn reinit() {
     init_textareas();
     init_tooltips();
     init_animations();
+    init_details();
     init_drawers();
     helper::animation::init_animation_overview();
     helper::popup::init_popup_overview();
@@ -103,6 +106,7 @@ fn main_section(route_path: &str) -> impl Renderable {
             "checkbox" => (component::checkbox::overview()),
             "checkbox-group" => (component::checkbox_group::overview()),
             "copy-button" => (component::copy_button::overview()),
+            "details" => (layout::details::overview()),
             "divider" => (layout::divider::overview()),
             "dropdown" => (component::dropdown::overview()),
             "drawer" => (layout::drawer::overview()),
@@ -354,6 +358,16 @@ pub fn render_root(url_path: &str) -> String {
                     </nav>
                     <nav class=(PAGE_MENU_NAV, " ", BORDER_END)>
                         <a class=FLANK href="#"><span>"Code Example"</span></a>
+                        <a
+                            class=FLANK
+                            href="/details"
+                            hx-get="/details"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Details"</span>
+                        </a>
                         <a
                             class=FLANK
                             href="/divider"

@@ -25,7 +25,7 @@ pub struct Anchor<'a> {
 
 impl Renderable for Anchor<'_> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[]);
         let style_line = self.style_line_with(&[]);
 
@@ -123,7 +123,7 @@ pub struct Head<'a> {
 
 impl<'a> Renderable for Head<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
             self.level.class(),

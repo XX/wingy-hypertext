@@ -1,0 +1,154 @@
+/* A port of `details.styles.ts`. The root is the native `<details>` itself, so
+ * the rules here also override what `native.css` gives every `<details>`: its
+ * margin, its padding when open and its own chevron after the summary.
+ *
+ * The logical open state is the `open` class, not the `open` attribute: the
+ * client keeps the attribute until the collapse animation ends, while the icon
+ * and the header corners have to follow the state right away. Child
+ * combinators keep a details nested in the content out of these rules. */
+.details {
+  --spacing: var(--wa-space-m);
+  --show-duration: var(--wa-transition-normal);
+  --hide-duration: var(--wa-transition-normal);
+
+  display: block;
+  margin: 0;
+  padding: 0;
+  overflow-anchor: none;
+  border: var(--wa-panel-border-width) var(--wa-color-surface-border) var(--wa-panel-border-style);
+  background-color: var(--wa-color-surface-default);
+  border-radius: var(--wa-panel-border-radius);
+  color: var(--wa-color-text-normal);
+
+  /* Print styles */
+  @media print {
+    background: none;
+    border: solid var(--wa-border-width-s) var(--wa-color-surface-border);
+
+    > .details-header {
+      list-style: none;
+    }
+  }
+}
+
+/* Appearance modifiers */
+.details.plain {
+  background-color: transparent;
+  border-color: transparent;
+  border-radius: 0;
+}
+
+.details.outlined {
+  background-color: var(--wa-color-surface-default);
+  border-color: var(--wa-color-surface-border);
+}
+
+.details.filled {
+  background-color: var(--wa-color-neutral-fill-quiet);
+  border-color: transparent;
+}
+
+.details.filled-outlined {
+  background-color: var(--wa-color-neutral-fill-quiet);
+  border-color: var(--wa-color-neutral-border-quiet);
+}
+
+.details.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.details-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing);
+  margin: 0;
+  padding: var(--spacing);
+  border-radius: calc(var(--wa-panel-border-radius) - var(--wa-panel-border-width));
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+
+  &::marker,
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  /* The chevron of `native.css`; the header has its own icon */
+  &::after {
+    content: none;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: var(--wa-focus-ring);
+    outline-offset: calc(var(--wa-panel-border-width) + var(--wa-focus-ring-offset));
+  }
+}
+
+.details.disabled > .details-header {
+  cursor: not-allowed;
+}
+
+.details.open > .details-header {
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+}
+
+/* 'Start' icon placement */
+.details.icon-start > .details-header {
+  flex-direction: row-reverse;
+  justify-content: start;
+}
+
+.details-icon {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  color: var(--wa-color-text-quiet);
+  transition: rotate var(--wa-transition-normal) var(--wa-transition-easing);
+}
+
+/* The state is wrapped in `:where()` to keep the specificity of a single
+ * class: a plain `.my-details .details-icon { rotate: none; }` turns the
+ * rotation off, as `::part(icon)` does in Web Awesome. */
+:where(.details.open > .details-header) > .details-icon {
+  rotate: 90deg;
+}
+
+:where(.details.open:dir(rtl) > .details-header) > .details-icon {
+  rotate: -90deg;
+}
+
+.details-expand-icon,
+.details-collapse-icon {
+  display: flex;
+  align-items: center;
+}
+
+.details.open > .details-header .details-expand-icon,
+.details:not(.open) > .details-header .details-collapse-icon {
+  display: none;
+}
+
+/* Web Awesome takes a left chevron for right-to-left text; mirroring the
+ * right one draws the same. Only the default icon is mirrored, not a custom one. */
+.details:dir(rtl) > .details-header .details-default-icon svg {
+  scale: -1 1;
+}
+
+.details-body.animating {
+  overflow: hidden;
+}
+
+.details-content {
+  display: block;
+  box-sizing: border-box; /* Ensure contents don't overflow */
+  padding-block-start: var(--spacing);
+  padding-inline: var(--spacing); /* Add horizontal padding */
+  padding-block-end: var(--spacing); /* Add bottom padding */
+}

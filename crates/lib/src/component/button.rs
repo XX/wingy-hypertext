@@ -48,7 +48,7 @@ pub struct Button<'a> {
 
 impl<'a> Renderable for Button<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
             if self.pill { PILL } else { "" },

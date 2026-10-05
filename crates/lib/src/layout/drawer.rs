@@ -57,7 +57,7 @@ pub struct Drawer<'a> {
 
 impl<'a> Renderable for Drawer<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS, self.placement.into_str()]);
         let style_line = self.style_line_with(&[]);
 
@@ -106,7 +106,7 @@ pub struct DrawerHeader<'a, A: Renderable = ()> {
 
 impl<'a, A: Renderable> DrawerHeader<'a, A> {
     fn render_to(&self, buffer: &mut Buffer, actions: Option<&dyn Renderable>) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
 
@@ -151,7 +151,7 @@ pub struct DrawerBody<'a> {
 
 impl<'a> Renderable for DrawerBody<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
 
@@ -181,7 +181,7 @@ pub struct DrawerFooter<'a> {
 
 impl<'a> Renderable for DrawerFooter<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
 

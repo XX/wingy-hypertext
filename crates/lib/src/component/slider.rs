@@ -176,7 +176,7 @@ impl<'a> Slider<'a> {
 
 impl<'a> Renderable for Slider<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
             self.orientation.into_str(),

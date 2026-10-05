@@ -29,7 +29,7 @@ pub struct CodeExample<'a> {
 
 impl<'a> Renderable for CodeExample<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let classes = [Self::CLASS, if self.open { OPEN } else { "" }];
         let class_line = self.class_line_with(&classes);
         let style_line = self.style_line_with(&[]);
@@ -61,7 +61,7 @@ pub struct CodeExamplePreview<'a> {
 
 impl<'a> Renderable for CodeExamplePreview<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
 
@@ -103,7 +103,7 @@ pub struct CodeExampleSource<'a> {
 
 impl<'a> Renderable for CodeExampleSource<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS, if self.is_not_animated { NO_ANIMATION } else { "" }]);
         let style_line = self.style_line_with(&[]);
 
@@ -153,7 +153,7 @@ pub struct CodeExampleButton<'a> {
 
 impl<'a> Renderable for CodeExampleButton<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
 

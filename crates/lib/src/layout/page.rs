@@ -100,7 +100,7 @@ pub struct Page<'a> {
 
 impl<'a> Renderable for Page<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
         let breakpoint = safe_breakpoint(self.mobile_breakpoint.as_deref());
@@ -170,7 +170,7 @@ pub struct PageNavigationToggle<'a> {
 
 impl<'a> Renderable for PageNavigationToggle<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
 
@@ -212,7 +212,7 @@ pub struct PageBody<'a> {
 
 impl<'a> Renderable for PageBody<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
 
@@ -238,7 +238,7 @@ pub struct PageMenu<'a> {
 
 impl<'a> Renderable for PageMenu<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
 

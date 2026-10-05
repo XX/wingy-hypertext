@@ -113,7 +113,7 @@ impl<'a> Default for Dropdown<'a> {
 
 impl<'a> Renderable for Dropdown<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line =
             self.class_line_with(&[Self::CLASS, self.size.map(DropdownSize::into_str).unwrap_or_default()]);
         let style_line = self.style_line_with(&[]);
@@ -260,7 +260,7 @@ impl<'a> Default for DropdownItem<'a> {
 
 impl<'a> Renderable for DropdownItem<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[
             Self::CLASS,
             if self.checked { CHECKED } else { "" },
@@ -317,7 +317,7 @@ pub struct DropdownItemIcon<'a> {
 
 impl<'a> Renderable for DropdownItemIcon<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
 
@@ -346,7 +346,7 @@ pub struct DropdownItemLabel<'a> {
 
 impl<'a> Renderable for DropdownItemLabel<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
 
@@ -374,7 +374,7 @@ pub struct DropdownItemDetails<'a> {
 
 impl<'a> Renderable for DropdownItemDetails<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
 
@@ -404,7 +404,7 @@ pub struct DropdownSubmenu<'a> {
 
 impl<'a> Renderable for DropdownSubmenu<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
 

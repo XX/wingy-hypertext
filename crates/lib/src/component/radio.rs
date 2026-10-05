@@ -79,7 +79,7 @@ pub struct Radio<'a> {
 
 impl<'a> Renderable for Radio<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.id();
+        let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS, self.appearance.as_class()]);
         let style_line = self.style_line_with(&[]);
 
