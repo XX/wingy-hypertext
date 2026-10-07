@@ -1,9 +1,12 @@
+use const_format::concatcp;
 use js_sys::Reflect;
 use wasm_bindgen::prelude::Closure;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_dom as dom;
-use wasm_dom::existing::access::CastToHtmlElement;
-use web_sys::{Element, ResizeObserver, ResizeObserverEntry, ResizeObserverSize};
+use wasm_dom::event::EventListener;
+use wasm_dom::existing::access::{CastToElement, CastToHtmlElement};
+use web_sys::{Element, Event, MouseEvent, ResizeObserver, ResizeObserverEntry, ResizeObserverSize};
+use wingy_hypertext::class::PAGE_NAVIGATION_DRAWER;
 
 use crate::layout::drawer;
 use crate::util::convert;
@@ -148,6 +151,57 @@ pub fn observe_view(page: &Element) -> Option<()> {
     callback.forget();
 
     Some(())
+}
+
+/// Links the browser opens somewhere else, leaving the current page as is: in a
+/// new tab or window, or as a download.
+const OPENS_ELSEWHERE: &str = "[target='_blank'], [download]";
+
+/// Whether following the clicked link leaves the page as is: the browser opens it
+/// in a new tab or window, or downloads it. That is only the browser's doing when
+/// the click is not canceled — a script handling the link on the page, as htmx
+/// does with `hx-get` even for modified clicks, cancels it and navigates in place.
+fn opens_elsewhere(mouse: &MouseEvent, link: &Element) -> bool {
+    if mouse.default_prevented() {
+        return false;
+    }
+
+    mouse.button() != 0
+        || mouse.ctrl_key()
+        || mouse.meta_key()
+        || mouse.shift_key()
+        || mouse.alt_key()
+        || link.matches(OPENS_ELSEWHERE).unwrap_or(false)
+}
+
+/// Closes the navigation drawer once a link in it is followed.
+///
+/// With htmx only the main content is swapped, so the drawer — part of the page
+/// frame — would otherwise stay open over the new content. The drawer's own
+/// `data-drawer` triggers are left to the drawer.
+fn handle_navigation_click(event: &Event) -> Option<()> {
+    let mouse: &MouseEvent = event.dyn_ref()?;
+    let target = event.target()?.maybe_into_element()?;
+    let link = target.closest("a[href]").ok()??;
+
+    if link.has_attribute("data-drawer") || opens_elsewhere(mouse, &link) {
+        return None;
+    }
+
+    let drawer_element = link.closest(concatcp!('.', PAGE_NAVIGATION_DRAWER)).ok()??;
+    if drawer::is_open(&drawer_element) {
+        drawer::close_drawer(drawer_element, link);
+    }
+
+    Some(())
+}
+
+/// Installs the document-level listener closing the navigation drawer when a
+/// link in it is followed.
+pub fn listen_page() {
+    dom::existing::document().add_steady_event_listener("click", |event| {
+        handle_navigation_click(&event);
+    });
 }
 
 pub fn init_page() -> Option<()> {

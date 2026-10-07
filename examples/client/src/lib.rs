@@ -33,7 +33,7 @@ use wingy_hypertext_web::layout::drawer::{init_drawers, listen_drawers};
 use wingy_hypertext_web::util::event;
 use wingy_hypertext_web::{
     init_code_examples, init_page_element, init_scroll_to_anchor, listen_click_actions, listen_code_examples,
-    register_copy_action,
+    listen_page, register_copy_action,
 };
 
 pub mod color_scheme;
@@ -59,6 +59,7 @@ pub fn init() {
     listen_remove_tags();
     listen_details();
     listen_drawers();
+    listen_page();
     listen_dialogs();
     helper::animation::listen_animation_overview();
     helper::popup::listen_popup_overview();
