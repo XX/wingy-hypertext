@@ -1,0 +1,96 @@
+Нужно перенести компонент `Dialog`, повторяя функционал `wa-dialog` из WebAwesome: `tmp/webawesome/packages/webawesome/src/components/dialog`. Это модальное окно поверх страницы для подтверждений, форм и других задач, которые прерывают основной сценарий. Компонент относится к той же группе, что и `Drawer`, поэтому ему место в `crates/lib/src/layout/`.
+
+Логика `dialog.ts` почти дословно совпадает с `drawer.ts` (их diff — это имена, `placement` у дровера и `--width` вместо `--size` у диалога). Значит, основная часть поведения у нас уже есть в `crates/web/src/layout/drawer.rs`. Повторять её копированием не нужно: общее поведение модального `<dialog>` надо вынести в общий модуль (например, `crates/web/src/util/modal.rs` или `helper/`), а `Drawer` и `Dialog` оставить тонкими обёртками над ним.
+
+## Разметка
+
+`crates/lib/src/layout/dialog.rs`. Структура повторяет `render()` из `dialog.ts` (строки 254–305), только без shadow DOM:
+
+```
+<dialog class="dialog" id="…" data-open data-light-dismiss>
+  <div class="dialog-header">
+    <h2 class="dialog-title">…</h2>
+    <div class="dialog-header-actions">
+      …
+      <button class="dialog-close" data-dialog="close">…xmark…</button>
+    </div>
+  </div>
+  <div class="dialog-body">…</div>
+  <div class="dialog-footer">…</div>
+</dialog>
+```
+
+Внешняя разметка передаётся не через пропы, а через `children` подкомпонентов, как в `Drawer` и `Details`. Слоты WA (`label`, `header-actions`, `footer`, содержимое по умолчанию) превращаются в подкомпоненты:
+
+```rust
+rsx! {
+    <Dialog id="dialog-overview">
+        <DialogHeader>"Dialog"</DialogHeader>
+        <DialogBody>"…"</DialogBody>
+        <DialogFooter>
+            <Button attrs=(attrs!["data-dialog" = &"close"])>"Close"</Button>
+        </DialogFooter>
+    </Dialog>
+}
+```
+
+- `Dialog` — `<dialog>`. Пропы — только значения, не разметка: `open`, `light_dismiss`. Содержимое — `children`.
+- `DialogHeader` — шапка. По умолчанию `children` — это заголовок: он оборачивается в `<h2 class="dialog-title">`, рядом рендерится кнопка закрытия. Если заголовка нет, нужен невидимый символ (`INVISIBLE`), чтобы шапка не схлопывалась. С `bare` шапка выводит `children` как есть, и пользователь собирает её сам.
+- Для действий в шапке (слот `header-actions`) — подкомпоненты `DialogTitle` и `DialogHeaderActions`, которые используются в `bare`-режиме шапки. `DialogHeaderActions` выводит свои `children`, а после них — кнопку закрытия. Шапка по умолчанию собирается из этих же подкомпонентов, чтобы разметка не дублировалась.
+- `DialogBody`, `DialogFooter` — тело и подвал, разметка через `children`.
+
+Аналоги `without-header` и `with-footer` из WA не нужны: шапки и подвала нет, если пользователь не добавил `DialogHeader` / `DialogFooter`. Кнопка закрытия — `Button` с `appearance(Plain)` и иконкой `xmark` из `iconic`, как в `DrawerHeader`. Шапка и подвал — `<div>`, а не `<header>`/`<footer>`, по той же причине, что и в `Drawer` (лишние landmark'и).
+
+`DrawerHeader` сейчас принимает действия пропом `actions`, а не через подкомпоненты. Когда подкомпоненты появятся у `Dialog`, стоит так же переделать `Drawer` — либо в этой задаче, либо отдельной.
+
+Заголовок связать с `<dialog>` через `aria-labelledby` (в WA этого нет, но у нас `<dialog>` — корень, и подписи ему больше взять неоткуда). `Dialog` не знает `id` своего заголовка, ведь заголовок приходит через `children`. Поэтому связь проставляет клиент при инициализации: если у `<dialog>` нет `aria-labelledby`, найти `.dialog-title`, при необходимости сгенерировать ему `id` и сослаться на него, как `ensure_id` в `crates/web/src/layout/details.rs`.
+
+## Стили
+
+`webassets/style/layouts/dialog.css` — порт `dialog.styles.ts`: кастомные свойства `--width`, `--spacing`, `--backdrop-filter`, `--show-duration`, `--hide-duration`; анимации `show`/`hide` (масштаб 0.8 → 1 и прозрачность) с подложкой и `pulse`; ограничение размеров `max-width`/`max-height` и `80vh` на узких экранах; шапка с выравниванием крестика по краю контента; прокручиваемое тело с фокус-кольцом; подвал; `::backdrop`; `forced-colors`. Как в `drawer.css`: базовый `.dialog` не задаёт `display`, иначе закрытый `<dialog>` перестанет быть скрытым; `flex` включается на `.dialog[open]`. Подключить в `webassets/style/index.css`.
+
+## Поведение
+
+Сначала вынести общее из `crates/web/src/layout/drawer.rs`, затем подключить к нему `Dialog` (`crates/web/src/layout/dialog.rs`, `data-dialog="open <id>"` / `data-dialog="close"`). Общее:
+
+- показ через `showModal()` с отменяемым `wg-show`, фокус на `[autofocus]` или на сам диалог, анимация `show`, затем `wg-after-show`;
+- `request_close` с отменяемым `wg-hide` и `detail.source`; при отмене — `pulse`; иначе анимация `hide`, `close()`, `wg-after-hide`;
+- клик по подложке: при `light_dismiss` закрыть, иначе `pulse`;
+- блокировка прокрутки страницы, пока открыт хоть один модальный элемент. Сейчас `update_body_scroll_lock` смотрит только на `.drawer.open` — открытый поверх дровера диалог снимет блокировку, пока дровер ещё открыт. Проверять надо оба вида;
+- [Escape] закрывает только верхний открытый элемент. Сейчас дровер ищет последний `.drawer.open` в порядке документа, а не последний открытый. В WA для этого есть стек `dismissible-stack` (`isTopDismissible`), общий для диалогов, дроверов, дропдаунов и т.д. Нужно решить, как определять верхний элемент: стек в порядке открытия или что-то ещё. Учесть, что `Tooltip` и `Dropdown` тоже закрываются по [Escape], и проверить, что одно нажатие закрывает один элемент;
+- событие `cancel` у нативного `<dialog>` (Escape, жест «назад» на Android) отменить и перевести в `request_close`, как `handleDialogCancel` в WA. Сейчас `Drawer` слушает только `keydown`, а `cancel` не обрабатывает, поэтому жест «назад» закроет его мгновенно, без анимации и `wg-hide`;
+- возврат фокуса на элемент, который открыл диалог (`originalTrigger`, строки 127–131 и 232). В нашем `Drawer` этого сейчас нет, хотя в WA оно есть и у дровера — добавить сразу в общий код;
+- `RenderedWatcher` из WA (снять модальность, если сторонний CSS спрятал открытый диалог) — оценить, нужен ли он нам. Если да, сделать общим.
+
+`init_dialogs()` (вызов в `reinit`) показывает диалоги, отрендеренные с `data-open`; `listen_dialogs()` ставит делегированные слушатели на документе. Если общий модуль сам ставит слушатели [Escape] и подложки для всех модальных элементов, достаточно одного вызова на оба компонента.
+
+После выноса `Drawer` должен работать как раньше: пройти его раздел в галерее.
+
+## Тесты и примеры
+
+Тесты разметки — `crates/lib/src/tests/dialog.rs`: пустой `Dialog`, `open`, `light_dismiss`; `DialogHeader` с заголовком строкой и разметкой, без заголовка (невидимый символ) и в `bare`-режиме с `DialogTitle` и `DialogHeaderActions`; `DialogBody`; `DialogFooter`; диалог без шапки.
+
+Раздел Dialog в `examples/client` (маршрут `/dialog`, пункт меню в разделе Layouts рядом с Drawer) со всеми примерами доки WA (`tmp/webawesome/packages/webawesome/docs/docs/components/dialog.md`): базовый, Without a Header, Footer, Opening & Closing Declaratively, Width, Scrolling, Header Actions, Light Dismissal, Preventing the Dialog from Closing, Initial Focus. Добавить пример «диалог из дровера», чтобы проверить [Escape] и блокировку прокрутки при вложенных модальных элементах.
+
+---
+
+Сделано:
+
+- Компонент `crates/lib/src/layout/dialog.rs`: `Dialog` (пропы `open`, `light_dismiss`), `DialogHeader` (заголовок через `children` или `bare`), `DialogTitle`, `DialogHeaderActions` (свои `children`, затем кнопка закрытия), `DialogBody`, `DialogFooter`. Шапка по умолчанию собирается из `DialogTitle` и `DialogHeaderActions`.
+- `Drawer` переделан так же: проп `DrawerHeader::actions` убран, вместо него `DrawerTitle` и `DrawerHeaderActions` в `bare`-шапке. Пример Header Actions в галерее обновлён, устаревшие упоминания `without_header`/`footer` в тексте раздела Drawer исправлены.
+- Стили `webassets/style/layouts/dialog.css` — перенос `dialog.styles.ts`.
+- Общее поведение вынесено в `crates/web/src/util/modal.rs`, `layout/drawer.rs` и `layout/dialog.rs` стали тонкими обёртками (`ModalKind` с классом и атрибутом триггера). Что изменилось относительно прежнего `Drawer`:
+  - верхний элемент для [Escape] и `cancel` — стек в порядке открытия, а не порядок в документе;
+  - блокировка прокрутки учитывает все модальные элементы (`.drawer.open, .dialog.open`), а `init_*` пересчитывает её после свопа — если htmx унёс открытое окно, блокировка снимается;
+  - [Escape] пропускается, если событие уже отменено (`default_prevented`): его отменяют дропдаун, селект и тултип, когда закрываются сами. Это держится на порядке регистрации слушателей: модальные слушатели ставятся после них;
+  - `cancel` нативного `<dialog>` (жест «назад») отменяется и превращается в обычное закрытие с анимацией и `wg-hide`; если браузер всё-таки закрыл окно сам, событие `close` синхронизирует состояние;
+  - фокус возвращается на элемент, который был в фокусе до открытия;
+  - клик по подложке определяется по `pointerdown` вне прямоугольника окна, как в WA. Раньше был `click` по самому `<dialog>`, и его давал в том числе клик по собственной полосе прокрутки дровера;
+  - `aria-labelledby` на `<dialog>` ставит клиент по заголовку `.{kind}-title`, если разметка не задала `aria-labelledby`/`aria-label`.
+- `RenderedWatcher` не перенесён: он нужен на случай, когда сторонний CSS прячет открытое окно (блокировщики cookie-баннеров), у нас такого сценария нет.
+- `ensure_id` из `details.rs` и `tooltip.rs` вынесен в `crates/web/src/util/id.rs` и используется ещё и для заголовков модальных окон.
+- `Tooltip` уступает [Escape] и открытому `.dialog`, как уже уступал `.drawer`.
+- Галерея: маршрут `/dialog`, пункт в разделе Layouts, все примеры из доки WA и пример «диалог из дровера».
+- Тесты: `crates/lib/src/tests/dialog.rs` (10 тестов), тест действий в шапке `Drawer` переписан под подкомпоненты.
+
+Проверено: `cargo +nightly fmt --check`, `cargo clippy --all-targets -- -D warnings`, `cargo test` (155 тестов), `cargo make client`. В headless Firefox (WebDriver BiDi, реальные события мыши и клавиатуры): все примеры Dialog, порядок и `detail.source` событий, отмена `wg-hide`, autofocus и возврат фокуса, вложенные дровер и диалог (Escape по одному, блокировка до последнего), регрессии `Drawer` (размещения, light dismiss, клик по полосе прокрутки не закрывает, мобильная навигация страницы), htmx-своп при открытом окне.

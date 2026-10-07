@@ -5,8 +5,6 @@
 //! entirely in the DOM (classes and attributes), matching the markup produced
 //! by `wingy_hypertext::component::tooltip`.
 
-use std::cell::Cell;
-
 use js_sys::Object;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen_futures::spawn_local;
@@ -20,6 +18,7 @@ use crate::helper::popup;
 use crate::util::animate::animate_with_class;
 pub use crate::util::class::{is_disabled, is_open};
 use crate::util::event;
+use crate::util::id::ensure_id;
 
 const DEFAULT_TRIGGER: &str = "hover focus";
 const DEFAULT_SHOW_DELAY: i32 = 150;
@@ -29,7 +28,7 @@ const DEFAULT_HIDE_DELAY: i32 = 0;
 /// opened above a tooltip, so the key belongs to them first. Web Awesome keeps
 /// a stack of dismissibles for this; the markup already tells us which of them
 /// are open.
-const DISMISSIBLE_ABOVE: &str = ".dropdown.open, .drawer.open";
+const DISMISSIBLE_ABOVE: &str = ".dropdown.open, .drawer.open, .dialog.open";
 
 pub fn tooltips() -> impl Iterator<Item = Element> {
     dom::existing::select_all_elements(".tooltip")
@@ -332,33 +331,6 @@ pub fn handle_keydown(event: &Event) -> Option<()> {
 // Initialization
 //
 
-thread_local! {
-    static NEXT_ID: Cell<u32> = const { Cell::new(0) };
-}
-
-/// The tooltip's id, generating one when the markup doesn't carry it: the
-/// anchor refers to the tooltip by id to be labeled by it.
-fn ensure_id(tooltip: &Element) -> String {
-    let id = tooltip.id();
-    if !id.is_empty() {
-        return id;
-    }
-
-    let document = dom::existing::document();
-    let id = NEXT_ID.with(|next| {
-        loop {
-            let id = format!("tooltip-{}", next.get());
-            next.set(next.get() + 1);
-            if document.get_element_by_id(&id).is_none() {
-                return id;
-            }
-        }
-    });
-
-    tooltip.set_id(&id);
-    id
-}
-
 /// Labels the anchor by the tooltip. Web Awesome uses `aria-labelledby` rather
 /// than `aria-describedby` here: it is the one screen readers announce
 /// consistently on the first focus of a control.
@@ -391,7 +363,8 @@ pub fn init_tooltips() {
             popup::set_popup_active(&host, false);
         }
 
-        let id = ensure_id(&tooltip);
+        // The anchor refers to the tooltip by id to be labeled by it.
+        let id = ensure_id(&tooltip, "tooltip");
         if let Some(anchor) = anchor_of(&tooltip) {
             add_to_aria_labelledby(&anchor, &id);
         }

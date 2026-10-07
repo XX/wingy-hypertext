@@ -1,0 +1,179 @@
+/*
+ * The base `.dialog` sets no `display`: a closed `<dialog>` keeps the UA's
+ * `display: none`, and `flex` turns on with `[open]` only.
+ */
+.dialog {
+  --width: 31rem;
+  --spacing: var(--wa-space-l);
+  --backdrop-filter: none;
+  --show-duration: var(--wa-transition-normal);
+  --hide-duration: var(--wa-transition-normal);
+
+  flex-direction: column;
+  align-items: stretch;
+  inset: 0;
+  width: var(--width);
+  max-width: calc(100% - var(--wa-space-2xl));
+  max-height: calc(100% - var(--wa-space-2xl));
+  color: inherit;
+  background-color: var(--wa-color-surface-raised);
+  border-radius: var(--wa-panel-border-radius);
+  border: none;
+  box-shadow: var(--wa-shadow-l);
+  padding: 0;
+  margin: auto;
+}
+
+.dialog[open] {
+  display: flex;
+}
+
+.dialog:focus {
+  outline: none;
+}
+
+.dialog::backdrop {
+  background-color: var(--wa-color-overlay-modal, rgb(0 0 0 / 0.25));
+  backdrop-filter: var(--backdrop-filter);
+}
+
+/* Ensure there's enough vertical padding for phones that don't update vh when chrome appears (e.g. iPhone) */
+@media screen and (max-width: 420px) {
+  .dialog {
+    max-height: 80vh;
+  }
+}
+
+@scope (.dialog) {
+  .dialog-header {
+    flex: 0 0 auto;
+    display: flex;
+    flex-wrap: nowrap;
+    padding-inline-start: var(--spacing);
+    padding-block-end: 0;
+
+    /* Subtract the close button's padding so that the X is visually aligned with the edges of the content */
+    padding-inline-end: calc(var(--spacing) - var(--wa-form-control-padding-block));
+    padding-block-start: calc(var(--spacing) - var(--wa-form-control-padding-block));
+  }
+
+  .dialog-title {
+    align-self: center;
+    flex: 1 1 auto;
+    font: inherit;
+    font-size: var(--wa-font-size-l);
+    font-weight: var(--wa-font-weight-heading);
+    line-height: var(--wa-line-height-condensed);
+    margin: 0;
+  }
+
+  .dialog-header-actions {
+    align-self: start;
+    display: flex;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    justify-content: end;
+    gap: var(--wa-space-2xs);
+    padding-inline-start: var(--spacing);
+  }
+
+  .dialog-header-actions .button {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+  }
+
+  .dialog-body {
+    flex: 1 1 auto;
+    display: block;
+    padding: var(--spacing);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .dialog-body:focus {
+    outline: none;
+  }
+
+  .dialog-body:focus-visible {
+    outline: var(--wa-focus-ring);
+    outline-offset: var(--wa-focus-ring-offset);
+  }
+
+  .dialog-footer {
+    flex: 0 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--wa-space-xs);
+    justify-content: end;
+    padding: var(--spacing);
+    padding-block-start: 0;
+  }
+}
+
+/* Animations (classes applied by wingy-hypertext-web) */
+.dialog.show {
+  animation: dialog-show var(--show-duration) ease;
+}
+
+.dialog.show::backdrop {
+  animation: dialog-show-backdrop var(--show-duration, 200ms) ease;
+}
+
+.dialog.hide {
+  animation: dialog-show var(--hide-duration) ease reverse;
+}
+
+.dialog.hide::backdrop {
+  animation: dialog-show-backdrop var(--hide-duration, 200ms) ease reverse;
+}
+
+.dialog.pulse {
+  animation: dialog-pulse 250ms ease;
+}
+
+@keyframes dialog-pulse {
+  0% {
+    scale: 1;
+  }
+  50% {
+    scale: 1.02;
+  }
+  100% {
+    scale: 1;
+  }
+}
+
+@keyframes dialog-show {
+  from {
+    opacity: 0;
+    scale: 0.8;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes dialog-show-backdrop {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog.show,
+  .dialog.hide,
+  .dialog.pulse {
+    animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .dialog {
+    border: solid 1px white;
+  }
+}

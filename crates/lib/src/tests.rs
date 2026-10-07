@@ -6,6 +6,7 @@ pub mod callout;
 pub mod checkbox;
 pub mod code_example;
 pub mod details;
+pub mod dialog;
 pub mod divider;
 pub mod drawer;
 pub mod dropdown;

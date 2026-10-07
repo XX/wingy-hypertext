@@ -17,7 +17,9 @@ use wingy_hypertext::component::head::HeadLevel::*;
 use wingy_hypertext::component::input::Input;
 use wingy_hypertext::layout::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
 use wingy_hypertext::layout::drawer::DrawerPlacement::*;
-use wingy_hypertext::layout::drawer::{Drawer, DrawerBody, DrawerFooter, DrawerHeader};
+use wingy_hypertext::layout::drawer::{
+    Drawer, DrawerBody, DrawerFooter, DrawerHeader, DrawerHeaderActions, DrawerTitle,
+};
 use wingy_hypertext::variant::Variant::*;
 
 #[renderable(builder = DefaultBuilder)]
@@ -91,9 +93,7 @@ pub fn overview() -> impl Renderable {
         <Head level=H3 id="without-a-header" anchor=true>
             "Without a Header"
         </Head>
-        <p>"Headers are enabled by default. To render a drawer without a header, add the "
-            <code>"without_header"</code>" attribute."
-        </p>
+        <p>"To render a drawer without a header, leave out "<code>"DrawerHeader"</code>"."</p>
         <CodeExample>
             <CodeExamplePreview resize=true>
                 <Drawer id="drawer-without-header">
@@ -124,8 +124,8 @@ pub fn overview() -> impl Renderable {
         <Head level=H3 id="footer" anchor=true>
             "Footer"
         </Head>
-        <p>"Footers can be used to display titles and more. Use the "<code>"footer"</code>
-            " property to add a footer to the drawer."
+        <p>"Footers can be used to display titles and more. Put "<code>"DrawerFooter"</code>
+            " after the body to add a footer to the drawer."
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
@@ -336,20 +336,22 @@ pub fn overview() -> impl Renderable {
         <Head level=H3 id="header-actions" anchor=true>
             "Header Actions"
         </Head>
-        <p>"The header shows a functional close button by default. Use the "<code>"header_actions"</code>
-            " property to add additional buttons if needed."
+        <p>"The header shows a functional close button by default. To add more buttons next to it, make the "
+            "header "<code>"bare"</code>" and compose it from "<code>"DrawerTitle"</code>" and "
+            <code>"DrawerHeaderActions"</code>": the actions are followed by the close button."
         </p>
         <CodeExample>
             <CodeExamplePreview resize=true>
                 <Drawer id="drawer-header-actions" class="drawer-header-actions-demo">
-                    <DrawerHeader actions=(rsx! {
-                        <Button class="new-window" appearance=Plain>
-                            <span class=ICON>
-                                (fontawesome::solid::Gear)
-                            </span>
-                        </Button>
-                    })>
-                        "Drawer"
+                    <DrawerHeader bare=true>
+                        <DrawerTitle>"Drawer"</DrawerTitle>
+                        <DrawerHeaderActions>
+                            <Button class="new-window" appearance=Plain attrs=(attrs!["aria-label" = &"Open in new window"])>
+                                <span class=ICON>
+                                    (fontawesome::solid::Gear)
+                                </span>
+                            </Button>
+                        </DrawerHeaderActions>
                     </DrawerHeader>
                     <DrawerBody>
                         "You can add custom actions to the header, like the button up there to open in a new window."
@@ -363,14 +365,15 @@ pub fn overview() -> impl Renderable {
             <CodeExampleSource copy_button=true>
                 <code class="language-html">r#"
                     <Drawer id="drawer-header-actions" class="drawer-header-actions-demo">
-                        <DrawerHeader actions=(rsx! {
-                            <Button class="new-window" appearance=Plain>
-                                <span class=ICON>
-                                    (fontawesome::solid::Gear)
-                                </span>
-                            </Button>
-                        })>
-                            "Drawer"
+                        <DrawerHeader bare=true>
+                            <DrawerTitle>"Drawer"</DrawerTitle>
+                            <DrawerHeaderActions>
+                                <Button class="new-window" appearance=Plain attrs=(attrs!["aria-label" = &"Open in new window"])>
+                                    <span class=ICON>
+                                        (fontawesome::solid::Gear)
+                                    </span>
+                                </Button>
+                            </DrawerHeaderActions>
                         </DrawerHeader>
                         <DrawerBody>
                             "You can add custom actions to the header, like the button up there to open in a new window."

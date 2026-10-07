@@ -28,6 +28,7 @@ use wingy_hypertext_web::component::tooltip::{init_tooltips, listen_tooltips};
 use wingy_hypertext_web::helper::animation::init_animations;
 use wingy_hypertext_web::helper::popup::{init_popups, listen_popups};
 use wingy_hypertext_web::layout::details::{init_details, listen_details};
+use wingy_hypertext_web::layout::dialog::{init_dialogs, listen_dialogs};
 use wingy_hypertext_web::layout::drawer::{init_drawers, listen_drawers};
 use wingy_hypertext_web::util::event;
 use wingy_hypertext_web::{
@@ -58,10 +59,12 @@ pub fn init() {
     listen_remove_tags();
     listen_details();
     listen_drawers();
+    listen_dialogs();
     helper::animation::listen_animation_overview();
     helper::popup::listen_popup_overview();
     listen_removable_demo();
     layout::drawer::listen_drawer_overview();
+    layout::dialog::listen_dialog_overview();
     component::dropdown::listen_dropdown_overview();
     component::radio_group::listen_radio_group_overview();
     component::slider::listen_slider_overview();
@@ -83,6 +86,7 @@ pub fn reinit() {
     init_animations();
     init_details();
     init_drawers();
+    init_dialogs();
     helper::animation::init_animation_overview();
     helper::popup::init_popup_overview();
 }
@@ -107,6 +111,7 @@ fn main_section(route_path: &str) -> impl Renderable {
             "checkbox-group" => (component::checkbox_group::overview()),
             "copy-button" => (component::copy_button::overview()),
             "details" => (layout::details::overview()),
+            "dialog" => (layout::dialog::overview()),
             "divider" => (layout::divider::overview()),
             "dropdown" => (component::dropdown::overview()),
             "drawer" => (layout::drawer::overview()),
@@ -367,6 +372,16 @@ pub fn render_root(url_path: &str) -> String {
                             hx-push-url="true"
                         >
                             <span>"Details"</span>
+                        </a>
+                        <a
+                            class=FLANK
+                            href="/dialog"
+                            hx-get="/dialog"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Dialog"</span>
                         </a>
                         <a
                             class=FLANK

@@ -9,8 +9,6 @@
 //! it, except that a collapsing details keeps the attribute until the
 //! animation ends, so the content stays visible while it collapses.
 
-use std::cell::Cell;
-
 use const_format::concatcp;
 use js_sys::{Array, Object, Reflect};
 use wasm_bindgen::{JsCast, JsValue};
@@ -26,6 +24,7 @@ use crate::util::animate::{linear_animate, prefers_reduced_motion};
 pub use crate::util::class::{is_disabled, is_open};
 use crate::util::convert::{bool_to_str, details, parse_duration_style};
 use crate::util::event;
+use crate::util::id::ensure_id;
 
 /// The generation of the latest expand/collapse of a details, telling a
 /// finished animation whether a newer one has started in the meantime. It is a
@@ -39,10 +38,6 @@ const SAVED_NAME: &str = "wgDetailsName";
 
 /// Clicks on these elements inside the header are theirs, not the header's.
 const INTERACTIVE: &str = "a, button, input, textarea, select";
-
-thread_local! {
-    static NEXT_ID: Cell<u32> = const { Cell::new(1) };
-}
 
 pub fn all_details() -> impl Iterator<Item = Element> {
     dom::existing::select_all_elements(concatcp!('.', DETAILS))
@@ -370,28 +365,6 @@ pub fn handle_toggle(event: &Event) -> Option<()> {
     }
 
     Some(())
-}
-
-/// Gives an element an id unique on the page, unless it already has one.
-fn ensure_id(element: &Element, prefix: &str) -> String {
-    let id = element.id();
-    if !id.is_empty() {
-        return id;
-    }
-
-    let document = dom::existing::document();
-    let id = NEXT_ID.with(|next| {
-        loop {
-            let id = format!("{prefix}-{}", next.get());
-            next.set(next.get() + 1);
-            if document.get_element_by_id(&id).is_none() {
-                return id;
-            }
-        }
-    });
-
-    element.set_id(&id);
-    id
 }
 
 /// Links the header and the body to each other by id. The server does it when

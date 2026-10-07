@@ -2,50 +2,37 @@ use derive_more::{AsMut, AsRef};
 use hypertext::prelude::{GlobalAttributes, hypertext_elements};
 use hypertext::{Buffer, Renderable, rsx};
 use iconic::fontawesome;
-use strum::{AsRefStr, IntoStaticStr};
 use wingy_hypertext_macros::{Props, const_str};
 
 use crate::appearance::Appearance::Plain;
 use crate::attributes::{CommonAttributeGetters, CommonAttributeSetters, CommonAttrs};
 use crate::attrs;
 use crate::class::{
-    DRAWER, DRAWER_BODY, DRAWER_CLOSE, DRAWER_FOOTER, DRAWER_HEADER, DRAWER_HEADER_ACTIONS, DRAWER_TITLE, ICON,
+    DIALOG, DIALOG_BODY, DIALOG_CLOSE, DIALOG_FOOTER, DIALOG_HEADER, DIALOG_HEADER_ACTIONS, DIALOG_TITLE, ICON,
 };
 use crate::component::button::Button;
 use crate::layout::INVISIBLE;
 
-/// The direction from which the drawer will open.
-#[derive(Copy, Clone, Debug, Default, IntoStaticStr, AsRefStr, PartialEq, Eq)]
-#[strum(const_into_str, serialize_all = "kebab-case")]
-pub enum DrawerPlacement {
-    #[default]
-    Start,
-    Top,
-    End,
-    Bottom,
-}
-
-/// A panel, slides in from the edge of the screen to expose additional
-/// options and information without navigating away. Rendered as a `<dialog>`
-/// element; the open/close behavior (modal display, animations, `data-drawer`
-/// click handling, light dismiss, [Escape], body scroll locking,
-/// `wg-show`/`wg-hide` events) is implemented in `wingy-hypertext-web` (`layout::drawer`)
-/// and must be wired up on the client with `init_drawers`/`listen_drawers`.
+/// A dialog, appears above the page and requires the user's immediate
+/// attention: confirmations, forms or focused tasks that interrupt the main
+/// flow. Rendered as a `<dialog>` element and composed of [`DialogHeader`],
+/// [`DialogBody`] and [`DialogFooter`]; the open/close behavior (modal display,
+/// animations, `data-dialog` click handling, light dismiss, [Escape], body
+/// scroll locking, `wg-show`/`wg-hide` events) is implemented in
+/// `wingy-hypertext-web` (`layout::dialog`) and must be wired up on the client
+/// with `init_dialogs`/`listen_dialogs`.
 ///
-/// Any element with `data-drawer="open <id>"` opens the drawer with that id on
-/// click, and elements with `data-drawer="close"` inside a drawer close it —
+/// Any element with `data-dialog="open <id>"` opens the dialog with that id on
+/// click, and elements with `data-dialog="close"` inside a dialog close it —
 /// the header close button uses exactly this mechanism.
 #[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = DRAWER)]
+#[const_str(CLASS = DIALOG)]
 #[props(builder)]
-pub struct Drawer<'a> {
-    #[prop(impl_from)]
-    pub placement: DrawerPlacement,
-
-    /// Renders the drawer already open: `init_drawers` shows it as a modal on the client.
+pub struct Dialog<'a> {
+    /// Renders the dialog already open: `init_dialogs` shows it as a modal on the client.
     pub open: bool,
 
-    /// When enabled, the drawer will be closed when the user clicks outside of it.
+    /// When enabled, the dialog will be closed when the user clicks outside of it.
     pub light_dismiss: bool,
 
     #[as_ref]
@@ -55,10 +42,10 @@ pub struct Drawer<'a> {
     pub children: Option<&'a dyn Renderable>,
 }
 
-impl<'a> Renderable for Drawer<'a> {
+impl<'a> Renderable for Dialog<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.not_empty_id();
-        let class_line = self.class_line_with(&[Self::CLASS, self.placement.into_str()]);
+        let class_line = self.class_line_with(&[Self::CLASS]);
         let style_line = self.style_line_with(&[]);
 
         let open = self.open.then_some("");
@@ -80,31 +67,31 @@ impl<'a> Renderable for Drawer<'a> {
     }
 }
 
-/// The drawer's header. By default its children are the drawer's title,
+/// The dialog's header. By default its children are the dialog's title,
 /// rendered next to the close button. You should always include a relevant
 /// title, as it is required for proper accessibility.
 ///
 /// With `bare` the children are rendered as is: compose the header from
-/// [`DrawerTitle`] and [`DrawerHeaderActions`] to add actions next to the
+/// [`DialogTitle`] and [`DialogHeaderActions`] to add actions next to the
 /// close button.
 ///
 /// Rendered as a `<div>`, not a `<header>`: `<dialog>` doesn't scope the banner
 /// landmark away, so a `<header>` here would expose a second `banner` next to
 /// the page's own.
 #[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = DRAWER_HEADER)]
+#[const_str(CLASS = DIALOG_HEADER)]
 #[props(builder)]
-pub struct DrawerHeader<'a> {
+pub struct DialogHeader<'a> {
+    pub bare: bool,
+
     #[as_ref]
     #[as_mut]
     pub attributes: CommonAttrs<'a>,
 
-    pub bare: bool,
-
     pub children: Option<&'a dyn Renderable>,
 }
 
-impl<'a> Renderable for DrawerHeader<'a> {
+impl<'a> Renderable for DialogHeader<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS]);
@@ -116,11 +103,11 @@ impl<'a> Renderable for DrawerHeader<'a> {
                     (self.children)
                 } @else {
                     @if let Some(title) = &self.children {
-                        <DrawerTitle>(title)</DrawerTitle>
+                        <DialogTitle>(title)</DialogTitle>
                     } @else {
-                        <DrawerTitle/>
+                        <DialogTitle/>
                     }
-                    <DrawerHeaderActions/>
+                    <DialogHeaderActions/>
                 }
             </div>
         }
@@ -128,11 +115,11 @@ impl<'a> Renderable for DrawerHeader<'a> {
     }
 }
 
-/// The drawer's title, labeling the drawer.
+/// The dialog's title, labeling the dialog.
 #[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = DRAWER_TITLE)]
+#[const_str(CLASS = DIALOG_TITLE)]
 #[props(builder)]
-pub struct DrawerTitle<'a> {
+pub struct DialogTitle<'a> {
     #[as_ref]
     #[as_mut]
     pub attributes: CommonAttrs<'a>,
@@ -140,7 +127,7 @@ pub struct DrawerTitle<'a> {
     pub children: Option<&'a dyn Renderable>,
 }
 
-impl<'a> Renderable for DrawerTitle<'a> {
+impl<'a> Renderable for DialogTitle<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS]);
@@ -160,11 +147,11 @@ impl<'a> Renderable for DrawerTitle<'a> {
     }
 }
 
-/// The actions in the drawer's header: the children followed by the close button.
+/// The actions in the dialog's header: the children followed by the close button.
 #[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = DRAWER_HEADER_ACTIONS)]
+#[const_str(CLASS = DIALOG_HEADER_ACTIONS)]
 #[props(builder)]
-pub struct DrawerHeaderActions<'a> {
+pub struct DialogHeaderActions<'a> {
     pub bare: bool,
 
     #[as_ref]
@@ -174,7 +161,7 @@ pub struct DrawerHeaderActions<'a> {
     pub children: Option<&'a dyn Renderable>,
 }
 
-impl<'a> Renderable for DrawerHeaderActions<'a> {
+impl<'a> Renderable for DialogHeaderActions<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS]);
@@ -184,7 +171,7 @@ impl<'a> Renderable for DrawerHeaderActions<'a> {
             <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
                 (self.children)
                 @if !self.bare {
-                    <Button class=DRAWER_CLOSE appearance=Plain attrs=(attrs!["data-drawer" = &"close", "aria-label" = &"Close"])>
+                    <Button class=DIALOG_CLOSE appearance=Plain attrs=(attrs!["data-dialog" = &"close", "aria-label" = &"Close"])>
                         <span class=ICON>
                             (fontawesome::solid::Xmark)
                         </span>
@@ -197,9 +184,9 @@ impl<'a> Renderable for DrawerHeaderActions<'a> {
 }
 
 #[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = DRAWER_BODY)]
+#[const_str(CLASS = DIALOG_BODY)]
 #[props(builder)]
-pub struct DrawerBody<'a> {
+pub struct DialogBody<'a> {
     #[as_ref]
     #[as_mut]
     pub attributes: CommonAttrs<'a>,
@@ -207,7 +194,7 @@ pub struct DrawerBody<'a> {
     pub children: Option<&'a dyn Renderable>,
 }
 
-impl<'a> Renderable for DrawerBody<'a> {
+impl<'a> Renderable for DialogBody<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS]);
@@ -222,14 +209,14 @@ impl<'a> Renderable for DrawerBody<'a> {
     }
 }
 
-/// The drawer's footer, usually one or more buttons representing various options.
+/// The dialog's footer, usually one or more buttons representing various options.
 ///
-/// Rendered as a `<div>` for the same reason [`DrawerHeader`] is: a `<footer>`
+/// Rendered as a `<div>` for the same reason [`DialogHeader`] is: a `<footer>`
 /// inside a `<dialog>` would duplicate the page's `contentinfo` landmark.
 #[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = DRAWER_FOOTER)]
+#[const_str(CLASS = DIALOG_FOOTER)]
 #[props(builder)]
-pub struct DrawerFooter<'a> {
+pub struct DialogFooter<'a> {
     #[as_ref]
     #[as_mut]
     pub attributes: CommonAttrs<'a>,
@@ -237,7 +224,7 @@ pub struct DrawerFooter<'a> {
     pub children: Option<&'a dyn Renderable>,
 }
 
-impl<'a> Renderable for DrawerFooter<'a> {
+impl<'a> Renderable for DialogFooter<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
         let id = self.not_empty_id();
         let class_line = self.class_line_with(&[Self::CLASS]);
