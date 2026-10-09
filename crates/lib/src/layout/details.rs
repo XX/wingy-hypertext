@@ -10,25 +10,9 @@ use crate::appearance::Appearance;
 use crate::attributes::{CommonAttributeGetters, CommonAttributeSetters, CommonAttrs};
 use crate::class::{
     DETAILS, DETAILS_BODY, DETAILS_COLLAPSE_ICON, DETAILS_CONTENT, DETAILS_DEFAULT_ICON, DETAILS_EXPAND_ICON,
-    DETAILS_HEADER, DETAILS_ICON, DETAILS_SUMMARY, DISABLED, ICON_START, OPEN,
+    DETAILS_HEADER, DETAILS_ICON, DETAILS_SUMMARY, DISABLED, OPEN,
 };
-
-/// The side of the header the expand/collapse icon is placed on.
-#[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
-pub enum DetailsIconPlacement {
-    Start,
-    #[default]
-    End,
-}
-
-impl DetailsIconPlacement {
-    pub const fn as_class(self) -> &'static str {
-        match self {
-            Self::Start => ICON_START,
-            Self::End => "",
-        }
-    }
-}
+use crate::icon_placement::ExpandIconPlacement;
 
 /// A brief summary that expands to reveal additional content: progressively
 /// disclosed information, grouped FAQs, hidden advanced options:
@@ -60,7 +44,7 @@ pub struct Details<'a> {
     /// Keeps the details from being toggled.
     pub disabled: bool,
 
-    pub icon_placement: DetailsIconPlacement,
+    pub icon_placement: ExpandIconPlacement,
 
     /// The summary shown in the header.
     #[prop(into)]
@@ -80,7 +64,7 @@ impl<'a> Default for Details<'a> {
             open: false,
             name: None,
             disabled: false,
-            icon_placement: DetailsIconPlacement::default(),
+            icon_placement: ExpandIconPlacement::default(),
             summary: None,
             attributes: CommonAttrs::default(),
             children: None,

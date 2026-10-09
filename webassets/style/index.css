@@ -19,6 +19,7 @@
 @import url("components/textarea.css");
 @import url("components/tooltip.css");
 
+@import url("layouts/accordion.css");
 @import url("layouts/code_example.css");
 @import url("layouts/details.css");
 @import url("layouts/dialog.css");
@@ -36,7 +37,10 @@ html {
   scroll-behavior: smooth;
 }
 
-[hidden] {
+/* `hidden="until-found"` is left to the browser: it hides the content with
+ * `content-visibility`, so a search in the page can still find and reveal it
+ * (and browsers without support treat it as plain `hidden`). */
+[hidden]:not([hidden='until-found' i]) {
   display: none !important;
 }
 

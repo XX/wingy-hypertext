@@ -7,8 +7,8 @@ use wingy_hypertext::attrs;
 use wingy_hypertext::class::{DETAILS_COLLAPSE_ICON, DETAILS_EXPAND_ICON, DETAILS_ICON, DETAILS_SUMMARY, STACK};
 use wingy_hypertext::component::head::Head;
 use wingy_hypertext::component::head::HeadLevel::*;
+use wingy_hypertext::icon_placement::ExpandIconPlacement::*;
 use wingy_hypertext::layout::code_example::{CodeExample, CodeExampleButton, CodeExamplePreview, CodeExampleSource};
-use wingy_hypertext::layout::details::DetailsIconPlacement::*;
 use wingy_hypertext::layout::details::{Details, DetailsBody, DetailsHeader};
 
 pub fn overview() -> impl Renderable {

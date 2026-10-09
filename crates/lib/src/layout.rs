@@ -1,3 +1,4 @@
+pub mod accordion;
 pub mod code_example;
 pub mod details;
 pub mod dialog;

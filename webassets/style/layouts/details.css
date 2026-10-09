@@ -10,6 +10,8 @@
   --spacing: var(--wa-space-m);
   --show-duration: var(--wa-transition-normal);
   --hide-duration: var(--wa-transition-normal);
+  /* Not inherited from an enclosing accordion: the details animates linearly, as in Web Awesome */
+  --easing: linear;
 
   display: block;
   margin: 0;

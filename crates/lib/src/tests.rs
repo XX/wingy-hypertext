@@ -1,3 +1,4 @@
+pub mod accordion;
 pub mod animation;
 pub mod badge;
 pub mod button;
@@ -11,6 +12,7 @@ pub mod divider;
 pub mod drawer;
 pub mod dropdown;
 pub mod dyn_renderable;
+pub mod head;
 pub mod input;
 pub mod page;
 pub mod popup;

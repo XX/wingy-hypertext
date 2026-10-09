@@ -27,6 +27,7 @@ use wingy_hypertext_web::component::textarea::{init_textareas, listen_textareas}
 use wingy_hypertext_web::component::tooltip::{init_tooltips, listen_tooltips};
 use wingy_hypertext_web::helper::animation::init_animations;
 use wingy_hypertext_web::helper::popup::{init_popups, listen_popups};
+use wingy_hypertext_web::layout::accordion::{init_accordions, listen_accordions};
 use wingy_hypertext_web::layout::details::{init_details, listen_details};
 use wingy_hypertext_web::layout::dialog::{init_dialogs, listen_dialogs};
 use wingy_hypertext_web::layout::drawer::{init_drawers, listen_drawers};
@@ -58,6 +59,7 @@ pub fn init() {
     listen_popups();
     listen_remove_tags();
     listen_details();
+    listen_accordions();
     listen_drawers();
     listen_page();
     listen_dialogs();
@@ -65,6 +67,7 @@ pub fn init() {
     helper::popup::listen_popup_overview();
     listen_removable_demo();
     layout::drawer::listen_drawer_overview();
+    layout::accordion::listen_accordion_overview();
     layout::dialog::listen_dialog_overview();
     component::dropdown::listen_dropdown_overview();
     component::radio_group::listen_radio_group_overview();
@@ -86,6 +89,7 @@ pub fn reinit() {
     init_tooltips();
     init_animations();
     init_details();
+    init_accordions();
     init_drawers();
     init_dialogs();
     helper::animation::init_animation_overview();
@@ -103,6 +107,7 @@ fn main_section(route_path: &str) -> impl Renderable {
 
     rsx! {
         @match path {
+            "accordion" => (layout::accordion::overview()),
             "animation" => (helper::animation::overview()),
             "badge" => (component::badge::overview()),
             "button" => (component::button::overview()),
@@ -363,6 +368,16 @@ pub fn render_root(url_path: &str) -> String {
                         <div class=FLANK><span class=HEADING_M>"Layouts"</span></div>
                     </nav>
                     <nav class=(PAGE_MENU_NAV, " ", BORDER_END)>
+                        <a
+                            class=FLANK
+                            href="/accordion"
+                            hx-get="/accordion"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Accordion"</span>
+                        </a>
                         <a class=FLANK href="#"><span>"Code Example"</span></a>
                         <a
                             class=FLANK

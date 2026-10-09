@@ -1,0 +1,170 @@
+/* A port of `accordion.styles.ts` and `accordion-item.styles.ts`.
+ *
+ * Web Awesome's accordion sets the appearance and the icon placement on each
+ * of its items; here the items render on their own, so these are classes on
+ * the accordion the item rules follow. Child combinators keep an accordion
+ * nested in the content out of the rules of the outer one.
+ *
+ * The logical state is the `expanded` class on the item. A collapsed panel is
+ * `hidden="until-found"`: the client keeps it visible until the collapse
+ * animation ends. */
+.accordion {
+  display: block;
+  border: var(--wa-panel-border-width) var(--wa-panel-border-style) var(--wa-color-surface-border);
+  border-radius: var(--wa-panel-border-radius);
+  overflow: hidden;
+}
+
+/* Appearance modifiers */
+.accordion.outlined {
+  background-color: var(--wa-color-surface-default);
+  border-color: var(--wa-color-surface-border);
+}
+
+.accordion.filled {
+  border-color: transparent;
+}
+
+.accordion.filled-outlined {
+  background-color: var(--wa-color-neutral-fill-quiet);
+  border-color: var(--wa-color-neutral-border-quiet);
+}
+
+.accordion.plain {
+  background-color: transparent;
+  border-color: transparent;
+  border-radius: 0;
+}
+
+.accordion-item {
+  --spacing: var(--wa-space-m);
+  --show-duration: var(--wa-transition-normal);
+  --hide-duration: var(--wa-transition-normal);
+  --easing: var(--wa-transition-easing);
+
+  display: block;
+}
+
+.accordion > .accordion-item:not(:first-child) {
+  border-top: var(--wa-panel-border-width) var(--wa-panel-border-style) var(--wa-color-surface-border);
+}
+
+.accordion.filled > .accordion-item {
+  background-color: var(--wa-color-neutral-fill-quiet);
+}
+
+.accordion.filled > .accordion-item:not(:first-child) {
+  margin-block-start: var(--wa-panel-border-width);
+  border-top: none;
+}
+
+.accordion-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.accordion-item-heading {
+  margin: 0;
+  font: inherit;
+}
+
+/* The trigger is a structural button: `all: unset` isolates it from the
+ * native button styles of `native.css`, layered below these rules. */
+.accordion-item-trigger {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing);
+  padding: var(--spacing);
+  width: 100%;
+  cursor: pointer;
+  text-align: start;
+  color: var(--wa-color-text-normal);
+  font: inherit;
+  font-weight: var(--wa-font-weight-semibold);
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: var(--wa-focus-ring);
+    /* Inset by the full ring width + offset so the accordion's overflow:hidden doesn't clip it */
+    outline-offset: calc(0px - var(--wa-focus-ring-width) - var(--wa-focus-ring-offset));
+  }
+}
+
+.accordion-item.disabled > .accordion-item-heading > .accordion-item-trigger,
+.accordion-item.disabled > .accordion-item-trigger {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.accordion > .accordion-item:first-child > .accordion-item-heading > .accordion-item-trigger,
+.accordion > .accordion-item:first-child > .accordion-item-trigger {
+  border-start-start-radius: var(--wa-panel-border-radius);
+  border-start-end-radius: var(--wa-panel-border-radius);
+}
+
+.accordion > .accordion-item:last-child:not(.expanded) > .accordion-item-heading > .accordion-item-trigger,
+.accordion > .accordion-item:last-child:not(.expanded) > .accordion-item-trigger {
+  border-end-start-radius: var(--wa-panel-border-radius);
+  border-end-end-radius: var(--wa-panel-border-radius);
+}
+
+/* 'Start' icon placement */
+.accordion.icon-start > .accordion-item > .accordion-item-heading > .accordion-item-trigger,
+.accordion.icon-start > .accordion-item > .accordion-item-trigger {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+.accordion-item-icon {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  color: var(--wa-color-text-quiet);
+  transition: rotate var(--hide-duration) var(--easing);
+}
+
+/* The state is wrapped in `:where()` to keep the specificity of a single
+ * class: a plain `.my-item .accordion-item-icon { rotate: none; }` turns the
+ * rotation off, as `::part(icon)` does in Web Awesome. */
+:where(.accordion-item.expanded > .accordion-item-heading > .accordion-item-trigger) > .accordion-item-icon,
+:where(.accordion-item.expanded > .accordion-item-trigger) > .accordion-item-icon {
+  rotate: 90deg;
+  transition-duration: var(--show-duration);
+}
+
+:where(.accordion-item.expanded:dir(rtl) > .accordion-item-heading > .accordion-item-trigger) > .accordion-item-icon,
+:where(.accordion-item.expanded:dir(rtl) > .accordion-item-trigger) > .accordion-item-icon {
+  rotate: -90deg;
+}
+
+/* Web Awesome takes a left chevron for right-to-left text; mirroring the
+ * right one draws the same. Only the default icon is mirrored, not a custom one. */
+.accordion-item:dir(rtl) .accordion-item-default-icon svg {
+  scale: -1 1;
+}
+
+.accordion-item-panel {
+  overflow: hidden;
+  color: var(--wa-color-text-quiet);
+}
+
+.accordion-item.expanded > .accordion-item-panel:not(.animating) {
+  overflow: visible;
+}
+
+.accordion-item-content {
+  display: block;
+  padding: 0 var(--spacing) var(--spacing);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accordion-item-icon {
+    transition: none;
+  }
+}

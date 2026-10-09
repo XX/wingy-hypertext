@@ -8,6 +8,11 @@ pub const HIDE: &str = "wg-hide";
 pub const AFTER_SHOW: &str = "wg-after-show";
 pub const AFTER_HIDE: &str = "wg-after-hide";
 pub const SELECT: &str = "wg-select";
+/// Dispatched by an accordion about one of its items, as `wa-accordion` does.
+pub const EXPAND: &str = "wg-expand";
+pub const AFTER_EXPAND: &str = "wg-after-expand";
+pub const COLLAPSE: &str = "wg-collapse";
+pub const AFTER_COLLAPSE: &str = "wg-after-collapse";
 /// Reported by the slider while its value changes, and once it settles —
 /// the native names of a form control, as `wa-slider` uses them.
 pub const INPUT: &str = "input";

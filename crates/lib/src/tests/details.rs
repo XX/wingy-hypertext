@@ -6,7 +6,7 @@ use crate::appearance::Appearance::*;
 use crate::appearance::AppearanceConstructor;
 use crate::attributes::CommonAttributeSetters;
 use crate::class::{DETAILS_COLLAPSE_ICON, DETAILS_EXPAND_ICON, DETAILS_ICON, DETAILS_SUMMARY};
-use crate::layout::details::DetailsIconPlacement::*;
+use crate::icon_placement::ExpandIconPlacement::*;
 use crate::layout::details::{Details, DetailsBody, DetailsHeader};
 
 fn chevron() -> String {

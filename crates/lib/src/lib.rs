@@ -9,6 +9,7 @@ pub mod component;
 pub mod convert;
 pub mod helper;
 pub mod htmx;
+pub mod icon_placement;
 pub mod layout;
 pub mod link;
 pub mod orientation;

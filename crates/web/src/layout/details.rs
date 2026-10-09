@@ -5,32 +5,27 @@
 //! events. The state lives entirely in the DOM, matching the markup produced
 //! by `wingy_hypertext::layout::details`.
 //!
+//! The height animation is the shared [`crate::util::collapse`] one.
+//!
 //! The logical state is the `open` class. The native `open` attribute follows
 //! it, except that a collapsing details keeps the attribute until the
 //! animation ends, so the content stays visible while it collapses.
 
 use const_format::concatcp;
-use js_sys::{Array, Object, Reflect};
+use js_sys::Reflect;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen_futures::spawn_local;
 use wasm_dom as dom;
 use wasm_dom::event::EventListener;
-use wasm_dom::existing::JsObjectAccess;
 use wasm_dom::existing::access::{CastToElement, CastToHtmlElement};
-use web_sys::{AddEventListenerOptions, Animation, Element, Event, HtmlElement, KeyboardEvent};
+use web_sys::{AddEventListenerOptions, Element, Event, HtmlElement, KeyboardEvent};
 use wingy_hypertext::class::{DETAILS, DETAILS_BODY, DETAILS_HEADER, OPEN};
 
-use crate::util::animate::{linear_animate, prefers_reduced_motion};
 pub use crate::util::class::{is_disabled, is_open};
-use crate::util::convert::{bool_to_str, details, parse_duration_style};
+use crate::util::collapse::{animate_body, bump_generation, reset_body};
+use crate::util::convert::{bool_to_str, details};
 use crate::util::event;
 use crate::util::id::ensure_id;
-
-/// The generation of the latest expand/collapse of a details, telling a
-/// finished animation whether a newer one has started in the meantime. It is a
-/// property on the element object rather than an attribute, so htmx doesn't
-/// snapshot it into the history cache.
-const GENERATION: &str = "wgDetailsGeneration";
 
 /// The group name of a details collapsing on behalf of another one in its
 /// group, put aside while it collapses (see [`close_others_with_same_name`]).
@@ -65,93 +60,12 @@ fn details_of_header(header: &Element) -> Option<Element> {
         .filter(|details| details.class_list().contains(DETAILS))
 }
 
-fn generation(details: &Element) -> u32 {
-    Reflect::get(details, &JsValue::from_str(GENERATION))
-        .ok()
-        .and_then(|value| value.as_f64())
-        .map(|value| value as u32)
-        .unwrap_or(0)
-}
-
-fn bump_generation(details: &Element) -> u32 {
-    let generation = generation(details) + 1;
-    Reflect::set(details, &JsValue::from_str(GENERATION), &JsValue::from(generation)).ok();
-    generation
-}
-
 /// Sets the logical state: the class the styles follow and the header's `aria-expanded`.
 fn set_expanded(details: &Element, open: bool) {
     details.class_list().toggle_with_force(OPEN, open).ok();
     if let Some(header) = header(details) {
         header.set_attribute("aria-expanded", bool_to_str(open)).ok();
     }
-}
-
-fn durations(body: &HtmlElement) -> (f64, f64) {
-    let Some(style) = dom::existing::window().get_computed_style(body).ok().flatten() else {
-        return (0.0, 0.0);
-    };
-
-    (
-        parse_duration_style(&style, "--show-duration").unwrap_or(0.0),
-        parse_duration_style(&style, "--hide-duration").unwrap_or(0.0),
-    )
-}
-
-fn keyframe(height: &str, opacity: &str) -> Object {
-    let object = Object::new();
-    object.set("height", height);
-    object.set("opacity", opacity);
-    object
-}
-
-/// Stops a running expand/collapse, leaving the body to its natural size.
-fn reset_body(body: &HtmlElement) {
-    let animations = body.get_animations();
-    for i in 0..animations.length() {
-        if let Ok(animation) = animations.get(i).dyn_into::<Animation>() {
-            animation.cancel();
-        }
-    }
-
-    body.class_list().remove_1("animating").ok();
-    body.style().remove_property("height").ok();
-    body.style().remove_property("opacity").ok();
-}
-
-/// Animates the body from or to the collapsed state. Returns `false` when a
-/// newer expand/collapse has started in the meantime and owns the details now.
-async fn animate_body(details: &Element, body: &HtmlElement, open: bool, generation: u32) -> bool {
-    reset_body(body);
-
-    if prefers_reduced_motion() {
-        return true;
-    }
-
-    let (show_duration, hide_duration) = durations(body);
-    body.class_list().add_1("animating").ok();
-
-    // The height can't be animated from or to `auto`, so the scroll height stands in for it
-    let height = format!("{}px", body.scroll_height());
-    if open {
-        let keyframes = Array::of2(&keyframe("0", "0"), &keyframe(&height, "1"));
-        linear_animate(body, &keyframes, show_duration).await;
-    } else {
-        // The collapsed state is set under the animation, so the body doesn't
-        // flash back to its full height before the native details closes.
-        body.style().set_property("height", "0").ok();
-        body.style().set_property("opacity", "0").ok();
-
-        let keyframes = Array::of2(&keyframe(&height, "1"), &keyframe("0", "0"));
-        linear_animate(body, &keyframes, hide_duration).await;
-    }
-
-    if self::generation(details) != generation {
-        return false;
-    }
-
-    body.class_list().remove_1("animating").ok();
-    true
 }
 
 /// Expands the details, animating it unless the `wg-show` event is canceled.
