@@ -463,8 +463,8 @@ dependencies = [
 
 [[package]]
 name = "iconic"
-version = "0.1.0"
-source = "git+https://github.com/XX/iconic#9dd0f760c9250945b396d1674d5e207542fa6aef"
+version = "0.1.2"
+source = "git+https://github.com/XX/iconic#aa70dce145c30286827f90f6db592783942f3334"
 dependencies = [
  "derive_more",
  "hypertext",
