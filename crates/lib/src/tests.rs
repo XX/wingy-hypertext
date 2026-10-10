@@ -17,6 +17,7 @@ pub mod input;
 pub mod page;
 pub mod popup;
 pub mod radio;
+pub mod rating;
 pub mod select;
 pub mod slider;
 pub mod switch;

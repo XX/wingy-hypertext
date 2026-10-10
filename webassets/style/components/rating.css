@@ -1,0 +1,128 @@
+/* A port of `rating.styles.ts`. Every symbol holds two layers — the empty one
+ * and the filled one on top of it — clipped by how much of the symbol the value
+ * covers. The amount is computed here from the `--value` of the rating and the
+ * `--position` of the symbol, so the client only updates `--value`. */
+.rating {
+  --symbol-color: var(--wa-color-neutral-on-quiet);
+  --symbol-color-active: var(--wa-color-yellow-70);
+  --symbol-spacing: 0.125em;
+
+  position: relative;
+  display: inline-flex;
+  /* Hugs the symbols even where a flex column would stretch it, so the focus
+   * ring and the pointer area match them */
+  width: fit-content;
+  border-radius: var(--wa-border-radius-m);
+  vertical-align: middle;
+  touch-action: none;
+}
+
+.rating:focus {
+  outline: none;
+}
+
+.rating:focus-visible {
+  outline: var(--wa-focus-ring);
+  outline-offset: var(--wa-focus-ring-offset);
+}
+
+.rating-symbols {
+  display: inline-flex;
+  gap: 0.125em;
+  position: relative;
+  line-height: 0;
+  color: var(--symbol-color);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.rating-symbol {
+  /* The covered part of the symbol: 0% before the value, 100% within it */
+  --fill: clamp(0%, (var(--value) - var(--position) + 1) * 100%, 100%);
+  /* Icons may draw beyond their box — the Font Awesome star pokes above its
+   * viewBox — so the clipping only cuts across and leaves room above and below */
+  --overflow: -0.5em;
+
+  position: relative;
+  padding: var(--symbol-spacing);
+  transition: scale var(--wa-transition-normal) var(--wa-transition-easing);
+  pointer-events: none;
+}
+
+/* Each layer takes the box of a `wa-icon`, the symbol of `wa-rating` */
+.rating-symbol-empty,
+.rating-symbol-filled {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25em;
+  height: 1em;
+}
+
+.rating-symbol-filled {
+  position: absolute;
+  inset: var(--symbol-spacing);
+  color: var(--symbol-color-active);
+}
+
+.rating-symbol-empty:dir(ltr) {
+  clip-path: inset(var(--overflow) 0 var(--overflow) var(--fill));
+}
+
+.rating-symbol-empty:dir(rtl) {
+  clip-path: inset(var(--overflow) var(--fill) var(--overflow) 0);
+}
+
+.rating-symbol-filled:dir(ltr) {
+  clip-path: inset(var(--overflow) calc(100% - var(--fill)) var(--overflow) 0);
+}
+
+.rating-symbol-filled:dir(rtl) {
+  clip-path: inset(var(--overflow) 0 var(--overflow) calc(100% - var(--fill)));
+}
+
+.rating-symbol-hover {
+  scale: 1.2;
+}
+
+.rating.readonly .rating-symbols {
+  cursor: default;
+}
+
+.rating.disabled .rating-symbol-hover,
+.rating.readonly .rating-symbol-hover {
+  scale: none;
+}
+
+.rating.disabled {
+  opacity: 0.5;
+}
+
+.rating.disabled .rating-symbols {
+  cursor: not-allowed;
+}
+
+/* The input submitting the value. It covers the rating invisibly instead of
+ * being hidden, so the browser can validate it and point its message at the
+ * rating */
+.rating .rating-value {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Forced colors mode */
+@media (forced-colors: active) {
+  .rating-symbol-filled {
+    color: SelectedItem;
+  }
+}

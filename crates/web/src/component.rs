@@ -3,6 +3,7 @@ pub mod checkbox;
 pub mod copy_button;
 pub mod dropdown;
 pub mod head;
+pub mod rating;
 pub mod select;
 pub mod slider;
 pub mod tag;

@@ -29,6 +29,15 @@ pub fn parse_float(input: impl AsRef<str>) -> f64 {
     trimmed[..end].parse::<f64>().unwrap_or(0.0)
 }
 
+/// Formats a value the way the markup does: whole numbers stay whole.
+pub fn format_float(value: f64) -> String {
+    if value.fract() == 0.0 {
+        format!("{}", value as i64)
+    } else {
+        format!("{value}")
+    }
+}
+
 /// Parses a CSS duration and returns the number of milliseconds.
 pub fn parse_duration_millis(duration: &str) -> f64 {
     let duration = duration.trim().to_lowercase();
@@ -49,6 +58,10 @@ pub fn parse_duration_style(style: &CssStyleDeclaration, name: &str) -> Option<f
         .get_property_value(name)
         .ok()
         .map(|value| parse_duration_millis(&value))
+}
+
+pub fn parse_number_attr(element: &Element, name: &str) -> Option<f64> {
+    element.get_attribute(name)?.trim().parse().ok()
 }
 
 pub fn dialog(element: &Element) -> Option<HtmlDialogElement> {

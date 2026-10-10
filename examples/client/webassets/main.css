@@ -99,3 +99,28 @@
   color: var(--wa-color-text-quiet);
   font-size: var(--wa-font-size-smaller);
 }
+
+/* Rating demos: the hovered value named next to the rating, and the submitted forms */
+.rating-hover-output {
+  border-radius: var(--wa-border-radius-m);
+  background: var(--wa-color-neutral-fill-loud);
+  color: var(--wa-color-neutral-on-loud);
+  text-align: center;
+  padding: 4px 6px;
+}
+
+.rating-hover-output::before {
+  /* Keeps a line box while empty, so the demo row is as tall with or without
+   * the text and the rating doesn't move when it shows up */
+  content: '\200b';
+}
+
+.rating-hover-output:empty {
+  visibility: hidden;
+}
+
+.rating-demo-output {
+  margin-block-start: var(--wa-space-m);
+  color: var(--wa-color-text-quiet);
+  font-size: var(--wa-font-size-smaller);
+}

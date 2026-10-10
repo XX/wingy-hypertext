@@ -17,6 +17,10 @@ pub const AFTER_COLLAPSE: &str = "wg-after-collapse";
 /// the native names of a form control, as `wa-slider` uses them.
 pub const INPUT: &str = "input";
 pub const CHANGE: &str = "change";
+/// Reported by the rating while the pointer previews a value, as `wa-hover` of
+/// `wa-rating`: the detail carries the `phase` (`start`, `move` or `end`) and
+/// the `value`.
+pub const HOVER: &str = "wg-hover";
 pub const COLOR_SCHEME_CHANGE: &str = "wg-color-scheme-change";
 
 pub fn dispatch(element: &Element, event_type: &str, bubbles: bool) -> Result<bool, JsValue> {

@@ -20,6 +20,7 @@ use wingy_hypertext::variant::Variant::*;
 use wingy_hypertext_web::component::callout::listen_close_callout;
 use wingy_hypertext_web::component::checkbox::init_checkboxes;
 use wingy_hypertext_web::component::dropdown::{init_dropdowns, listen_dropdowns};
+use wingy_hypertext_web::component::rating::listen_ratings;
 use wingy_hypertext_web::component::select::{init_selects, listen_selects};
 use wingy_hypertext_web::component::slider::{init_sliders, listen_sliders};
 use wingy_hypertext_web::component::tag::listen_remove_tags;
@@ -53,6 +54,7 @@ pub fn init() {
     listen_close_callout();
     listen_dropdowns();
     listen_selects();
+    listen_ratings();
     listen_sliders();
     listen_textareas();
     listen_tooltips();
@@ -71,6 +73,7 @@ pub fn init() {
     layout::dialog::listen_dialog_overview();
     component::dropdown::listen_dropdown_overview();
     component::radio_group::listen_radio_group_overview();
+    component::rating::listen_rating_overview();
     component::slider::listen_slider_overview();
     component::tooltip::listen_tooltip_overview();
 }
@@ -125,6 +128,7 @@ fn main_section(route_path: &str) -> impl Renderable {
             "popup" => (helper::popup::overview()),
             "radio" => (component::radio::overview()),
             "radio-group" => (component::radio_group::overview()),
+            "rating" => (component::rating::overview()),
             "select" => (component::select::overview()),
             "slider" => (component::slider::overview()),
             "switch" => (component::switch::overview()),
@@ -302,6 +306,16 @@ pub fn render_root(url_path: &str) -> String {
                             hx-push-url="true"
                         >
                             <span>"Radio Group"</span>
+                        </a>
+                        <a
+                            class=FLANK
+                            href="/rating"
+                            hx-get="/rating"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Rating"</span>
                         </a>
                         <a
                             class=FLANK
