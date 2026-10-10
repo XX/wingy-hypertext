@@ -20,6 +20,17 @@
   }
 }
 
+/* The sticky-header offset is for the content scrolling under the header. The
+ * header, the menu and the aside are sticky and the dialogs are in the top
+ * layer, so the header never hides them; with the offset, focusing an element
+ * near their top (Tab through the header) would scroll the page toward the top
+ * on every move, as the page scrolling never moves the sticky element itself. */
+.page :is(.page-header, .page-menu, .page-aside, dialog) *,
+.page > header *,
+.page-body > aside * {
+  scroll-margin-top: 0;
+}
+
 /* Shown only once the page has collapsed, by the rendered stylesheet. */
 .page-navigation-toggle {
   display: none;

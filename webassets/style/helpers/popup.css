@@ -52,6 +52,17 @@
   overflow: unset;
 }
 
+/* The sticky-header offset (`scroll-margin-top` in common/layers.css) is for
+ * the page content. A popup is painted in the top layer, above the header, so
+ * nothing in it is hidden by the header: without this, a scrolling focus
+ * (Tab, `autofocus`, a plain `focus()`) on an element near the top of a popup
+ * opened from the header would scroll the page. The components' own focus
+ * management doesn't scroll the page anyway (`util::focus`). */
+.popup-body,
+.popup-body * {
+  scroll-margin-top: 0;
+}
+
 .popup > .popup-body.fixed-strategy {
   position: fixed;
 }

@@ -10,15 +10,14 @@ use wasm_bindgen_futures::spawn_local;
 use wasm_dom as dom;
 use wasm_dom::event::EventListener;
 use wasm_dom::existing::access::{CastToElement, CastToHtmlElement};
-use web_sys::{
-    Element, Event, EventInit, HtmlInputElement, KeyboardEvent, ScrollIntoViewOptions, ScrollLogicalPosition,
-};
+use web_sys::{Element, Event, EventInit, HtmlInputElement, KeyboardEvent};
 use wingy_hypertext::component::tag::Tag;
 
 use crate::helper::popup;
 use crate::util::animate::animate_with_class;
 pub use crate::util::class::{is_disabled, is_multiple, is_open, is_selected};
 use crate::util::convert::bool_to_str;
+use crate::util::focus::{focus_without_scroll, scroll_into_view_within};
 use crate::util::typeahead::{TypeaheadKey, typeahead_buffer, update_typeahead_buffer};
 
 fn display_input(select: &Element) -> Option<HtmlInputElement> {
@@ -92,12 +91,11 @@ fn set_current_option(select: &Element, current: Option<&Element>) {
         option.class_list().add_1("current").ok();
         option.set_attribute("tabindex", "0").ok();
         if let Some(html) = option.maybe_as_html() {
-            html.focus().ok();
+            focus_without_scroll(html);
         }
-
-        let options = ScrollIntoViewOptions::new();
-        options.set_block(ScrollLogicalPosition::Nearest);
-        option.scroll_into_view_with_scroll_into_view_options(&options);
+        if let Some(listbox) = listbox(select) {
+            scroll_into_view_within(option, &listbox);
+        }
     }
 }
 
@@ -298,7 +296,7 @@ fn select_option(select: &Element, option: &Element) {
     if !is_multiple(select) {
         toggle_select(select, false);
         if let Some(display) = display_input(select) {
-            display.focus().ok();
+            focus_without_scroll(&display);
         }
     }
 }
@@ -321,7 +319,8 @@ fn handle_select_mousedown(event: &Event) -> Option<()> {
     {
         // Prevent the press from stealing focus from the display input
         event.prevent_default();
-        display_input(&select)?.focus().ok();
+        let display = display_input(&select)?;
+        focus_without_scroll(&display);
         toggle_select(&select, !is_open(&select));
     }
 
@@ -343,7 +342,7 @@ fn handle_option_click(event: &Event) -> Option<()> {
         if is_multiple(&select)
             && let Some(display) = display_input(&select)
         {
-            display.focus().ok();
+            focus_without_scroll(&display);
         }
     }
     Some(())
@@ -363,7 +362,8 @@ fn handle_clear_click(event: &Event) -> Option<()> {
     }
     selection_changed(&select);
     dispatch_form_events(&select);
-    display_input(&select)?.focus().ok();
+    let display = display_input(&select)?;
+    focus_without_scroll(&display);
 
     Some(())
 }
@@ -426,7 +426,8 @@ fn handle_select_keydown(event: &Event) -> Option<()> {
             event.prevent_default();
             event.stop_propagation();
             toggle_select(&select, false);
-            display_input(&select)?.focus().ok();
+            let display = display_input(&select)?;
+            focus_without_scroll(&display);
         }
         return Some(());
     }

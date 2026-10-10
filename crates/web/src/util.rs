@@ -6,6 +6,7 @@ pub mod color_scheme;
 pub mod convert;
 pub mod direction;
 pub mod event;
+pub mod focus;
 pub mod id;
 pub mod modal;
 pub mod scroll;

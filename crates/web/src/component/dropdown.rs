@@ -12,7 +12,7 @@ use wasm_dom as dom;
 use wasm_dom::correct::JsObjectAccess;
 use wasm_dom::correct::access::{CastToElement, CastToHtmlElement};
 use wasm_dom::event::EventListener;
-use web_sys::{AddEventListenerOptions, Element, Event, KeyboardEvent, ScrollIntoViewOptions, ScrollLogicalPosition};
+use web_sys::{AddEventListenerOptions, Element, Event, KeyboardEvent};
 
 use crate::helper::popup;
 use crate::util::animate::animate_with_class;
@@ -20,6 +20,7 @@ pub use crate::util::class::{is_disabled, is_open};
 use crate::util::convert::bool_to_str;
 use crate::util::direction::{is_rtl, observe_direction_changes};
 use crate::util::event;
+use crate::util::focus::{focus_without_scroll, scroll_into_view_within};
 use crate::util::typeahead::{TypeaheadKey, typeahead_buffer, update_typeahead_buffer};
 
 // Submenus open next to their item, on the end side of the text direction,
@@ -109,12 +110,12 @@ fn set_active_item(dropdown: &Element, item: Option<&Element>) {
         item.class_list().add_1("active").ok();
         item.set_attribute("tabindex", "0").ok();
         if let Some(html) = item.maybe_as_html() {
-            html.focus().ok();
+            focus_without_scroll(html);
         }
-
-        let options = ScrollIntoViewOptions::new();
-        options.set_block(ScrollLogicalPosition::Nearest);
-        item.scroll_into_view_with_scroll_into_view_options(&options);
+        // The item's menu level (the menu or a submenu) is the scroll container
+        if let Some(menu) = item.parent_element() {
+            scroll_into_view_within(item, &menu);
+        }
     }
 }
 
@@ -400,7 +401,7 @@ pub fn make_selection(dropdown: &Element, item: &Element) -> Option<()> {
     if selected {
         set_dropdown_open(dropdown, false, item);
         if let Some(trigger) = trigger(dropdown).and_then(CastToHtmlElement::maybe_into_html) {
-            trigger.focus().ok();
+            focus_without_scroll(&trigger);
         }
     }
 
@@ -488,7 +489,7 @@ pub fn handle_keydown(event: &Event) -> Option<()> {
         } else {
             set_dropdown_open(&dropdown, false, &dropdown.clone());
             if let Some(trigger) = trigger(&dropdown).and_then(|trigger| trigger.maybe_into_html()) {
-                trigger.focus().ok();
+                focus_without_scroll(&trigger);
             }
         }
         return Some(());

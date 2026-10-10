@@ -29,6 +29,7 @@ web-sys = { workspace = true, features = [
     "EventInit",
     "EventTarget",
     "FillMode",
+    "FocusOptions",
     "HtmlDetailsElement",
     "HtmlDialogElement",
     "HtmlElement",
