@@ -6,12 +6,12 @@ use wingy_hypertext_macros::{Props, const_str};
 
 use crate::appearance::Appearance::Plain;
 use crate::attributes::{CommonAttributeGetters, CommonAttributeSetters, CommonAttrs};
-use crate::attrs;
 use crate::class::{
     DIALOG, DIALOG_BODY, DIALOG_CLOSE, DIALOG_FOOTER, DIALOG_HEADER, DIALOG_HEADER_ACTIONS, DIALOG_TITLE, ICON,
 };
 use crate::component::button::Button;
 use crate::layout::INVISIBLE;
+use crate::{attrs, div_component};
 
 /// A dialog, appears above the page and requires the user's immediate
 /// attention: confirmations, forms or focused tasks that interrupt the main
@@ -183,58 +183,13 @@ impl<'a> Renderable for DialogHeaderActions<'a> {
     }
 }
 
-#[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = DIALOG_BODY)]
-#[props(builder)]
-pub struct DialogBody<'a> {
-    #[as_ref]
-    #[as_mut]
-    pub attributes: CommonAttrs<'a>,
+div_component!(DialogBody, DIALOG_BODY);
 
-    pub children: Option<&'a dyn Renderable>,
-}
-
-impl<'a> Renderable for DialogBody<'a> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.not_empty_id();
-        let class_line = self.class_line_with(&[Self::CLASS]);
-        let style_line = self.style_line_with(&[]);
-
-        rsx! {
-            <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
-                (self.children)
-            </div>
-        }
-        .render_to(buffer);
-    }
-}
-
-/// The dialog's footer, usually one or more buttons representing various options.
-///
-/// Rendered as a `<div>` for the same reason [`DialogHeader`] is: a `<footer>`
-/// inside a `<dialog>` would duplicate the page's `contentinfo` landmark.
-#[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = DIALOG_FOOTER)]
-#[props(builder)]
-pub struct DialogFooter<'a> {
-    #[as_ref]
-    #[as_mut]
-    pub attributes: CommonAttrs<'a>,
-
-    pub children: Option<&'a dyn Renderable>,
-}
-
-impl<'a> Renderable for DialogFooter<'a> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.not_empty_id();
-        let class_line = self.class_line_with(&[Self::CLASS]);
-        let style_line = self.style_line_with(&[]);
-
-        rsx! {
-            <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
-                (self.children)
-            </div>
-        }
-        .render_to(buffer);
-    }
-}
+div_component!(
+    /// The dialog's footer, usually one or more buttons representing various options.
+    ///
+    /// Rendered as a `<div>` for the same reason [`DialogHeader`] is: a `<footer>`
+    /// inside a `<dialog>` would duplicate the page's `contentinfo` landmark.
+    DialogFooter,
+    DIALOG_FOOTER
+);

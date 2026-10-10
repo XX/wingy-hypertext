@@ -1,0 +1,157 @@
+.card {
+  --spacing: var(--wa-space-l);
+
+  /* Internal calculated properties */
+  --inner-border-radius: calc(var(--wa-panel-border-radius) - var(--wa-panel-border-width));
+
+  display: flex;
+  flex-direction: column;
+  background-color: var(--wa-color-surface-default);
+  border-color: var(--wa-color-surface-border);
+  border-radius: var(--wa-panel-border-radius);
+  border-style: var(--wa-panel-border-style);
+  box-shadow: var(--wa-shadow-s);
+  border-width: var(--wa-panel-border-width);
+  color: var(--wa-color-text-normal);
+}
+
+/* Appearance modifiers */
+.card.plain {
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.card.outlined {
+  background-color: var(--wa-color-surface-default);
+  border-color: var(--wa-color-surface-border);
+}
+
+.card.filled {
+  background-color: var(--wa-color-neutral-fill-quiet);
+  border-color: transparent;
+}
+
+.card.filled-outlined {
+  background-color: var(--wa-color-neutral-fill-quiet);
+  border-color: var(--wa-color-surface-border);
+}
+
+.card.accent {
+  color: var(--wa-color-neutral-on-loud);
+  background-color: var(--wa-color-neutral-fill-loud);
+  border-color: transparent;
+}
+
+/* Take care of top and bottom radii: absent sections aren't rendered, so the
+ * first and the last sections take the card's corners */
+.card:not(.horizontal) > :first-child {
+  border-start-start-radius: var(--inner-border-radius);
+  border-start-end-radius: var(--inner-border-radius);
+}
+
+.card:not(.horizontal) > :last-child {
+  border-end-start-radius: var(--inner-border-radius);
+  border-end-end-radius: var(--inner-border-radius);
+}
+
+.card-media {
+  display: flex;
+  overflow: hidden;
+
+  & > * {
+    display: block;
+    width: 100%;
+    border-radius: 0 !important;
+  }
+}
+
+/* Round all corners for plain appearance */
+.card.plain > .card-media {
+  border-radius: var(--inner-border-radius);
+
+  & > * {
+    border-radius: inherit !important;
+  }
+}
+
+.card-header {
+  display: block;
+  border-block-end-style: inherit;
+  border-block-end-color: var(--wa-color-surface-border);
+  border-block-end-width: var(--wa-panel-border-width);
+  padding: calc(var(--spacing) / 2) var(--spacing);
+}
+
+.card-body {
+  display: block;
+  padding: var(--spacing);
+}
+
+.card-footer {
+  display: block;
+  border-block-start-style: inherit;
+  border-block-start-color: var(--wa-color-surface-border);
+  border-block-start-width: var(--wa-panel-border-width);
+  padding: var(--spacing);
+}
+
+/* Push the content and the actions to the sides when the actions render */
+.card-header:has(> .card-header-actions),
+.card-footer:has(> .card-footer-actions) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-header-actions,
+.card-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--wa-space-xs);
+}
+
+/* Orientation Styles */
+.card.horizontal {
+  flex-direction: row;
+
+  & > :first-child {
+    border-start-start-radius: var(--inner-border-radius);
+    border-end-start-radius: var(--inner-border-radius);
+  }
+
+  & > :last-child {
+    border-start-end-radius: var(--inner-border-radius);
+    border-end-end-radius: var(--inner-border-radius);
+  }
+
+  & > .card-media > * {
+    block-size: 100%;
+    inline-size: 100%;
+    object-fit: cover;
+  }
+
+  & > .card-body > * {
+    display: block;
+    height: 100%;
+    margin: 0;
+  }
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing);
+}
+
+/* The `awesome` theme's `wa-card::part(header|footer)` overrides, which don't
+ * reach the light DOM markup */
+.wa-theme-awesome .card {
+  & > .card-header {
+    border-bottom-style: dotted;
+  }
+
+  & > .card-footer {
+    border-top-style: dotted;
+  }
+}

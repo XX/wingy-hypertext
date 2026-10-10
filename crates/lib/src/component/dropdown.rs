@@ -12,10 +12,10 @@ use crate::class::{
     DROPDOWN_ITEM_LABEL, DROPDOWN_MENU, DROPDOWN_SUBMENU, SIZE_EXTRA_LARGE, SIZE_EXTRA_SMALL, SIZE_LARGE, SIZE_MEDIUM,
     SIZE_SMALL, SUBMENU_ADJACENT, SUBMENU_ICON,
 };
-use crate::convert;
 use crate::helper::popup::AutoSize::Vertical;
 use crate::helper::popup::{Popup, PopupBody, PopupPlacement};
 use crate::variant::Variant;
+use crate::{convert, span_component};
 
 /// The dropdown's size, applied as the corresponding `size-*` class. Dropdowns
 /// are sized relative to the current font size, so the size can also be set
@@ -303,89 +303,26 @@ impl<'a> Renderable for DropdownItem<'a> {
     }
 }
 
-/// An icon displayed before the label of a [`DropdownItem`].
-#[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = DROPDOWN_ITEM_ICON)]
-#[props(builder)]
-pub struct DropdownItemIcon<'a> {
-    #[as_ref]
-    #[as_mut]
-    pub attributes: CommonAttrs<'a>,
+span_component!(
+    /// An icon displayed before the label of a [`DropdownItem`].
+    DropdownItemIcon,
+    DROPDOWN_ITEM_ICON
+);
 
-    pub children: Option<&'a dyn Renderable>,
-}
+span_component!(
+    /// The label of a [`DropdownItem`], taking the space the icon, the details and
+    /// the submenu indicator leave. It is also what type-to-select matches against,
+    /// unless the item carries an explicit `label`.
+    DropdownItemLabel,
+    DROPDOWN_ITEM_LABEL
+);
 
-impl<'a> Renderable for DropdownItemIcon<'a> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.not_empty_id();
-        let class_line = self.class_line_with(&[Self::CLASS]);
-        let style_line = self.style_line_with(&[]);
-
-        rsx! {
-            <span id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
-                (self.children)
-            </span>
-        }
-        .render_to(buffer);
-    }
-}
-
-/// The label of a [`DropdownItem`], taking the space the icon, the details and
-/// the submenu indicator leave. It is also what type-to-select matches against,
-/// unless the item carries an explicit `label`.
-#[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = DROPDOWN_ITEM_LABEL)]
-#[props(builder)]
-pub struct DropdownItemLabel<'a> {
-    #[as_ref]
-    #[as_mut]
-    pub attributes: CommonAttrs<'a>,
-
-    pub children: Option<&'a dyn Renderable>,
-}
-
-impl<'a> Renderable for DropdownItemLabel<'a> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.not_empty_id();
-        let class_line = self.class_line_with(&[Self::CLASS]);
-        let style_line = self.style_line_with(&[]);
-
-        rsx! {
-            <span id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
-                (self.children)
-            </span>
-        }
-        .render_to(buffer);
-    }
-}
-
-/// Secondary content displayed after the label of a [`DropdownItem`], such as a
-/// keyboard shortcut.
-#[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = DROPDOWN_ITEM_DETAILS)]
-#[props(builder)]
-pub struct DropdownItemDetails<'a> {
-    #[as_ref]
-    #[as_mut]
-    pub attributes: CommonAttrs<'a>,
-
-    pub children: Option<&'a dyn Renderable>,
-}
-
-impl<'a> Renderable for DropdownItemDetails<'a> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.not_empty_id();
-        let class_line = self.class_line_with(&[Self::CLASS]);
-        let style_line = self.style_line_with(&[]);
-
-        rsx! {
-            <span id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
-                (self.children)
-            </span>
-        }
-        .render_to(buffer);
-    }
-}
+span_component!(
+    /// Secondary content displayed after the label of a [`DropdownItem`], such as a
+    /// keyboard shortcut.
+    DropdownItemDetails,
+    DROPDOWN_ITEM_DETAILS
+);
 
 /// A menu nested into a [`DropdownItem`], turning it into a submenu trigger.
 /// It renders the submenu indicator next to the item's content and the nested

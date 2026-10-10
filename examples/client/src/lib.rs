@@ -116,6 +116,7 @@ fn main_section(route_path: &str) -> impl Renderable {
             "button" => (component::button::overview()),
             "button-group" => (component::button_group::overview()),
             "callout" => (component::callout::overview()),
+            "card" => (layout::card::overview()),
             "checkbox" => (component::checkbox::overview()),
             "checkbox-group" => (component::checkbox_group::overview()),
             "copy-button" => (component::copy_button::overview()),
@@ -391,6 +392,16 @@ pub fn render_root(url_path: &str) -> String {
                             hx-push-url="true"
                         >
                             <span>"Accordion"</span>
+                        </a>
+                        <a
+                            class=FLANK
+                            href="/card"
+                            hx-get="/card"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Card"</span>
                         </a>
                         <a class=FLANK href="#"><span>"Code Example"</span></a>
                         <a

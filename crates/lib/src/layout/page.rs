@@ -7,9 +7,9 @@ use iconic::fontawesome;
 use wingy_hypertext_macros::{Props, const_str};
 
 use crate::attributes::{CommonAttributeGetters, CommonAttributeSetters, CommonAttrs};
-use crate::attrs;
 use crate::class::{ICON, PAGE, PAGE_BODY, PAGE_MENU, PAGE_NAVIGATION_DRAWER, PAGE_NAVIGATION_TOGGLE};
 use crate::layout::drawer::{Drawer, DrawerBody, DrawerHeader, DrawerPlacement};
+use crate::{attrs, div_component};
 
 /// The id of the drawer [`Page`] renders for the mobile navigation, and the one
 /// [`PageNavigationToggle`] opens.
@@ -199,54 +199,6 @@ impl<'a> Renderable for PageNavigationToggle<'a> {
     }
 }
 
-#[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = PAGE_BODY)]
-#[props(builder)]
-pub struct PageBody<'a> {
-    #[as_ref]
-    #[as_mut]
-    pub attributes: CommonAttrs<'a>,
+div_component!(PageBody, PAGE_BODY);
 
-    pub children: Option<&'a dyn Renderable>,
-}
-
-impl<'a> Renderable for PageBody<'a> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.not_empty_id();
-        let class_line = self.class_line_with(&[Self::CLASS]);
-        let style_line = self.style_line_with(&[]);
-
-        rsx! {
-            <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
-                (self.children)
-            </div>
-        }
-        .render_to(buffer);
-    }
-}
-
-#[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = PAGE_MENU)]
-#[props(builder)]
-pub struct PageMenu<'a> {
-    #[as_ref]
-    #[as_mut]
-    pub attributes: CommonAttrs<'a>,
-
-    pub children: Option<&'a dyn Renderable>,
-}
-
-impl<'a> Renderable for PageMenu<'a> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.not_empty_id();
-        let class_line = self.class_line_with(&[Self::CLASS]);
-        let style_line = self.style_line_with(&[]);
-
-        rsx! {
-            <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
-                (self.children)
-            </div>
-        }
-        .render_to(buffer);
-    }
-}
+div_component!(PageMenu, PAGE_MENU);

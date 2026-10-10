@@ -7,12 +7,12 @@ use wingy_hypertext_macros::{Props, const_str};
 
 use crate::appearance::Appearance::Plain;
 use crate::attributes::{CommonAttributeGetters, CommonAttributeSetters, CommonAttrs};
-use crate::attrs;
 use crate::class::{
     DRAWER, DRAWER_BODY, DRAWER_CLOSE, DRAWER_FOOTER, DRAWER_HEADER, DRAWER_HEADER_ACTIONS, DRAWER_TITLE, ICON,
 };
 use crate::component::button::Button;
 use crate::layout::INVISIBLE;
+use crate::{attrs, div_component};
 
 /// The direction from which the drawer will open.
 #[derive(Copy, Clone, Debug, Default, IntoStaticStr, AsRefStr, PartialEq, Eq)]
@@ -196,58 +196,13 @@ impl<'a> Renderable for DrawerHeaderActions<'a> {
     }
 }
 
-#[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = DRAWER_BODY)]
-#[props(builder)]
-pub struct DrawerBody<'a> {
-    #[as_ref]
-    #[as_mut]
-    pub attributes: CommonAttrs<'a>,
+div_component!(DrawerBody, DRAWER_BODY);
 
-    pub children: Option<&'a dyn Renderable>,
-}
-
-impl<'a> Renderable for DrawerBody<'a> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.not_empty_id();
-        let class_line = self.class_line_with(&[Self::CLASS]);
-        let style_line = self.style_line_with(&[]);
-
-        rsx! {
-            <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
-                (self.children)
-            </div>
-        }
-        .render_to(buffer);
-    }
-}
-
-/// The drawer's footer, usually one or more buttons representing various options.
-///
-/// Rendered as a `<div>` for the same reason [`DrawerHeader`] is: a `<footer>`
-/// inside a `<dialog>` would duplicate the page's `contentinfo` landmark.
-#[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = DRAWER_FOOTER)]
-#[props(builder)]
-pub struct DrawerFooter<'a> {
-    #[as_ref]
-    #[as_mut]
-    pub attributes: CommonAttrs<'a>,
-
-    pub children: Option<&'a dyn Renderable>,
-}
-
-impl<'a> Renderable for DrawerFooter<'a> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.not_empty_id();
-        let class_line = self.class_line_with(&[Self::CLASS]);
-        let style_line = self.style_line_with(&[]);
-
-        rsx! {
-            <div id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
-                (self.children)
-            </div>
-        }
-        .render_to(buffer);
-    }
-}
+div_component!(
+    /// The drawer's footer, usually one or more buttons representing various options.
+    ///
+    /// Rendered as a `<div>` for the same reason [`DrawerHeader`] is: a `<footer>`
+    /// inside a `<dialog>` would duplicate the page's `contentinfo` landmark.
+    DrawerFooter,
+    DRAWER_FOOTER
+);

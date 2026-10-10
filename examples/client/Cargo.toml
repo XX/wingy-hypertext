@@ -10,6 +10,7 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 hypertext = { workspace = true }
 iconic = { workspace = true }
+indoc = { workspace = true }
 js-sys = { workspace = true }
 wasm-bindgen = { workspace = true }
 wasm-dom = { workspace = true }

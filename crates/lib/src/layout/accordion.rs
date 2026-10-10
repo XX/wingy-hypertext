@@ -14,6 +14,7 @@ use crate::class::{
 };
 use crate::component::head::{Head, HeadLevel};
 use crate::icon_placement::ExpandIconPlacement;
+use crate::span_component;
 
 /// How the items of an accordion can be expanded.
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
@@ -261,32 +262,11 @@ impl<'a> Renderable for AccordionItemTrigger<'a> {
     }
 }
 
-/// The item's label inside the trigger.
-#[derive(Default, AsRef, AsMut, Props)]
-#[const_str(CLASS = ACCORDION_ITEM_LABEL)]
-#[props(builder)]
-pub struct AccordionItemLabel<'a> {
-    #[as_ref]
-    #[as_mut]
-    pub attributes: CommonAttrs<'a>,
-
-    pub children: Option<&'a dyn Renderable>,
-}
-
-impl<'a> Renderable for AccordionItemLabel<'a> {
-    fn render_to(&self, buffer: &mut Buffer) {
-        let id = self.not_empty_id();
-        let class_line = self.class_line_with(&[Self::CLASS]);
-        let style_line = self.style_line_with(&[]);
-
-        rsx! {
-            <span id=[id] class=[&class_line] style=[&style_line] (self.get_attrs())>
-                (self.children)
-            </span>
-        }
-        .render_to(buffer);
-    }
-}
+span_component!(
+    /// The item's label inside the trigger.
+    AccordionItemLabel,
+    ACCORDION_ITEM_LABEL
+);
 
 /// The item's expand/collapse icon, rotating as the item expands. Without
 /// children it is the default chevron, mirrored in right-to-left text.

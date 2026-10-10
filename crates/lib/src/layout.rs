@@ -1,4 +1,5 @@
 pub mod accordion;
+pub mod card;
 pub mod code_example;
 pub mod details;
 pub mod dialog;
