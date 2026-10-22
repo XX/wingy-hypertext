@@ -4,6 +4,7 @@ pub mod button_group;
 pub mod callout;
 pub mod checkbox;
 pub mod checkbox_group;
+pub mod color_scheme_selector;
 pub mod copy_button;
 pub mod dropdown;
 pub mod input;

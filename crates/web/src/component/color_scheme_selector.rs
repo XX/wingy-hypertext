@@ -25,6 +25,12 @@ pub fn listen_color_scheme_selector() {
     });
 }
 
+/// Checks the item of the stored scheme in selectors added after
+/// [`listen_color_scheme_selector`], e.g. by an htmx swap.
+pub fn init_color_scheme_selectors() {
+    sync_selector(color_scheme());
+}
+
 fn handle_select(event: &Event) -> Option<()> {
     let dropdown = event.target()?.maybe_into_element()?;
     if !dropdown.class_list().contains(COLOR_SCHEME_SELECTOR) {

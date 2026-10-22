@@ -20,7 +20,9 @@ use wingy_hypertext::link::Target::*;
 use wingy_hypertext::variant::Variant::*;
 use wingy_hypertext_web::component::callout::listen_close_callout;
 use wingy_hypertext_web::component::checkbox::init_checkboxes;
-use wingy_hypertext_web::component::color_scheme_selector::listen_color_scheme_selector;
+use wingy_hypertext_web::component::color_scheme_selector::{
+    init_color_scheme_selectors, listen_color_scheme_selector,
+};
 use wingy_hypertext_web::component::dropdown::{init_dropdowns, listen_dropdowns};
 use wingy_hypertext_web::component::rating::listen_ratings;
 use wingy_hypertext_web::component::select::{init_selects, listen_selects};
@@ -85,6 +87,7 @@ pub fn reinit() {
     init_page_element();
     init_scroll_to_anchor();
     init_dropdowns();
+    init_color_scheme_selectors();
     init_checkboxes();
     init_selects();
     init_sliders();
@@ -120,6 +123,7 @@ fn main_section(route_path: &str) -> impl Renderable {
             "card" => (layout::card::overview()),
             "checkbox" => (component::checkbox::overview()),
             "checkbox-group" => (component::checkbox_group::overview()),
+            "color-scheme-selector" => (component::color_scheme_selector::overview()),
             "copy-button" => (component::copy_button::overview()),
             "details" => (layout::details::overview()),
             "dialog" => (layout::dialog::overview()),
@@ -258,6 +262,16 @@ pub fn render_root(url_path: &str) -> String {
                             hx-push-url="true"
                         >
                             <span>"Checkbox Group"</span>
+                        </a>
+                        <a
+                            class=FLANK
+                            href="/color-scheme-selector"
+                            hx-get="/color-scheme-selector"
+                            hx-target=".main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                        >
+                            <span>"Color Scheme Selector"</span>
                         </a>
                         <a
                             class=FLANK
