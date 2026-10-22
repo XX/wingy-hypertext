@@ -2,44 +2,23 @@
 //! or `auto` to follow the system) is kept in `localStorage`, and the dark one
 //! is applied by toggling the `wa-dark` class on the document element.
 
-use strum::{AsRefStr, IntoStaticStr};
 use wasm_dom as dom;
 use wasm_dom::event::EventListener;
 use web_sys::MediaQueryList;
 use wingy_hypertext::class::DARK;
+use wingy_hypertext::component::color_scheme_selector::ColorScheme;
 
 use crate::util::event;
 
 /// The `localStorage` key holding the chosen scheme.
 pub const STORAGE_KEY: &str = "color-scheme";
 
-#[derive(Copy, Clone, Debug, Default, IntoStaticStr, AsRefStr, PartialEq, Eq)]
-#[strum(const_into_str, serialize_all = "kebab-case")]
-pub enum ColorScheme {
-    Light,
-    Dark,
-    /// Follows the system preference.
-    #[default]
-    Auto,
-}
-
-impl ColorScheme {
-    pub fn parse(value: &str) -> Option<Self> {
-        match value {
-            value if value == ColorScheme::Light.as_ref() => Some(Self::Light),
-            value if value == ColorScheme::Dark.as_ref() => Some(Self::Dark),
-            value if value == ColorScheme::Auto.as_ref() => Some(Self::Auto),
-            _ => None,
-        }
-    }
-
-    /// Resolves `Auto` against the system preference.
-    pub fn is_dark(self) -> bool {
-        match self {
-            Self::Light => false,
-            Self::Dark => true,
-            Self::Auto => prefers_dark(),
-        }
+/// Resolves `Auto` against the system preference.
+pub fn is_dark(color_scheme: ColorScheme) -> bool {
+    match color_scheme {
+        ColorScheme::Light => false,
+        ColorScheme::Dark => true,
+        ColorScheme::Auto => prefers_dark(),
     }
 }
 
@@ -78,7 +57,7 @@ pub fn set_color_scheme(scheme: ColorScheme) {
 pub fn apply_color_scheme(scheme: ColorScheme) {
     dom::existing::document_element()
         .class_list()
-        .toggle_with_force(DARK, scheme.is_dark())
+        .toggle_with_force(DARK, is_dark(scheme))
         .ok();
 }
 

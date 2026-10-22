@@ -1,5 +1,6 @@
 pub mod callout;
 pub mod checkbox;
+pub mod color_scheme_selector;
 pub mod copy_button;
 pub mod dropdown;
 pub mod head;

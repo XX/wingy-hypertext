@@ -13,12 +13,14 @@ use wingy_hypertext::class::{
     STACK, START,
 };
 use wingy_hypertext::component::button::Button;
+use wingy_hypertext::component::color_scheme_selector::ColorSchemeSelector;
 use wingy_hypertext::layout::page::{Page, PageBody, PageMenu, PageNavigationToggle};
 use wingy_hypertext::link::LinkSetters;
 use wingy_hypertext::link::Target::*;
 use wingy_hypertext::variant::Variant::*;
 use wingy_hypertext_web::component::callout::listen_close_callout;
 use wingy_hypertext_web::component::checkbox::init_checkboxes;
+use wingy_hypertext_web::component::color_scheme_selector::listen_color_scheme_selector;
 use wingy_hypertext_web::component::dropdown::{init_dropdowns, listen_dropdowns};
 use wingy_hypertext_web::component::rating::listen_ratings;
 use wingy_hypertext_web::component::select::{init_selects, listen_selects};
@@ -38,7 +40,6 @@ use wingy_hypertext_web::{
     listen_page, register_copy_action,
 };
 
-pub mod color_scheme;
 pub mod component;
 pub mod helper;
 pub mod layout;
@@ -47,7 +48,7 @@ pub mod layout;
 #[wasm_bindgen]
 pub fn init() {
     register_copy_action();
-    color_scheme::listen_color_scheme_selector();
+    listen_color_scheme_selector();
     init_code_examples();
     listen_code_examples();
     listen_click_actions();
@@ -183,7 +184,7 @@ pub fn render_root(url_path: &str) -> String {
                     <a href="#">"Example Link"</a>
                 </div>
                 <div class=(CLUSTER, " ", GAP_XS)>
-                    (color_scheme::selector())
+                    <ColorSchemeSelector />
                     <Button variant=Brand appearance=Accent class=SIZE_SMALL href="https://github.com/XX/wingy-hypertext" target=Blank>
                         <span class=(START, " ", ICON)>
                             (fontawesome::brand::Github)

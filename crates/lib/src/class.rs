@@ -53,6 +53,7 @@ pub const CODE_EXAMPLE_THEME: &str = "code-example-theme";
 pub const CODE_EXAMPLE_THEME_DARK: &str = "code-example-theme-dark";
 pub const CODE_EXAMPLE_THEME_LIGHT: &str = "code-example-theme-light";
 pub const CODE_EXAMPLE_TOGGLE: &str = "code-example-toggle";
+pub const COLOR_SCHEME_SELECTOR: &str = "color-scheme-selector";
 pub const COMBOBOX: &str = "combobox";
 pub const CONTROL: &str = "control";
 pub const COPY_BUTTON: &str = "copy-button";
