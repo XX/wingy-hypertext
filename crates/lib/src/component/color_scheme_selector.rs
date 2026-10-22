@@ -42,6 +42,9 @@ impl ColorScheme {
 #[props(builder)]
 pub struct ColorSchemeSelector<'a> {
     #[prop(into)]
+    pub title: Option<Cow<'a, str>>,
+
+    #[prop(into)]
     pub label_light: Option<Cow<'a, str>>,
 
     #[prop(into)]
@@ -57,6 +60,7 @@ pub struct ColorSchemeSelector<'a> {
 
 impl<'a> Renderable for ColorSchemeSelector<'a> {
     fn render_to(&self, buffer: &mut Buffer) {
+        let title = self.title.as_deref().unwrap_or("Toggle color scheme");
         let label_light = self.label_light.as_deref().unwrap_or("Light");
         let label_dark = self.label_dark.as_deref().unwrap_or("Dark");
         let label_auto = self.label_auto.as_deref().unwrap_or("System");
@@ -67,7 +71,7 @@ impl<'a> Renderable for ColorSchemeSelector<'a> {
                     class=SIZE_SMALL
                     appearance=Plain
                     pill=true
-                    attrs=(attrs!["title" = &"Toggle color scheme", "aria-label" = &"Toggle color scheme"])
+                    attrs=(attrs!["title" = &title, "aria-label" = &title])
                 >
                     <span class=(ICON, " ", "only-light")>
                         (fontawesome_ext::regular::SunBright)
