@@ -54,6 +54,16 @@ pub trait CommonAttributeSetters<'a> {
         self
     }
 
+    fn maybe_attr(mut self, attr: Option<impl Into<NamedAttribute<'a>>>) -> Self
+    where
+        Self: Sized,
+    {
+        if let Some(attr) = attr {
+            self.add_attr(attr);
+        }
+        self
+    }
+
     fn attrs(mut self, attrs: impl Into<Vec<NamedAttribute<'a>>>) -> Self
     where
         Self: Sized,
