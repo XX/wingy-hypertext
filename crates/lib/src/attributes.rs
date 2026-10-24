@@ -81,11 +81,17 @@ pub trait CommonAttributeSetters<'a> {
     }
 
     fn add_class(&mut self, class: impl Into<Cow<'a, str>>) {
-        self.common_attrs_mut().classes.push(class.into());
+        let class = class.into();
+        if !class.trim().is_empty() {
+            self.common_attrs_mut().classes.push(class);
+        }
     }
 
     fn add_style(&mut self, style: impl Into<Cow<'a, str>>) {
-        self.common_attrs_mut().styles.push(style.into());
+        let style = style.into();
+        if !style.trim().is_empty() {
+            self.common_attrs_mut().styles.push(style);
+        }
     }
 
     fn add_attr(&mut self, attr: impl Into<NamedAttribute<'a>>) {
